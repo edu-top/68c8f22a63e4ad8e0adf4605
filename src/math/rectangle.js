@@ -2,9 +2,13 @@
  * Rectangle parameters calculation
  */
 
+// User input
+const i1 = prompt("Введите длину прямоугольника");
+const i2 = prompt("Введите ширину прямоугольника");
+
 // Rectangle length and width
-const length = 10;
-const width = 5;
+const length = Number(i1);
+const width = parseFloat(i2);
 
 // Rectangle area
 const area = length * width;
@@ -12,3 +16,4 @@ const perimeter = (length * width) * 2;
 
 // Output
 console.log(`Rectangle area: ${area}, perimeter: ${perimeter}`);
+alert(`Площадь прямоугольника: ${area}, периметр: ${perimeter}`)
