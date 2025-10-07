@@ -17,7 +17,7 @@ else if (length < 0 || width < 0)
 else {
     // Rectangle area
     const area = length * width;
-    const perimeter = (length * width) * 2;
+    const perimeter = (length + width) * 2;
 
     // Output
     console.log(`Rectangle area: ${area}, perimeter: ${perimeter}`);
