@@ -2,8 +2,7 @@
  * Для реализации логики использовать переключатель `switch`.
  */
 
-const userInput = prompt("Введите номер месяца (1-12) или название месяца:");
-const month = userInput.toLowerCase()
+const month = prompt("Введите номер месяца (1-12) или название месяца:").toLowerCase()
 
 switch(month) {
   case '1': case '2': case '12':

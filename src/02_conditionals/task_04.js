@@ -2,8 +2,7 @@
  * Для реализации логики использовать переключатель `switch..case`.
  */
 
-const userInput = prompt("Введите номер дня недели (1-7):");
-const dayNumber = Number(userInput);
+const dayNumber = Number(prompt("Введите номер дня недели (1-7):"));
 
 if (isNaN(dayNumber) || !Number.isInteger(dayNumber)) {
   alert("Пожалуйста, введите корректное целое число от 1 до 7");

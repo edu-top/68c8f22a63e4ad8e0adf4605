@@ -1,20 +1,20 @@
 /* Проверить вводимое пользователем число на чётность и положительность. */
 
-const userInput = prompt("Введите целое число:");
-const n = Number(userInput);
+const input = prompt("Введите целое число:");
+const number = Number(input);
 
-if (isNaN(n)) {
+if (isNaN(number)) {
     alert("Пожалуйста, введите корректное число");
 }
-else if (n % 1 != 0) // !Number.isInteger(num)
+else if (number % 1 != 0) // !Number.isInteger(num)
 {
     alert("Пожалуйста, введите целое число");
 }
 else {
-    let isEven = n % 2 === 0;
+    let isEven = number % 2 === 0;
     let isPositive;
-    if (n > 0) isPositive = true;
-    else if (n < 0) isPositive = false;
+    if (number > 0) isPositive = true;
+    else if (number < 0) isPositive = false;
     else isPositive = null;
 
     if (isPositive == null) alert("Число равно нулю")
