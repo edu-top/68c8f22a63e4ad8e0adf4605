@@ -9,17 +9,9 @@ const end = parseInt(prompt("Введите конец диапазона:"));
 const isEven = confirm("Хотите вывести только четные числа? Нажмите OK для да, Отмена для нет.");
 
 for (let i = start; i <= end; i++) {
-  if (isEven && i % 2 === 0)
+  if (isEven && i % 2 === 0) {
     console.log(i);
-  else if (!isEven && i % 2 !== 0)
+  } else if (!isEven && i % 2 !== 0) {
     console.log(i);
+  }
 }
-
-/* Test data
-  1   10  true    => 2, 4, 6, 8, 10
-  1   10  false   => 1, 3, 5, 7, 9
-  -5  5   true    => -4, -2, 0, 2, 4
-  -5  5   false   => -5, -3, -1, 1, 3, 5
-  0   0   true    => 0
-  10  5   true    =>
-*/
