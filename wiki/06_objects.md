@@ -29,6 +29,12 @@
       - [Копирование свойств-объектов](#копирование-свойств-объектов)
     - [Копирование объекта с помощью spread-оператора](#копирование-объекта-с-помощью-spread-оператора)
     - [Сравнение объектов](#сравнение-объектов)
+  - [Проверка наличия и перебор методов и свойств](#проверка-наличия-и-перебор-методов-и-свойств)
+    - [Перебор свойств и методов](#перебор-свойств-и-методов)
+    - [Функции Object.entries, Object.keys, Object.values](#функции-objectentries-objectkeys-objectvalues)
+      - [Object.entries()](#objectentries)
+      - [Object.keys()](#objectkeys)
+      - [Object.values()](#objectvalues)
   - [Практическая работа. Работа с объектами](#практическая-работа-работа-с-объектами)
     - [Задание](#задание)
   - [Источники информации](#источники-информации)
@@ -903,6 +909,150 @@ console.log(tom === bob);   // true
 
 В этом случае в обоих случаях мы получим `true`, поскольку значения обоих констант равны, так как по сути это одно и то же значение.
 
+### Проверка наличия и перебор методов и свойств
+При динамическом определении в объекте новых свойств и методов перед их использованием бывает важно проверить, а есть ли уже такие методы и свойства. Для этого в javascript может использоваться оператор **`in`**. Он имеет следующий синтаксис:
+```js
+"свойство|метод" in объект
+```
+
+в кавычках идет название свойства или метода, а после **`in`** — название объекта. Если свойство или метод с подобным именем имеется, то оператор возвращает `true`. Если нет — то возвращается `false`.
+
+Например, узнаем, есть ли в объекте ряд свойств:
+```js
+const user = {};
+user.name = "Tom";
+user.age = 26;
+user.print = function(){
+
+    console.log(this.name);
+    console.log(this.age);
+};
+const hasNameProp = "name" in user;
+console.log(hasNameProp); // true - свойство name есть в user
+
+const hasWeightProp = "weight" in user;
+console.log(hasWeightProp); // false - в user нет свойства или метода под названием weight
+```
+
+С помощью выражения `"name" in user` проверяем, есть ли в объекте `user` свойство `"name"` и результат проверки передаем в константу `hasNameProp`. Далее анологичным образом проверяем наличие свойства `wheight`.
+
+Подобным образом можно проверить и наличие методов:
+```js
+const hasPrintMethod = "print" in user;
+console.log(hasPrintMethod); // true - в user есть метод print
+```
+
+Альтернативный способ заключается в проверке на значение **`undefined`**. Если свойство или метод равен `undefined`, то эти свойство или метод не определены:
+```js
+const hasNameProp = user.name!==undefined;
+console.log(hasNameProp); // true
+const hasWeightProp = user.weight!==undefined;
+console.log(hasWeightProp); // false
+```
+
+И так как объекты представляют тип `Object`, а значит, имеет все его методы и свойства, то объекты также могут использовать метод **`hasOwnProperty()`**, который определен в типе `Object`:
+```js
+const hasNameProp = user.hasOwnProperty("name");
+console.log(hasNameProp); // true
+const hasPrintMethod = user.hasOwnProperty("print");
+console.log(hasPrintMethod); // true
+const hasWeightProp = user.hasOwnProperty("weight");
+console.log(hasWeightProp); // false
+```
+
+#### Перебор свойств и методов
+С помощью цикла `for..in` мы можем перебрать объект как обычный массив и получить все его свойства и методы и их значения:
+```js
+const tom = {
+    name: "Tom",
+    age: 26,
+    print(){
+        console.log(`Name: ${this.name}  Age: ${this.age}`);
+    }
+};
+
+for(const prop in tom) {
+    console.log(prop, " : ", tom[prop]);
+}
+```
+
+И при запуске консоль браузера отобразит следующий вывод:
+```
+name : Tom
+age : 26
+print : print(){
+	console.log(`Name: ${this.name}  Age: ${this.age}`);
+}
+```
+
+#### Функции Object.entries, Object.keys, Object.values
+С помощью дополнительных функций **`Object.entries`**, **`Object.keys`** и **`Object.values`** можно получить все свойства (в том числе методы) объекта и их значения.[^4.3]
+
+##### Object.entries()
+Функция **`Object.entries()`** в качестве параметра принимает объект и возвращает массив пар "название_свойства - значение", где каждая пара свойство-значение представляет массив. Например:
+```js
+const tom = {
+    name: "Tom",
+    age: 26,
+    print(){
+        console.log(`Name: ${this.name}  Age: ${this.age}`);
+    }
+};
+
+for(const prop of Object.entries(tom)) {
+    console.log(prop);
+}
+```
+
+Консольный вывод:
+```
+["name", "Tom"]
+["age", 26]
+["print", ƒ]
+```
+
+##### Object.keys()
+Функция **`Object.keys()`** позволяет получить массив названий всех свойств объекта. Например, возьмем выше определенный объект `tom`:
+```js
+const tom = {
+    name: "Tom",
+    age: 26,
+    print(){
+        console.log(`Name: ${this.name}  Age: ${this.age}`);
+    }
+};
+console.log(Object.keys(tom)); // ["name", "age", "print"]
+```
+
+Соответственно можно перебрать этот набор и получить значения свойств:
+```js
+for(const prop of Object.keys(tom)) {
+    const value = tom[prop];    // получаем по названию значение свойства
+    console.log(prop,value);
+}
+```
+
+Консольный вывод:
+```
+name Tom
+age 26
+print ƒ print(){
+        console.log(`Name: ${this.name}  Age: ${this.age}`);
+    }
+```
+
+##### Object.values()
+Функция **`Object.values()`** возвращает массив, который содержит все значения свойств объекта:
+```js
+const tom = {
+    name: "Tom",
+    age: 26,
+    print(){
+        console.log(`Name: ${this.name}  Age: ${this.age}`);
+    }
+};
+console.log(Object.values(tom)); // ["Tom", 26, print()]
+```
 
 ### Практическая работа. Работа с объектами
 
@@ -930,3 +1080,4 @@ console.log(tom === bob);   // true
 [^4.10]: [Ключевое слово this](https://metanit.com/web/javascript/4.10.php)
 [^4.2]: [Вложенные объекты и массивы в объектах](https://metanit.com/web/javascript/4.2.php)
 [^4.13]: [Копирование и сравнение объектов](https://metanit.com/web/javascript/4.13.php)
+[^4.3]: [Проверка наличия и перебор методов и свойств](https://metanit.com/web/javascript/4.3.php)
