@@ -38,6 +38,8 @@
   - [Объекты в функциях](#объекты-в-функциях)
     - [Объект как результат функции](#объект-как-результат-функции)
     - [Объект как параметр](#объект-как-параметр)
+  - [Функции-конструкторы объектов](#функции-конструкторы-объектов)
+    - [Оператор instanceof](#оператор-instanceof)
   - [Практическая работа. Работа с объектами](#практическая-работа-работа-с-объектами)
     - [Задание](#задание)
   - [Источники информации](#источники-информации)
@@ -1212,6 +1214,138 @@ person = {name: "Undefined", age: 0};
 
 В итоге ссылке, которая хранится в параметре `person`, присвается новый объект. Но поскольку переменная `sam` и параметр `person` представляют две разные ссылки, то это присваивание никак не затронет объект `sam`.[^4.4]
 
+### Функции-конструкторы объектов
+Кроме создания новых объектов JavaScript предоставляет нам возможность создавать новые типы объектов с помощью специальных функций — **конструкторов**. Конструктор позволяет определить новый тип объекта. Определение типа может состоять из функции конструктора, методов и свойств.
+
+Для начала определим конструктор:
+```js
+function Person(pName, pAge) {
+    this.name = pName;
+    this.age = pAge;
+    this.print = function(){
+        console.log("Name: ", this.name);
+        console.log("Age: ", this.age);
+    };
+}
+```
+
+Конструктор — это обычная функция за тем исключением, что в ней мы можем установить свойства и методы. Для установки свойств и методов используется ключевое слово **`this`**:
+```js
+this.name = pName;
+```
+
+В данном случае устанавливаются два свойства `name` и `age` и один метод `print`.
+
+Как правило, названия конструкторы в отличие от названий обычных функций начинаются с большой буквы.[^4.5]
+
+После этого в программе мы можем определить объект типа `Person` и использовать его свойства и методы:
+```js
+// определение конструктора объектов типа Person
+function Person(pName, pAge) {
+    this.name = pName;
+    this.age = pAge;
+    this.print = function(){
+        console.log(`Name: ${this.name}  Age: ${this.age}`);
+    };
+}
+// определение объекта типа Person
+const tom = new Person("Tom", 39);
+// обращение к свойству объекта
+console.log(tom.name); // Том
+// обращение к методу объекта
+tom.print();    // Name: Tom  Age: 39
+```
+
+Чтобы вызвать конструктор, то есть создать объект типа `Person`, надо использовать ключевое слово **`new`**:
+```js
+const tom = new Person("Tom", 39);
+```
+
+Далее через имя объекта можно обращаться к его свойствам и методам, которые определены внутри функции конструктора:
+```js
+// обращение к свойству объекта
+console.log(tom.name); // Том
+// обращение к методу объекта
+tom.print();
+```
+
+Стоит отметить, что, конечно, мы могли бы определить объект стандартным образом:
+```js
+const tom = {
+    name: "Tom",
+    age: 39,
+    print: function(){
+        console.log(`Name: ${this.name}  Age: ${this.age}`);
+    }
+}
+```
+
+Однако использование функций-конструкторов позволяет упростить многократное создание однотипных объектов, которые имеют одинаковый набор свойств и методов. То есть фактически мы определяем новый тип объектов. Например:
+```js
+function Person(pName, pAge) {
+    this.name = pName;
+    this.age = pAge;
+    this.print = function(){
+        console.log(`Name: ${this.name}  Age: ${this.age}`);
+    };
+}
+const tom = new Person("Tom", 39);
+const bob = new Person("Bob", 43);
+const sam = new Person("Sam", 28);
+
+tom.print();    // Name: Tom  Age: 39
+bob.print();    // Name: Bob  Age: 43
+sam.print();    // Name: Sam  Age: 28
+```
+
+Объекты подобных типов можно также передавать в функции или возвращать из функций, они могут выступать в качестве свойств других объектов, могут храниться в массивах и т.д. Например:
+```js
+function Person(pName, pAge) {
+    this.name = pName;
+    this.age = pAge;
+    this.print = function(){
+        console.log(`Name: ${this.name}  Age: ${this.age}`);
+    };
+}
+function printPersonName(person){
+    console.log(person.name);
+}
+// массив из трех объектов Person
+const people = [new Person("Tom", 39), new Person("Bob", 43), new Person("Sam", 28)];
+
+for(person of people){
+    printPersonName(person);
+}
+```
+
+#### Оператор instanceof
+Оператор **`instanceof`** позволяет проверить, с помощью какого конструктора создан объект. Если объект создан с помощью определенного конструктора, то оператор возвращает `true`:
+```js
+// определение конструктора объектов типа Person
+function Person(pName, pAge) {
+    this.name = pName;
+    this.age = pAge;
+    this.print = function(){
+        console.log(`Name: ${this.name}  Age: ${this.age}`);
+    };
+}
+// определение конструктора объектов типа Employee
+function Employee(eName, eCompany) {
+    this.name = eName;
+    this.company = eCompany;
+    this.print = function(){
+        console.log(`Name: ${this.name}  Company: ${this.company}`);
+    };
+}
+const tom = new Person("Tom", 39);
+const bob = new Employee("Bob", "Google");
+
+console.log(tom instanceof Person);       // true - tom является объектом типа Person
+console.log(bob instanceof Employee);   // true - bob является объектом типа Employee
+console.log(tom instanceof Employee);   // false - tom НЕ является объектом типа Employee
+```
+
+
 ### Практическая работа. Работа с объектами
 
 #### Задание
@@ -1240,3 +1374,4 @@ person = {name: "Undefined", age: 0};
 [^4.13]: [Копирование и сравнение объектов](https://metanit.com/web/javascript/4.13.php)
 [^4.3]: [Проверка наличия и перебор методов и свойств](https://metanit.com/web/javascript/4.3.php)
 [^4.4]: [Объекты в функциях](https://metanit.com/web/javascript/4.4.php)
+[^4.5]: [Функции-конструкторы объектов](https://metanit.com/web/javascript/4.5.php)
