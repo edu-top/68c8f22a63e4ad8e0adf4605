@@ -12,6 +12,10 @@
   - [Наследование прототипов](#наследование-прототипов)
     - [Вызов методов базового прототипа](#вызов-методов-базового-прототипа)
     - [Проверка наследования прототипов и Object.isPrototypeOf()](#проверка-наследования-прототипов-и-objectisprototypeof)
+  - [Наследование прототипов конструкторов](#наследование-прототипов-конструкторов)
+    - [Переопределение функций](#переопределение-функций)
+    - [Вызов метода родительского прототипа](#вызов-метода-родительского-прототипа)
+    - [Проблемы прототипного наследования](#проблемы-прототипного-наследования)
   - [Классы](#классы)
     - [Определение класса](#определение-класса)
     - [Создание объектов](#создание-объектов)
@@ -718,6 +722,230 @@ console.log(user.isPrototypeOf(employee));      // false
 ```
 
 Здесь объект `employee` наследует прототип от `person`. Соответственно вызов `person.isPrototypeOf(employee)` возвратит `true`. А объект `user` не является прототипом для `employee` даже несмотря на то, что у него тот же набор методов и свойств.[^4.21]
+
+### Наследование прототипов конструкторов
+В прошлой теме было рассмотрено наследование объектов или точнее их прототипов. Использование функций-конструкторов делает шаг вперед в этом плане, позволяя наследовать прототипы в псевдоклассовом стиле, как наследование типов.
+
+Например, у нас может быть объект `Person`, который представляет отдельного пользователя. И также может быть объект `Employee`, который представляет работника. Но работник также может являться пользователем и поэтому должен иметь все его свойства и методы. Например:
+```js
+// конструктор пользователя
+function Person (name, age) {
+    this.name = name;
+    this.age = age;
+    this.sayHello = function(){
+        console.log(`Person ${this.name} says "Hello"`);
+    };
+}
+// добавляем прототип в функцию
+Person.prototype.print = function(){
+    console.log(`Name: ${this.name}  Age: ${this.age}`);
+};
+
+
+// конструктор работника
+function Employee(name, age, comp){
+    Person.call(this, name, age);         // применяем конструктор Person
+    this.company = comp;
+    this.work = function(){
+        console.log(`${this.name}  works in ${this.company}`);
+    };
+}
+// наследуем прототип от Person
+Employee.prototype = Object.create(Person.prototype);
+// устанавливаем конструктор
+Employee.prototype.constructor = Employee;
+```
+
+Здесь в начале определяет функция-конструктор `Person`, который представляет пользователя. В `Person` определены два свойства и два метода. Для примера один метод — `sayHello` — определен внутри конструктора, а второй метод — `print` — определен непосредственно в прототипе.
+
+Затем определяется функция-конструктор `Employee`, который представляет работника.
+
+В конструкторе `Employee` происходит обращение к конструктору `Person` с помощью вызова:
+```js
+Person.call(this, name, age);
+```
+
+Передача первого параметра позволяет вызвать функцию конструктора `Person` для объекта, создаваемого конструктором `Employee`. Благодаря этому все свойства и методы, определенные в конструкторе `Person`, также переходят на объект `Employee`. Дополнительно определяется свойство company, которое представляет компанию работника, и метод `work`.
+
+Кроме того, необходимо унаследовать также и прототип `Person` и соответственно все определенные через прототип функции (например, в примере выше это функция `Person.prototype.print`). Для этого служит вызов:
+```js
+Employee.prototype = Object.create(Person.prototype);
+```
+
+Метод **`Object.create()`** позволяет создать объект прототипа `Person`, который затем присваивается прототипу `Employee`.
+
+Нередко вместо вызова метода `Object.create()` для установки прототипа используется вызов наследуемого конструктора, например:
+```js
+Employee.prototype = new Person();
+```
+
+В результате будет создан объект, у которого прототип (`Employee.prototype.__proto__`) будет указывать на прототип `Person`.
+
+Однако стоит учитывать, что созданный объект прототипа будет указывать на конструктор `Person`. Поэтому также устанавливаем нужный конструктор:
+```js
+Employee.prototype.constructor = Employee;
+```
+
+Конструктор редко используется сам по себе, и, возможно, осутствие установки конструктора никак не скажется на работе программы. Но тем не менее рассмотрим следующую ситуацию
+```js
+const obj = new Employee.prototype.constructor("Bob", 23, "Google");
+console.log(obj); // Employee или Person в зависимости от типа конструктора
+obj.work(); // Если obj -  Person, то будет ошибка
+```
+
+Здесь напрямую вызываем конструктор для создания объекта `obj`. И тип объекта `obj` здесь будет зависеть от того, какой конструктор установлен для `Employee.prototype.constructor`.
+
+Протестируем выше определенные функции-конструкторы:
+```js
+// конструктор пользователя
+function Person (name, age) {
+    this.name = name;
+    this.age = age;
+    this.sayHello = function(){
+        console.log(`Person ${this.name} says "Hello"`);
+    };
+}
+Person.prototype.print = function(){
+    console.log(`Name: ${this.name}  Age: ${this.age}`);
+};
+
+// конструктор работника
+function Employee(name, age, comp){
+    Person.call(this, name, age);         // применяем конструктор Person
+    this.company = comp;
+    this.work = function(){
+        console.log(`${this.name}  works in ${this.company}`);
+    };
+}
+// наследуем прототип от Person
+Employee.prototype = Object.create(Person.prototype);
+
+// устанавливаем конструктор
+Employee.prototype.constructor = Employee;
+
+// создаем объект Employee
+const tom = new Employee("Tom", 39, "Google");
+// обращение к унаследованному свойству
+console.log("Age:", tom.age);
+// обращение к унаследованному методу
+tom.sayHello();    // Person Tom says "Hello"
+// обращение к унаследованному методу прототипа
+tom.print();    // Name: Tom  Age: 39
+// обращение к собственному методу
+tom.work();    // Tom works in Google
+```
+
+#### Переопределение функций
+При наследовании мы можем переопределять наследуемый функционал. Например, в примере выше для `Person` определено два метода: `sayHello` (в конструкторе) и `print()` (в прототипе). Но, допустим, для `Employee` мы хотим изменить их логику, например, в методе `print` также выводить компанию работника. В этом случае мы можем определить для `Employee` методы с теми же именами:
+```js
+function Person (name, age) {
+    this.name = name;
+    this.age = age;
+    this.sayHello = function(){
+        console.log(`Person ${this.name} says "Hello"`);
+    };
+}
+Person.prototype.print = function(){
+    console.log(`Name: ${this.name}  Age: ${this.age}`);
+};
+
+function Employee(name, age, comp){
+    Person.call(this, name, age);
+    this.company = comp;
+    // переопределяем метод sayHello
+    this.sayHello = function(){
+        console.log(`Employee ${this.name} says "Hello"`);
+    };
+}
+Employee.prototype = Object.create(Person.prototype);
+Employee.prototype.constructor = Employee;
+
+// переопределяем метод print
+Employee.prototype.print = function(){
+    console.log(`Name: ${this.name}  Age: ${this.age}  Company: ${this.company}`);
+};
+
+const tom = new Employee("Tom", 39, "Google");
+tom.sayHello();    // Employee Tom says "Hello"
+tom.print();    // Name: Tom  Age: 39  Company: Google
+```
+
+Метод `sayHello()` определен внутри конструктора `Person`, поэтому данный метод переопределяется внутри конструктора `Employee`. Метод `print()` определен как метод прототипа `Person`, поэтому его можно переопределить в прототипе `Employee`.
+
+#### Вызов метода родительского прототипа
+В прототипе-наследнике может потребоваться вызвать метод из родительского прототипа. Например, это может быть необходимо для сокращении логики кода/, если логика метода наследника повторяет логику метода родителя. В этом случае для обращения к методам родительского прототипа применяется функция **`call()`**:
+```js
+function Person (name, age) {
+    this.name = name;
+    this.age = age;
+}
+Person.prototype.print = function(){
+    console.log(`Name: ${this.name}  Age: ${this.age}`);
+};
+
+function Employee(name, age, comp){
+    Person.call(this, name, age);
+    this.company = comp;
+}
+Employee.prototype = Object.create(Person.prototype);
+Employee.prototype.constructor = Employee;
+
+// переопределяем метод print
+Employee.prototype.print = function(){
+    Person.prototype.print.call(this); // вызываем метод print из Person
+    console.log(`Company: ${this.company}`);
+};
+
+const tom = new Employee("Tom", 39, "Google");
+tom.print();    // Name: Tom  Age: 39
+                // Company: Google
+```
+
+В данном случае при переопределении метода `print` в прототипе `Employee` вызывается метод `print` из прототипа `Person`:
+```js
+Employee.prototype.print = function(){
+    Person.prototype.print.call(this); // вызываем метод print из Person
+    console.log(`Company: ${this.company}`);
+};
+```
+
+#### Проблемы прототипного наследования
+Стоит отметить, что тип `Employee` перенимает не только все текущие свойства и методы из прототипа `Person`, но и также те, которые будут впоследствии добавляться динамически. Например:
+```js
+const tom = new Employee("Tom", 39, "Google");
+Person.prototype.sleep = function() {console.log(`${this.name} sleeps`);}
+tom.sleep();
+```
+
+Здесь в прототип `Person` добавляется метод `sleep`. Причем она добавляется уже после создания объекта `tom`, который представляет тип `Employee`. Тем не менее даже у этого объекта мы можем вызвать метод `sleep`.[^4.9]
+
+Другой момент, который стоит учитывать, через прототип конструктора-наследника можно изменить прототип конструктора-родителя. Например:
+```js
+function Person (name, age) {
+    this.name = name;
+    this.age = age;
+    this.sayHello = function(){
+        console.log(`Person ${this.name} says "Hello"`);
+    };
+}
+Person.prototype.print = function(){
+    console.log(`Name: ${this.name}  Age: ${this.age}`);
+};
+
+function Employee(name, age, comp){
+    Person.call(this, name, age);
+    this.company = comp;
+}
+// наследуем прототип от Person
+Employee.prototype = Object.create(Person.prototype);
+Employee.prototype.constructor = Employee;
+
+// меняем метод print в базовом прототипе Person
+Employee.prototype.__proto__.print = function(){ console.log("Person prototype hacked");};
+// создаем объект Person
+const bob = new Person("Bob", 43);
+bob.print();      // Person prototype hacked
+```
 
 ### Классы
 С внедрением стандарта ES2015 (ES6) в JavaScript появился новый способ определения объектов — с помощью классов. Класс представляет описание объекта, его состояния и поведения, а объект является конкретным воплощением или экземпляром класса. По сути синтаксис классов является альтернативной конструкцией, которая, как и функции-конструкторы, позволяет определить новый тип объектов.
@@ -1722,6 +1950,7 @@ console.log(sam instanceof Manager); // false
 [^4.6]: [Расширение объектов. Прототипы](https://metanit.com/web/javascript/4.6.php)
 [^4.19]: [Функция Object.create. Конфигурация свойств объектов](https://metanit.com/web/javascript/4.19.php)
 [^4.21]: [Наследование прототипов](https://metanit.com/web/javascript/4.21.php)
+[^4.9]: [Наследование прототипов конструкторов](https://metanit.com/web/javascript/4.9.php)
 [^4.12]: [ООП. Классы](https://metanit.com/web/javascript/4.12.php)
 [^4.16]: [Приватные поля и методы](https://metanit.com/web/javascript/4.16.php)
 [^4.14.]: [Свойства и методы доступа](https://metanit.com/web/javascript/4.14.php)
