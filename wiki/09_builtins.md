@@ -41,6 +41,9 @@
       - [Получение элементов](#получение-элементов)
       - [Удаление элементов](#удаление-элементов)
       - [Перебор элементов](#перебор-элементов)
+    - [Слабоссылаемые множества](#слабоссылаемые-множества)
+      - [Перебор WeakSet](#перебор-weakset)
+      - [Слабые ссылки](#слабые-ссылки)
   - [Источники информации](#источники-информации)
 
 ### Объект Date. Работа с датами
@@ -1018,6 +1021,119 @@ for(item of dict.values()){
 
 [^14.4]
 
+
+#### Слабоссылаемые множества
+Объект **`WeakSet`** во многом похож на обычное множество. Он также может хранить только уникальные значения, но каждый его элемент должен представлять объект.
+
+Для создания объекта `WeakSet` используется его конструктор, в который можно передать начальные значения:
+```js
+// пустой WeakSet
+const weakSet1 = new WeakSet();
+// инициализация начальными значениями
+const weakSet2 = new WeakSet([{name:"Tom", age: 37}, {name:"Alice", age: 34}]);
+```
+
+Для инициализации как в случае с объектом `Set` в конструктор передается массив, но данный массив содержит именно объекты, а не скалярные значения, типа чисел или строк.
+
+Для добавления данных в `WeakSet` применяется метод **`add()`**:
+```js
+const weakSet = new WeakSet();
+weakSet.add({lang: "JavaScript"});
+weakSet.add({lang: "TypeScript"});
+// weakSet.add(34); // так нельзя - 34 - число, а не объект
+console.log(weakSet);   // {{lang: "JavaScript"}, {lang: "TypeScript"}}
+```
+
+Причем опять же добавить мы можем только объект, а не скалярные значения типа чисел или строк.
+
+Для удаления применяется метод **`delete()`**, в который передается ссылка на удаляемый объект:
+```js
+const weakSet = new WeakSet();
+const js = {lang: "JavaScript"};
+const ts = {lang: "TypeScript"};
+weakSet.add(js);
+weakSet.add(ts);
+
+weakSet.delete(js);
+
+console.log(weakSet);   // {{lang: "TypeScript"}}
+```
+
+Если надо проверить, имеется ли объект в `WeakSet`, то можно использовать метод **`has()`**, который возвращает `true` при наличии объекта:
+```js
+const js = {lang: "JavaScript"};
+const ts = {lang: "TypeScript"};
+const java = {lang: "Java"};
+const weakSet = new WeakSet([js, ts]);
+console.log(weakSet.has(ts));       // true
+console.log(weakSet.has(java));     //  false
+```
+
+##### Перебор WeakSet
+Стоит отметить, что `WeakSet` не поддерживает перебор ни с помощью метода `forEach`, которого у `WeakSet` нет, ни с помощью цикла `for`. Например. если мы попробуем перебрать `WeakSet` через цикл `for..of`:
+```js
+const weakSet = new WeakSet([
+    {lang: "JavaScript"},
+    {lang: "TypeScript"},
+    {lang: "Java"}
+]);
+
+
+for(item of weakSet){
+    console.log(item);
+}
+```
+
+То мы получим ошибку
+```
+Uncaught TypeError: weakSet is not iterable
+```
+
+##### Слабые ссылки
+Объекты передаются в `WeakSet` по ссылке. И отличительной особенностью `WeakSet` является то, что когда объект перестает существовать в силу различных причин, он удаляется из `WeakSet`. Так, рассмотрим следующий пример:
+```js
+let js = {lang: "JavaScript"};
+let ts = {lang: "TypeScript"};
+const weakSet = new WeakSet([js, ts]);
+
+js = null;
+
+console.log(weakSet);   // {{lang: "JavaScript"}, {lang: "TypeScript"}}
+console.log("Некоторая работа");
+const timerId = setTimeout(function(){
+    console.log(weakSet);   // {{lang: "TypeScript"}}
+    clearTimeout(timerId);
+}, 20000);
+```
+
+В данном случае сначала объект `WeakSet` хранит ссылки на два объекта: `js` и `ts`. Далее мы устанавливаем значение для переменной `js` в `null`.
+
+Это приведет к тому, что спустя некоторое время начальное значение этой переменной будет удалено сборщиком мусора JavaScript.
+
+```js
+js = null;
+```
+
+Причем если сразу после этого мы посмотрим на содержимое `weakSet`, то увидим, что объект `js` в нем еще присутствует. Однако спустя некоторое время ссылка будет удалена из `weakSet`. Для эмуляции прошествия времени здесь используется функция `setTimeout`, которая выводит на консоль содержимое `weakSet` через 9000 секунд (конкретный период времени, через который сборщик мусора удалит значение, может отличаться)
+
+Теперь сравним с тем, что произойдет, если вместо `WeakSet` использовать **`Set`**:
+```js
+let js = {lang: "JavaScript"};
+let ts = {lang: "TypeScript"};
+const set = new Set([js, ts]);
+
+js = null;
+
+console.log(set);   // Set(2) {{lang: "JavaScript"}, {lang: "TypeScript"}}
+console.log("Некоторая работа");
+const timerId = setTimeout(function(){
+    console.log(set);   // Set(2){{lang: "JavaScript"}, {lang: "TypeScript"}}
+    clearTimeout(timerId);
+}, 20000);
+```
+
+В случае с `Set` даже спустя некоторое время мы увидим, что в объекте `Set` до сих пор присутствует объект, для которого было установлено значение `null`.[^14.5]
+
 ### Источники информации
 [^5.1]: [Объект Date. Работа с датами](https://metanit.com/web/javascript/5.1.php)
 [^5.2]: [Объект Math. Математические операции](https://metanit.com/web/javascript/5.2.php)
@@ -1026,3 +1142,4 @@ for(item of dict.values()){
 [^5.9]: [Proxy](https://metanit.com/web/javascript/5.9.php)
 [^14.3]: [Множества Set](https://metanit.com/web/javascript/14.3.php)
 [^14.4]: [Map](https://metanit.com/web/javascript/14.4.php)
+[^14.5]: [WeakSet](https://metanit.com/web/javascript/14.5.php)
