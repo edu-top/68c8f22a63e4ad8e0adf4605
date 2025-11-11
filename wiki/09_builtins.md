@@ -239,7 +239,7 @@ const max = Math.max(1, 2, 3, -9, 46, -23); // 46
 #### ceil()
 Функция `ceil()` округляет число до следующего наибольшего целого числа:
 ```js
-const x = Math.ceil(9.2); // 10
+const x = Math.ceil(9.2);  // 10
 const y = Math.ceil(-5.9); // -5
 ```
 
@@ -282,14 +282,14 @@ const x = Math.pow(2, 3); // 8
 Функция `sqrt()` возвращает квадратный корень числа:
 ```js
 const x = Math.sqrt(121); // 11
-const y = Math.sqrt(9); // 3
-const z = Math.sqrt(20); // 4.47213595499958
+const y = Math.sqrt(9);   // 3
+const z = Math.sqrt(20);  // 4.47213595499958
 ```
 
 #### log()
 Функция `log()` возвращает натуральный логарифм числа:
 ```js
-const x = Math.log(1); // 0
+const x = Math.log(1);  // 0
 const z = Math.log(10); // 2.302585092994046
 ```
 
@@ -349,7 +349,7 @@ const z = Math.atan(1); // 0.7853981633974483
 
 Используем константы в вычислениях:
 ```js
-const x = Math.log(Math.E); // 1
+const x = Math.log(Math.E);    // 1
 const z = Math.tan(Math.PI/4); // 0.9999999999999999
 ```
 
@@ -406,10 +406,10 @@ else
 
 ```js
 const a = Number.isNaN(Number.NaN); // true
-const b = Number.isNaN(true); // false - new Number(true) = 1
+const b = Number.isNaN(true);  // false - new Number(true) = 1
 const c = Number.isNaN(null);  // false - new Number(null) = 0
-const d = Number.isNaN(25);  // false
-const e = Number.isNaN("54"); // false
+const d = Number.isNaN(25);    // false
+const e = Number.isNaN("54");  // false
 ```
 
 Но следующее выражение вернет `false`, хотя значение не является числом:
@@ -425,9 +425,9 @@ const f = isNaN("hello"); // true
 - `parseFloat()`: преобразует строку в число с плавающей точкой. Например:
 
 ```js
-const a = Number.parseFloat("34.90"); // 34.9
+const a = Number.parseFloat("34.90");   // 34.9
 console.log(a);
-const b = Number.parseFloat("hello"); // NaN
+const b = Number.parseFloat("hello");   // NaN
 console.log(b);
 const c = Number.parseFloat("34hello"); // 34
 console.log(c);
