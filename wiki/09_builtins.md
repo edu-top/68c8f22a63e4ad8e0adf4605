@@ -44,6 +44,8 @@
     - [Слабоссылаемые множества](#слабоссылаемые-множества)
       - [Перебор WeakSet](#перебор-weakset)
       - [Слабые ссылки](#слабые-ссылки)
+    - [Слабоссылочные словари](#слабоссылочные-словари)
+      - [Слабые ссылки](#слабые-ссылки-1)
   - [Источники информации](#источники-информации)
 
 ### Объект Date. Работа с датами
@@ -1020,7 +1022,7 @@ for(item of dict.values()){
 ```
 
 #### Слабоссылаемые множества
-Объект **`WeakSet`** во многом похож на обычное множество. Он также может хранить только уникальные значения, но каждый его элемент должен представлять объект.
+Объект **`WeakSet`** во многом похож на обычное множество. Он также может хранить только уникальные значения, но каждый его элемент должен представлять объект.[^14.5]
 
 Для создания объекта `WeakSet` используется его конструктор, в который можно передать начальные значения:
 ```js
@@ -1129,7 +1131,127 @@ const timerId = setTimeout(function(){
 }, 20000);
 ```
 
-В случае с `Set` даже спустя некоторое время мы увидим, что в объекте `Set` до сих пор присутствует объект, для которого было установлено значение `null`.[^14.5]
+В случае с `Set` даже спустя некоторое время мы увидим, что в объекте `Set` до сих пор присутствует объект, для которого было установлено значение `null`.
+
+#### Слабоссылочные словари
+`WeakMap` представляет развитие коллекции `Map`. Особенностью `WeakMap` является то, что все ее элементы должны представлять объекты. При этом ключи должны представлять объекты.[^14.6]
+
+Создание `WeakMap`:
+```js
+// пустой WeakMap
+const weakMap1 = new WeakMap();
+
+// WeakMap с инициализацией данными
+let key1 = {key:1};
+let key2 = {key:2};
+let value1 = {name: "Tom"};
+let value2 = {name: "Sam"};
+
+const weakMap2 = new WeakMap([[key1, value1], [key2, value2]]);
+// или так
+// const weakMap2 = new WeakMap([[{key:1}, {name: "Tom"}], [{key:2}, {name: "Sam"}]]);
+```
+
+Стоит отметить, что объект `WeakMap` не поддерживает перебор.
+
+Для добавления новых объектов или изменения старых применяется метод **`set()`**:
+```js
+let key1 = {key:1};
+let key2 = {key:2};
+let value1 = {name: "Tom"};
+let value2 = {name: "Sam"};
+
+const weakMap2 = new WeakMap([[key1, value1]]);
+weakMap2.set(key2, value2);
+weakMap2.set(key1, {name: "Kate"});
+console.log(weakMap2.get(key1));    //{name: "Kate"}
+console.log(weakMap2.get(key2));    //{name: "Sam"}
+```
+
+Для получения объектов по ключу из WeakMap применяется метод **`get()`**:
+```js
+let key1 = {key:1};
+let key2 = {key:2};
+let value1 = {name: "Tom"};
+let value2 = {name: "Sam"};
+
+const weakMap2 = new WeakMap([[key1, value1], [key2, value2]]);
+console.log(weakMap2.get(key1));    // {name: "Tom"}
+```
+
+Чтобы проверить наличие элемента по определенному ключу, применяется метод **`has()`**, который возвращает `true` при наличии элемента:
+```js
+let key1 = {key:1},
+    key2 = {key:2};
+let value1 = {name: "Tom"},
+    value2 = {name: "Sam"};
+
+const weakMap2 = new WeakMap([[key1, value1]]);
+console.log(weakMap2.has(key1));    // true
+console.log(weakMap2.has(key2));    // false
+```
+
+Для удаления элемента по ключу применяется метод **`delete()`**:
+```js
+let key1 = {key:1},
+    key2 = {key:2};
+let value1 = {name: "Tom"},
+    value2 = {name: "Sam"};
+
+const weakMap2 = new WeakMap([[key1, value1], [key2, value2]]);
+console.log(weakMap2.has(key1));    // true
+weakMap2.delete(key1);
+console.log(weakMap2.has(key1));    // false
+```
+
+##### Слабые ссылки
+Объекты передаются в `WeakMap` по ссылке. И отличительной особенностью `WeakMap` является то, что когда объект перестает существовать в силу различных причин, он удаляется из `WeakMap`. Рассмотрим следующий пример:
+```js
+let jsCode = {code: "js"},
+    tsCode = {code: "ts"};
+let js = {lang: "JavaScript"},
+    ts = {lang: "TypeScript"};
+const weakMap = new WeakMap([[jsCode, js], [tsCode, ts]]);
+
+jsCode = null;
+
+console.log(weakMap);   // WeakMap {{code: "js"} => {lang: "JavaScript"}, {code: "ts"} => {lang: "TypeScript"}}
+console.log("Некоторая работа");
+const timerId = setTimeout(function(){
+    console.log(weakMap);   // WeakMap {{code: "ts"} => {lang: "TypeScript"}}
+    clearTimeout(timerId);
+}, 30000);
+```
+
+В данном случае сначала объект `WeakMap` хранит ссылки на два элемента с ключами `jsCode` и `tsCode`. Далее для переменной `jsCode` устанавливается значение `null`.
+
+```js
+jsCode = null;
+```
+
+Это приведет к тому, что спустя некоторое время начальное значение этой переменной будет удалено сборщиком мусора JavaScript.
+
+Причем если сразу после этого мы посмотрим на содержимое `weakMap`, то увидим, что объект с ключом `jsCode` в нем еще присутствует. Однако спустя некоторое время ссылка будет удалена из `weakSet`. Для эмуляции прошествия времени здесь используется функция `setTimeout`, которая выводит на консоль содержимое `weakSet` через 10000 секунд (конкретный период времени, через который сборщик мусора удалит значение, может отличаться).
+
+Теперь сравним с тем, что произойдет, если вместо `WeakMap` использовать `Map`:
+```js
+let jsCode = {code: "js"},
+    tsCode = {code: "ts"};
+let js = {lang: "JavaScript"},
+    ts = {lang: "TypeScript"};
+const map = new Map([[jsCode, js], [tsCode, ts]]);
+
+jsCode = null;
+
+console.log(map);   // Map(2) {{code: "js"} => {lang: "JavaScript"}, {code: "ts"} => {lang: "TypeScript"}}
+console.log("Некоторая работа");
+const timerId = setTimeout(function(){
+    console.log(map);   // Map(2) {{code: "js"} => {lang: "JavaScript"}, {code: "ts"} => {lang: "TypeScript"}}
+    clearTimeout(timerId);
+}, 30000);
+```
+
+В случае с `Map` даже спустя некоторое время мы увидим, что в объекте `Map` до сих пор присутствует объект, для которого было установлено значение `null`.
 
 ### Источники информации
 [^5.1]: [Объект Date. Работа с датами](https://metanit.com/web/javascript/5.1.php)
@@ -1140,3 +1262,4 @@ const timerId = setTimeout(function(){
 [^14.3]: [Множества Set](https://metanit.com/web/javascript/14.3.php)
 [^14.4]: [Map](https://metanit.com/web/javascript/14.4.php)
 [^14.5]: [WeakSet](https://metanit.com/web/javascript/14.5.php)
+[^14.6]: [WeakMap](https://metanit.com/web/javascript/14.6.php)
