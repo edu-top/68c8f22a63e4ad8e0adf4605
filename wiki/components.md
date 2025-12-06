@@ -1,0 +1,782 @@
+## Веб-компоненты
+
+- [Веб-компоненты](#веб-компоненты)
+  - [Компонентная архитектура](#компонентная-архитектура)
+  - [Пользовательские элементы (Custom Elements)](#пользовательские-элементы-custom-elements)
+      - [Добавление методов](#добавление-методов)
+      - [События жизненного цикла](#события-жизненного-цикла)
+      - [Добавление атрибутов](#добавление-атрибутов)
+      - [Стилизация CSS](#стилизация-css)
+      - [Пример: «time-formatted»](#пример-time-formatted)
+      - [Наблюдение за атрибутами](#наблюдение-за-атрибутами)
+      - [Порядок рендеринга](#порядок-рендеринга)
+      - [Модифицированные встроенные элементы](#модифицированные-встроенные-элементы)
+      - [Итого](#итого)
+  - [Практическая работа](#практическая-работа)
+    - [Элемент "живой таймер"](#элемент-живой-таймер)
+  - [Дополнительные источники](#дополнительные-источники)
+  - [Источники информации](#источники-информации)
+
+<dfn title="веб-компоненты">Веб-компоненты</dfn> — совокупность стандартов, которая позволяет создавать новые, пользовательские HTML-элементы со своими свойствами, методами, инкапсулированными DOM и стилями.[^web-components]
+
+### Компонентная архитектура
+Хорошо известное правило разработки сложного программного обеспечения гласит: не создавай сложное программное обеспечение.[^webcomponents-intro]
+
+Если что-то становится сложным – раздели это на более простые части и соедини наиболее очевидным способом.
+
+**Хороший архитектор – это тот, кто может сделать сложное простым.**
+
+Мы можем разделить пользовательский интерфейс на визуальные компоненты: каждый из них занимает своё место на странице, выполняет определённую задачу, и отделен от остальных.
+
+Рассмотрим какой-нибудь сайт, например Twitter.
+
+Он естественным образом разделён на компоненты:
+
+![Twitter components](../img/twitter-components.png)
+
+1. Верхняя навигация.
+2. Данные пользователя.
+3. Предложения подписаться.
+4. Форма отправки сообщения.
+5. (а так же 6 и 7) – сообщения.
+
+Компоненты могут содержать подкомпоненты, например сообщения могут быть частями родительского компонента «список сообщений». Кликабельное фото пользователя может быть самостоятельным компонентом и т.д.
+
+Как мы определяем, что является компонентом? Это приходит из соображений здравого смысла, а также с интуицией и опытом. Обычно это объект, отделимый визуально, который мы можем описать с точки зрения того, что он делает и как он взаимодействует со страницей. В примере выше, страница содержит блоки, каждый из которых играет свою роль, и логично выделить их в компоненты.
+
+Компонент имеет:
+
+- свой собственный JavaScript-класс.
+- DOM-структура управляется исключительно своим классом, и внешний код не имеет к ней доступа (принцип «инкапсуляции»).
+- CSS-стили, применённые к компоненту.
+- API: события, методы класса и т.п., для взаимодействия с другими компонентами.
+
+Ещё раз заметим, в компонентном подходе как таковом нет ничего особенного.
+
+Существует множество фреймворков и методов разработки для их создания, каждый из которых со своими плюсами и минусами. Обычно особые CSS классы и соглашения используются для эмуляции компонентов – области видимости CSS и инкапсуляция DOM.
+
+«Веб-компоненты» предоставляют встроенные возможности браузера для этого, поэтому нам больше не нужно эмулировать их.
+
+- [Пользовательские элементы](https://html.spec.whatwg.org/multipage/custom-elements.html#custom-elements) – для определения пользовательских HTML-элементов.
+- [Теневой DOM](https://dom.spec.whatwg.org/#shadow-trees) – для создания внутреннего DOM компонента, скрытого от остальных.
+- [Области видимости CSS](https://drafts.csswg.org/css-scoping/) – для определения стилей, которые применяются только внутри теневого DOM компонента.
+- [Перенаправление событий](https://dom.spec.whatwg.org/#retarget) и другие мелочи для создания более удобных в разработке пользовательских компонентов.
+
+### Пользовательские элементы (Custom Elements)
+По умолчанию HTML предоставляет ряд встроенных элементов, из которых мы можем составить структуру веб-страницы. Однако мы не ограничены встроенными html-элементами и можем сами создать и использовать свои элементы html.[^8.8]
+
+Мы можем создавать пользовательские HTML-элементы, описываемые нашим классом, со своими методами и свойствами, событиями и так далее.
+
+Как только пользовательский элемент определён, мы можем использовать его наравне со встроенными HTML-элементами.
+
+Это замечательно, ведь словарь HTML-тегов богат, но не бесконечен. Не существует `<easy-tabs>`, `<sliding-carousel>`, `<beautiful-upload>`… Просто подумайте о любом другом теге, который мог бы нам понадобиться.
+
+Мы можем определить их с помощью специального класса, а затем использовать, как если бы они всегда были частью HTML.
+
+Существует два вида пользовательских элементов:
+
+1. **Автономные пользовательские элементы** – «полностью новые» элементы, расширяющие абстрактный класс HTMLElement.
+2. **Пользовательские встроенные элементы** – элементы, расширяющие встроенные, например кнопку HTMLButtonElement и т.п.
+
+Сначала мы разберёмся с автономными элементами, а затем перейдём к пользовательским встроенным.
+
+В JavaScript HTML-элемент представлен интерфейсом **`HTMLElement`**. Соответственно, реализуя данный интерфейс в JavaScript, мы можем создать свои классы, которые будут представлять элементы html, и потом их использовать. Что-то наподобие следующего:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<title>DevPM</title>
+<meta charset="utf-8">
+</head>
+<body>
+<hello-world></hello-world>
+</script>
+</body>
+</html>
+```
+
+В данном случае в коде странице определен элемент `<hello-world>`, и в реальности такого элемента конечно же не существует. Но сейчас мы его создадим.
+
+Чтобы создать пользовательский элемент, нам нужно сообщить браузеру ряд деталей о нём: как его показать, что делать, когда элемент добавляется или удаляется со страницы и т.д.
+
+Это делается путём создания класса со специальными методами. Это просто, так как существует всего несколько методов, и все они являются необязательными.
+
+Вот набросок с полным списком:
+```js
+class MyElement extends HTMLElement {
+  constructor() {
+    super();
+    // элемент создан
+  }
+
+  connectedCallback() {
+    // браузер вызывает этот метод при добавлении элемента в документ
+    // (может вызываться много раз, если элемент многократно добавляется/удаляется)
+  }
+
+  disconnectedCallback() {
+    // браузер вызывает этот метод при удалении элемента из документа
+    // (может вызываться много раз, если элемент многократно добавляется/удаляется)
+  }
+
+  static get observedAttributes() {
+    return [/* массив имён атрибутов для отслеживания их изменений */];
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    // вызывается при изменении одного из перечисленных выше атрибутов
+  }
+
+  adoptedCallback() {
+    // вызывается, когда элемент перемещается в новый документ
+    // (происходит в document.adoptNode, используется очень редко)
+  }
+
+  // у элемента могут быть ещё другие методы и свойства
+}
+```
+
+Итак, чтобы определить класс, который будет представлять html-элемент, нам достаточно создать класс, который реализует интерфейс **`HTMLElement`**:
+```js
+class HelloMetanit extends HTMLElement {
+
+}
+```
+
+Второй важный момент — нам надо зарегистрировать наш кастомный html-элемент, чтобы браузер знал, что есть такой элемент. Для этого применяется встроенная функция:
+```js
+customElements.define(name, constructor, options);
+```
+
+Она принимает три параметра:
+
+- `name`: имя кастомного элемента html, который будет представлять класс JavaScript. Важно: имя должно содержать дефис.
+
+- `constructor`: конструктор (по сути класс JavaScript), который представляет кастомный элемент html.
+
+- `options`: необязательный параметр — объект, который настраивает кастомный html-элемент. В настоящий момент он поддерживает один параметр — `extends`. Он определяет название встроенного html-элемента, который применяется для создания кастомного элемента html.
+
+Например, в нашем случае мы могли бы вызвать эту функцию так:
+```js
+customElements.define("hello-world", HelloMetanit);
+```
+
+Итак, нам нужно зарегистрировать элемент:
+```js
+// сообщим браузеру, что <my-element> обслуживается нашим новым классом
+customElements.define("my-element", MyElement);
+```
+
+Теперь для любых HTML-элементов с тегом `<my-element>` создаётся экземпляр `MyElement` и вызываются вышеупомянутые методы. Также мы можем использовать `document.createElement('my-element')` в JavaScript.[^custom-elements]
+
+!!! info Имя пользовательского элемента должно содержать дефис `-`
+
+    Имя пользовательского элемента должно содержать дефис `-`, например, `my-element` и `super-button` – валидные имена, а `myelement` – нет.
+
+    Это чтобы гарантировать отсутствие конфликтов имён между встроенными и пользовательскими элементами HTML.
+
+То есть в общем это будет выглядеть следующим образом:
+```js
+<!DOCTYPE html>
+<html>
+<head>
+<title>DevPM</title>
+<meta charset="utf-8">
+</head>
+<body>
+
+<hello-world></hello-world>
+
+<script>
+class HelloWorld extends HTMLElement {
+
+}
+customElements.define("hello-world", HelloWorld);
+</script>
+</body>
+</html>
+```
+
+Но пока кастомный элемент "hello-world" ничего не делает. Добавим ему какую-нибудь примитивную задачу. Пусть он выводит некоторое приветствие.
+
+Как правило, классы кастомных элементов применяют конструктор. Причем в самом начале конструктора должен идти вызов функции **`super()`**, который гарантирует, что наш класс унаследовал все методы, атрибуты и свойства интерфейса `HTMlElement`.
+
+```js
+class HelloWorld extends HTMLElement {
+    constructor() {
+        super();
+    }
+}
+```
+
+Но кроме того, в конструкторе мы можем определить некоторую базовую логику нашего элемента. Например:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<title>DevPM</title>
+<meta charset="utf-8">
+</head>
+<body>
+
+<hello-world></hello-world>
+
+<script>
+class HelloWorld extends HTMLElement {
+    constructor() {
+        super();
+
+        let welcome = "Доброе утро";
+        const hour = new Date().getHours();
+        if (hour > 17) {
+            welcome = "Добрый вечер";
+        } else if (hour > 12) {
+            welcome = "Добрый день";
+        }
+
+        this.innerText= welcome;
+        // либо так
+        // this.textContent = welcome;
+    }
+}
+
+customElements.define("hello-world", HelloMetanit);
+</script>
+</body>
+</html>
+```
+
+В конструкторе мы получаем текущее время и в зависимости от текущего часа определяем текст приветствия. Поскольку наш класс применяет интерфейс `HTMLElement`, то соответственно мы можем в нем использовать стандартные для html-элементов свойства. В частности, в данном случае для установки текста элемента применяется свойство `innerText` (также можно было бы использовать свойство `textContent`).
+
+![Создание html-элемента и HTMLElement](../img/5.1.png)
+
+##### Добавление методов
+Как и в обычных классах, мы можем определять в классах элементов методы и затем вызывать их. Например, определим простейший метод, который возвращает текущее время:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<title>DevPM</title>
+<meta charset="utf-8">
+</head>
+<body>
+
+<hello-world id="hello"></hello-world>
+<script>
+class HelloWorld extends HTMLElement {
+
+    constructor() {
+        super();
+
+        let welcome = "Доброе утро";
+        const hour = new Date().getHours();
+        if (hour > 17) {
+            welcome = "Добрый вечер";
+        } else if (hour > 12) {
+            welcome = "Добрый день";
+        }
+        this.style="cursor:pointer;"
+        this.innerText= welcome;
+    }
+
+    showTime(){
+        console.log(new Date().toTimeString());
+    }
+}
+
+customElements.define("hello-world", HelloWorld);
+
+// получаем элемент
+const hello = document.getElementById("hello");
+// по нажатию вызываем его метод showTime
+hello.addEventListener("click", ()=> hello.showTime());
+</script>
+</body>
+</html>
+```
+
+Для примера в классе элемента определен метод `showTime`, который просто выводит на консоль текущее время. В коде javascript мы получаем по `id` данный элемент, прикрепляем к нему обработчик нажатия, в котором вызываем вышеопределенный метод `showTime()`. В итоге по нажатию в консоли мы увидим текущее время:
+
+![Создание html-элемента и HTMLElement и customElements.define](../img/5.2.png)
+
+##### События жизненного цикла
+Кастомный элемент html имеет свой жизненный цикл, который описывается следующими методами:
+
+- **`connectedCallback`**: вызывается каждый раз, когда кастомный элемент html добавляется в DOM.
+
+- **`disconnectedCallback`**: вызывается каждый раз, когда кастомный элемент html удаляется из DOM.
+
+- **`adoptedCallback`**: вызывается каждый раз, когда кастомный элемент html перемещается в новый элемент.
+
+- **`attributeChangedCallback`**: вызывается при каждом изменении (добавлении, изменении значения или удаления) атрибута кастомного элемента html.
+
+Например, применим метод `connectedCallback()`:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<title>DevPM</title>
+<meta charset="utf-8">
+</head>
+<body>
+
+<hello-world id="hello"></hello-world>
+<script>
+class HelloWorld extends HTMLElement {
+
+    constructor() {
+        super();
+
+        let welcome = "Доброе утро";
+        const hour = new Date().getHours();
+        if (hour > 17) {
+            welcome = "Добрый вечер";
+        } else if (hour > 12) {
+            welcome = "Добрый день";
+        }
+        this.style.cursor="pointer"
+        this.innerText= welcome;
+    }
+    connectedCallback() {
+      this.style.color = "red";
+    }
+    showTime(){
+        console.log(new Date().toTimeString());
+    }
+}
+
+customElements.define("hello-world", HelloWorld);
+</script>
+</body>
+</html>
+```
+
+В данном случае в методе `connectedCallback()` просто устанавливаем цвет шрифта — в данном случае красный цвет:
+```js
+this.style.color = "red";
+```
+
+##### Добавление атрибутов
+Также мы можем определить у элемента свои атрибуты и затем использовать их. Например, выше при добавлении элемента на страницу у него устанавливается красный цвет текста. Зададим установку цвета с помощью атрибута:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<title>DevPM</title>
+<meta charset="utf-8">
+</head>
+<body>
+
+<hello-world hellocolor="#2980b9"></hello-world>
+<br/>
+<hello-world></hello-world>
+<script>
+class HelloWorld extends HTMLElement {
+
+    constructor() {
+        super();
+
+        let welcome = "Доброе утро";
+        const hour = new Date().getHours();
+        if (hour > 17) {
+            welcome = "Добрый вечер";
+        } else if (hour > 12) {
+            welcome = "Добрый день";
+        }
+        this.style.cursor="pointer"
+        this.innerText= welcome;
+    }
+    connectedCallback() {
+        this.style.color = "red";
+        if (this.hasAttribute("hellocolor")) {
+            this.style.color = this.getAttribute("hellocolor");
+        }
+    }
+    showTime(){
+        console.log(new Date().toTimeString());
+    }
+}
+
+customElements.define("hello-world", HelloWorld);
+</script>
+</body>
+</html>
+```
+
+В данном случае элемент принимает атрибут `hellocolor`, который задает цвет текста элемента. Если этот атрибут определен, то по нему устанавливаем цвет текста. Если не определен, то применяется цвет по умолчанию — красный:
+```js
+this.style.color = "red";
+if (this.hasAttribute("hellocolor")) {
+    this.style.color = this.getAttribute("hellocolor");
+}
+```
+
+![атрибуты html-элемента и HTMLElement и customElements.define и connectedCallback](../img/5.3.png)
+
+##### Стилизация CSS
+Стилизация элемента через CSS производится также, как и стилизация любого другого элемента:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<title>DevPM Vault</title>
+<meta charset="utf-8">
+<style>
+hello-world{
+    font-family: Verdana;
+    font-size:22px;
+}
+</style>
+</head>
+<body>
+<hello-world hellocolor="#2980b9"></hello-world>
+<script>
+class HelloWorld extends HTMLElement {
+
+    constructor() {
+        super();
+
+        let welcome = "Доброе утро";
+        const hour = new Date().getHours();
+        if (hour > 17) {
+            welcome = "Добрый вечер";
+        } else if (hour > 12) {
+            welcome = "Добрый день";
+        }
+        this.style.cursor="pointer"
+        this.innerText= welcome;
+    }
+    connectedCallback() {
+        this.style.color = "red";
+        if (this.hasAttribute("hellocolor")) {
+            this.style.color = this.getAttribute("hellocolor");
+        }
+    }
+    showTime(){
+        console.log(new Date().toTimeString());
+    }
+}
+
+customElements.define("hello-world", HelloWorld);
+</script>
+</body>
+</html>
+```
+
+![Стилизация CSS для html-элемента и HTMLElement и customElements.define и connectedCallback](../img/5.4.png)
+
+##### Пример: «time-formatted»
+Например, элемент `<time>` уже существует в HTML для даты/времени. Но сам по себе он не выполняет никакого форматирования. Давайте создадим элемент `<time-formatted>`, который отображает время в удобном формате с учётом языка:
+```html
+<script>
+class TimeFormatted extends HTMLElement { // (1)
+
+  connectedCallback() {
+    let date = new Date(this.getAttribute('datetime') || Date.now());
+
+    this.innerHTML = new Intl.DateTimeFormat("default", {
+      year: this.getAttribute('year') || undefined,
+      month: this.getAttribute('month') || undefined,
+      day: this.getAttribute('day') || undefined,
+      hour: this.getAttribute('hour') || undefined,
+      minute: this.getAttribute('minute') || undefined,
+      second: this.getAttribute('second') || undefined,
+      timeZoneName: this.getAttribute('time-zone-name') || undefined,
+    }).format(date);
+  }
+
+}
+
+customElements.define("time-formatted", TimeFormatted); // (2)
+</script>
+
+<!-- (3) -->
+<time-formatted datetime="2019-12-01"
+  year="numeric" month="long" day="numeric"
+  hour="numeric" minute="numeric" second="numeric"
+  time-zone-name="short"
+></time-formatted>
+```
+
+```
+December 1, 2019 at 3:00:00 AM GMT+3
+```
+
+1. Класс имеет только один метод `connectedCallback()` – браузер вызывает его, когда элемент `<time-formatted>` добавляется на страницу (или когда HTML-парсер обнаруживает его), и он использует встроенный форматировщик данных `Intl.DateTimeFormat`, хорошо поддерживаемый в браузерах, чтобы показать красиво отформатированное время.
+2. Нам нужно зарегистрировать наш новый элемент, используя `customElements.define(tag, class`).
+3. И тогда мы сможем использовать его везде.
+
+!!! info Обновление пользовательских элементов
+
+    Если браузер сталкивается с элементами `<time-formatted>` до `customElements.define`, то это не ошибка. Но элемент пока неизвестен, как и любой нестандартный тег.
+
+    Такие «неопределённые» элементы могут быть стилизованы с помощью CSS селектора `:not(:defined)`.
+
+    Когда вызывается `customElements.define`, они «обновляются»: для каждого создаётся новый экземпляр `TimeFormatted` и вызывается `connectedCallback`. Они становятся `:defined`.
+
+    Чтобы получить информацию о пользовательских элементах, есть следующие методы:
+
+    - `customElements.get(name)` – возвращает класс пользовательского элемента с указанным именем `name`,
+    - `customElements.whenDefined(name)` – возвращает промис, который переходит в состояние «успешно выполнен» со значением конструктора пользовательского элемента, когда определён пользовательский элемент с указанным именем `name`.
+
+!!! info Рендеринг происходит в `connectedCallback`, не в `constructor`
+
+    В приведённом выше примере содержимое элемента рендерится (создаётся) в `connectedCallback`.
+
+    Почему не в `constructor`?
+
+    Причина проста: когда вызывается `constructor`, делать это слишком рано. Экземпляр элемента создан, но на этом этапе браузер ещё не обработал/назначил атрибуты: вызовы `getAttribute` вернули бы `null`. Так что мы не можем рендерить здесь.
+
+    Кроме того, если подумать, это лучше с точки зрения производительности – отложить работу до тех пор, пока она действительно не понадобится.
+
+    `connectedCallback` срабатывает, когда элемент добавляется в документ. Не просто добавляется к другому элементу как дочерний, но фактически становится частью страницы. Таким образом, мы можем построить отдельный DOM, создать элементы и подготовить их для последующего использования. Они будут рендериться только тогда, когда попадут на страницу.
+
+##### Наблюдение за атрибутами
+В текущей реализации `<time-formatted>` после того, как элемент отрендерился, дальнейшие изменения атрибутов не дают никакого эффекта. Это странно для HTML-элемента. Обычно, когда мы изменяем атрибут, например a.href, мы ожидаем, что изменение будет видно сразу. Так что давайте исправим это.
+
+Мы можем наблюдать за атрибутами, поместив их список в статический геттер `observedAttributes()`. При изменении таких атрибутов вызывается `attributeChangedCallback`. Он срабатывает не для любого атрибута по соображениям производительности.
+
+Вот новый `<time-formatted>`, который автоматически обновляется при изменении атрибутов:
+```html
+<script>
+class TimeFormatted extends HTMLElement {
+
+  render() { // (1)
+    let date = new Date(this.getAttribute('datetime') || Date.now());
+
+    this.innerHTML = new Intl.DateTimeFormat("default", {
+      year: this.getAttribute('year') || undefined,
+      month: this.getAttribute('month') || undefined,
+      day: this.getAttribute('day') || undefined,
+      hour: this.getAttribute('hour') || undefined,
+      minute: this.getAttribute('minute') || undefined,
+      second: this.getAttribute('second') || undefined,
+      timeZoneName: this.getAttribute('time-zone-name') || undefined,
+    }).format(date);
+  }
+
+  connectedCallback() { // (2)
+    if (!this.rendered) {
+      this.render();
+      this.rendered = true;
+    }
+  }
+
+  static get observedAttributes() { // (3)
+    return ['datetime', 'year', 'month', 'day', 'hour', 'minute', 'second', 'time-zone-name'];
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) { // (4)
+    this.render();
+  }
+
+}
+
+customElements.define("time-formatted", TimeFormatted);
+</script>
+
+<time-formatted id="elem" hour="numeric" minute="numeric" second="numeric"></time-formatted>
+
+<script>
+setInterval(() => elem.setAttribute('datetime', new Date()), 1000); // (5)
+</script>
+```
+
+1. Логика рендеринга перенесена во вспомогательный метод `render()`.
+2. Мы вызываем его один раз, когда элемент вставляется на страницу.
+3. При изменении атрибута, указанного в `observedAttributes()`, вызывается `attributeChangedCallback`.
+4. …и происходит ререндеринг элемента.
+5. В конце мы легко создаём живой таймер.
+
+##### Порядок рендеринга
+Когда HTML-парсер строит DOM, элементы обрабатываются друг за другом, родители до детей. Например, если у нас есть `<outer><inner></inner></outer>`, то элемент `<outer>` создаётся и включается в DOM первым, а затем `<inner>`.
+
+Это приводит к важным последствиям для пользовательских элементов.
+
+Например, если пользовательский элемент пытается получить доступ к `innerHTML` в `connectedCallback`, он ничего не получает:
+```html
+<script>
+customElements.define('user-info', class extends HTMLElement {
+
+  connectedCallback() {
+    alert(this.innerHTML); // пусто (*)
+  }
+
+});
+</script>
+
+<user-info>Джон</user-info>
+```
+
+Если вы запустите это, `alert` будет пуст.
+
+Это происходит именно потому, что на этой стадии ещё не существуют дочерние элементы, DOM не завершён. HTML-парсер подключил пользовательский элемент `<user-info>` и теперь собирается перейти к его дочерним элементам, но пока не сделал этого.
+
+Если мы хотим передать информацию в пользовательский элемент, мы можем использовать атрибуты. Они доступны сразу.
+
+Или, если нам действительно нужны дочерние элементы, мы можем отложить доступ к ним, используя `setTimeout` с нулевой задержкой.
+
+Это работает:
+```html
+<script>
+customElements.define('user-info', class extends HTMLElement {
+
+  connectedCallback() {
+    setTimeout(() => alert(this.innerHTML)); // Джон (*)
+  }
+
+});
+</script>
+
+<user-info>Джон</user-info>
+```
+
+Теперь `alert` в строке `(*)` показывает «Джон», поскольку мы запускаем его асинхронно, после завершения парсинга HTML. Мы можем обработать дочерние элементы при необходимости и завершить инициализацию.
+
+С другой стороны, это решение также не идеально. Если вложенные пользовательские элементы тоже используют `setTimeout` для инициализации, то они встают в очередь: первым запускается внешний `setTimeout`, а затем внутренний.
+
+Так что внешний элемент завершает инициализацию раньше внутреннего.
+
+Продемонстрируем это на примере:
+```html
+<script>
+customElements.define('user-info', class extends HTMLElement {
+  connectedCallback() {
+    alert(`${this.id} connected.`);
+    setTimeout(() => alert(`${this.id} initialized.`));
+  }
+});
+</script>
+
+<user-info id="outer">
+  <user-info id="inner"></user-info>
+</user-info>
+```
+
+Порядок вывода:
+
+1. outer connected.
+2. inner connected.
+3. outer initialized.
+4. inner initialized.
+
+Мы ясно видим, что внешний элемент `outer` завершает инициализацию `(3)` до внутреннего `inner (4)`.
+
+Нет встроенного колбэка, который срабатывает после того, как вложенные элементы готовы. Если нужно, мы можем реализовать подобное самостоятельно. Например, внутренние элементы могут отправлять события наподобие `initialized`, а внешние могут слушать и реагировать на них.
+
+##### Модифицированные встроенные элементы
+Новые элементы, которые мы создаём, такие как `<time-formatted>`, не имеют связанной с ними семантики. Они не известны поисковым системам, а устройства для людей с ограниченными возможностями не могут справиться с ними.
+
+Но такие вещи могут быть важны. Например, поисковой системе было бы интересно узнать, что мы показываем именно время. А если мы делаем специальный вид кнопки, почему не использовать существующую функциональность `<button>`?
+
+Мы можем расширять и модифицировать встроенные HTML-элементы, наследуя их классы.
+
+Например, кнопки `<button>` являются экземплярами класса `HTMLButtonElement`, давайте построим элемент на его основе.
+
+1. Унаследуем `HTMLButtonElement` нашим классом:
+
+    ```js
+    class HelloButton extends HTMLButtonElement { /* методы пользовательского элемента */ }
+    ```
+
+2. Предоставим третий аргумент в `customElements.define`, указывающий тег:
+
+    ```js
+    customElements.define('hello-button', HelloButton, {extends: 'button'});
+    ```
+
+    Бывает, что разные теги имеют одинаковый DOM-класс, поэтому указание тега необходимо.
+
+3. В конце, чтобы использовать наш пользовательский элемент, вставим обычный тег `<button>`, но добавим к нему `is="hello-button":`
+
+    ```html
+    <button is="hello-button">...</button>
+    ```
+
+Вот полный пример:
+```html
+<script>
+// Кнопка, говорящая "привет" по клику
+class HelloButton extends HTMLButtonElement {
+  constructor() {
+    super();
+    this.addEventListener('click', () => alert("Привет!"));
+  }
+}
+
+customElements.define('hello-button', HelloButton, {extends: 'button'});
+</script>
+
+<button is="hello-button">Нажми на меня</button>
+
+<button is="hello-button" disabled>Отключена</button>
+```
+
+Наша новая кнопка расширяет встроенную. Так что она сохраняет те же стили и стандартные возможности, наподобие атрибута `disabled`.
+
+##### Итого
+Есть два типа пользовательских элементов:
+
+1. «Автономные» – новые теги, расширяющие `HTMLElement`.
+
+    Схема определения:
+    ```js
+    class MyElement extends HTMLElement {
+    constructor() { super(); /* ... */ }
+    connectedCallback() { /* ... */ }
+    disconnectedCallback() { /* ... */  }
+    static get observedAttributes() { return [/* ... */]; }
+    attributeChangedCallback(name, oldValue, newValue) { /* ... */ }
+    adoptedCallback() { /* ... */ }
+    }
+    customElements.define('my-element', MyElement);
+    /* <my-element> */
+    ```
+
+2. «Модифицированные встроенные элементы» – расширения существующих элементов.
+
+    Требуют ещё один аргумент в `.define` и атрибут `is="..."` в HTML:
+    ```js
+    class MyButton extends HTMLButtonElement { /*...*/ }
+    customElements.define('my-button', MyElement, {extends: 'button'});
+    /* <button is="my-button"> */
+    ```
+
+Пользовательские элементы широко поддерживаются среди браузеров. Существует полифил: https://github.com/webcomponents/polyfills/tree/master/packages/webcomponentsjs.
+
+### Практическая работа
+
+#### Элемент "живой таймер"
+
+У нас уже есть элемент `<time-formatted>`, показывающий красиво отформатированное время.
+
+Создайте элемент `<live-timer>`, показывающий текущее время:
+
+1. Внутри он должен использовать `<time-formatted>`, не дублировать его функциональность.
+2. Должен тикать (обновляться) каждую секунду.
+3. На каждом тике должно генерироваться пользовательское событие с именем `tick`, содержащее текущую дату в `event.detail` (смотрите главу [Генерация пользовательских событий](https://learn.javascript.ru/dispatch-events)).
+
+Использование:
+```html
+<live-timer id="elem"></live-timer>
+
+<script>
+  elem.addEventListener('tick', event => console.log(event.detail));
+</script>
+```
+
+Пожалуйста, обратите внимание:
+
+1. Мы останавливаем таймер `setInterval`, когда элемент удаляется из документа. Это важно, иначе он продолжит тикать, даже если больше не нужен. И браузер не сможет очистить память от этого элемента.
+2. Мы можем получить доступ к текущей дате через свойство `elem.date`. Все методы и свойства класса, естественно, являются методами и свойствами элемента.
+Открыть решение в песочнице.
+
+### Дополнительные источники
+- HTML Living Standard: https://html.spec.whatwg.org/#custom-elements.
+- Совместимость: https://caniuse.com/#feat=custom-elementsv1.
+
+### Источники информации
+[^web-components]: [Веб-компоненты](https://learn.javascript.ru/web-components)
+[^webcomponents-intro]: [С орбитальной высоты](https://learn.javascript.ru/webcomponents-intro)
+[^custom-elements]: [Пользовательские элементы (Custom Elements)](https://learn.javascript.ru/custom-elements)
+[^8.8]: [Создание своего элемента HTML](https://metanit.com/web/javascript/8.8.php)
