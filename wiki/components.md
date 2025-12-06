@@ -521,9 +521,7 @@ customElements.define("time-formatted", TimeFormatted); // (2)
 ></time-formatted>
 ```
 
-```
-December 1, 2019 at 3:00:00 AM GMT+3
-```
+![Custom elements](../img/custom-elements_01.png)
 
 1. Класс имеет только один метод `connectedCallback()` – браузер вызывает его, когда элемент `<time-formatted>` добавляется на страницу (или когда HTML-парсер обнаруживает его), и он использует встроенный форматировщик данных `Intl.DateTimeFormat`, хорошо поддерживаемый в браузерах, чтобы показать красиво отформатированное время.
 2. Нам нужно зарегистрировать наш новый элемент, используя `customElements.define(tag, class`).
@@ -604,6 +602,8 @@ customElements.define("time-formatted", TimeFormatted);
 setInterval(() => elem.setAttribute('datetime', new Date()), 1000); // (5)
 </script>
 ```
+
+![Custom elements](../img/custom-elements_02.png)
 
 1. Логика рендеринга перенесена во вспомогательный метод `render()`.
 2. Мы вызываем его один раз, когда элемент вставляется на страницу.
@@ -735,6 +735,8 @@ customElements.define('hello-button', HelloButton, {extends: 'button'});
 <button is="hello-button" disabled>Отключена</button>
 ```
 
+![Custom elements](../img/custom-elements_03.png)
+
 Наша новая кнопка расширяет встроенную. Так что она сохраняет те же стили и стандартные возможности, наподобие атрибута `disabled`.
 
 ##### Итого
@@ -799,6 +801,8 @@ input::-webkit-slider-runnable-track {
 <input type="range">
 ```
 
+![Shadow DOM](../img/shadow-dom_01.png)
+
 Ещё раз заметим, что `pseudo` – нестандартный атрибут. Если говорить хронологически, то сначала браузеры начали экспериментировать с инкапсуляцией внутренних DOM-структур для элементов, а уже потом, через некоторое время, появился стандарт Shadow DOM, который позволяет делать то же самое нам, разработчикам.
 
 Далее мы воспользуемся современным стандартом Shadow DOM, описанным в спецификации [DOM spec](https://dom.spec.whatwg.org/#shadow-trees) и других спецификациях.
@@ -829,9 +833,7 @@ customElements.define('show-hello', class extends HTMLElement {
 <show-hello name="John"></show-hello>
 ```
 
-```
-Hello, John
-```
+![Shadow DOM](../img/shadow-dom_02.png)
 
 А вот как получившийся DOM выглядит в инструментах разработчика в Chrome, весь контент внутри «#shadow-root»:
 
@@ -988,9 +990,7 @@ alert(elem.shadowRoot.host === elem); // true
 </script>
 ```
 
-```
-Нажми на меня
-```
+![Template](../img/template_01.png)
 
 Когда мы клонируем и вставляем `tmpl.content` в строке `(*)`, то, так как это `DocumentFragment`, вместо него вставляются его потомки (`<style>`, `<p>`).
 
@@ -1773,6 +1773,8 @@ customElements.define('user-card', class extends HTMLElement {
   elem.addEventListener('tick', event => console.log(event.detail));
 </script>
 ```
+Демо:
+![Custom elements](../img/custom-elements_04.png)
 
 Пожалуйста, обратите внимание:
 
