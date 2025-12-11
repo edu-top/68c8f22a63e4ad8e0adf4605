@@ -11,6 +11,9 @@
     - [Объект Event](#объект-event)
     - [Остановка выполнения события](#остановка-выполнения-события)
     - [Получение текущего объекта](#получение-текущего-объекта)
+  - [Распространение событий](#распространение-событий)
+    - [Восходящие события](#восходящие-события)
+    - [Нисходящие события](#нисходящие-события)
   - [Программный вызов событий](#программный-вызов-событий)
     - [Конструктор Event](#конструктор-event)
     - [Метод dispatchEvent](#метод-dispatchevent)
@@ -536,6 +539,106 @@ function btn_click(e){
     console.log(this===e.target); // true
 }
 ```
+
+### Распространение событий
+Когда мы нажимаем на какой-либо элемент на станице и генерируется событие нажатия, то это событие может распространяться от элемента к элементу. Например, если мы нажимаем на блок `div`, то также мы нажимаем и на элемент `body`, в котором блок `div` находится. То есть происходит распространение события.[^9.4]
+
+Есть несколько форм распространения событий:
+
+- **Восходящие**: событие распространяется вверх по дереву DOM от дочерних узлов к родительским
+
+- **Нисходящие**: событие распространяется вниз по дереву DOM от родительских узлов к дочерним, пока не достигнет того элемента, на котором это событие и возникло
+
+#### Восходящие события
+Рассмотрим восходящие (`bubbling`) события, которые распространяются в верх по дереву DOM. Допустим, у нас есть следующая веб-страница:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DevPM</title>
+    <style>
+    #blueRect{
+        width:100px;
+        height:100px;
+        background-color:blue;
+    }
+    #redRect{
+        width:50px;
+        height:50px;
+        background-color:red;
+    }
+    </style>
+</head>
+<body>
+    <div id="blueRect">
+        <div id="redRect"></div>
+    </div>
+    <script>
+    const redRect = document.getElementById("redRect");
+    redRect.addEventListener("click", () => console.log("Событие на redRect"));
+
+    const blueRect = document.getElementById("blueRect");
+    blueRect.addEventListener("click", ()=>console.log("Событие на blueRect"));
+
+    document.body.addEventListener("click", () => console.log("Событие на body"));
+    </script>
+</body>
+</html>
+```
+
+Если мы нажмем на вложенный (красный) `div`, то событие пойдет к родительскому элементу `div` и далее к элементу `body`:
+
+![Восходящие события в JavaScript](../img/bubbling.png)
+
+Надо сказать, что подобное поведение не всегда является желательным. И в этом случае мы можем остановить распространение событие с помощью метода **`stopPropagation()`** объекта `Event`:
+```js
+const redRect = document.getElementById("redRect");
+redRect.addEventListener("click", function(e){
+    console.log("Событие на redRect");
+    e.stopPropagation();
+});
+```
+
+И в результате нажатия событие будет обработано только обработчиком для `redRect`.
+
+Правда, у `stopPropagation()` есть одна проблема — он приостанавливает дальнейшее выполнение **текущего** обработчика. Однако если для одного и того же события элемента прикреплены несколько обработчиков событий, то остальные обработчики продолжать выполняться. И чтобы оставить также выполнение всех остальных обработчиков подобных образом можно вызывать метод **`stopImmediatePropagation`**
+```js
+const redRect = document.getElementById("redRect");
+function handler1(e){
+    console.log("handler1: Событие на redRect");
+    e.stopImmediatePropagation();   // останавливаем также выполнение handler2
+}
+function handler2(e){
+    console.log("handler2: Событие на redRect");
+}
+redRect.addEventListener("click", handler1);
+redRect.addEventListener("click", handler2);
+```
+
+#### Нисходящие события
+События также могут быть нисходящими (*capturing*). Для их использования в метод **`addEventListener()`** в качестве третьего необязательного параметра передается логическое значение `true` или `false`. Значение **`true`** указывает, что событие нисходящим. По умолчанию все события восходящие.
+
+Возьмем ту же веб-станицу, только изменим ее код javascript:
+```js
+const redRect = document.getElementById("redRect");
+redRect.addEventListener("click", function(){
+    console.log("Событие на redRect");
+}, true);
+
+const blueRect = document.getElementById("blueRect");
+blueRect.addEventListener("click", function(){
+    console.log("Событие на blueRect");
+}, true);
+
+document.body.addEventListener("click", function(){
+    console.log("Событие на body");
+}, true);
+```
+
+Теперь события будут распространяться в обратном порядке:
+
+![Нисходящие события в JavaScript](../img/capturing.png)
 
 ### Программный вызов событий
 События могут возникать не только в следствие действий пользователя на веб-странице. События также можно генерировать программно.
@@ -1092,6 +1195,7 @@ Current balance: 0 Requested Sum:  50
 [^9.1]: [Введение в обработку событий](https://metanit.com/web/javascript/9.1.php)
 [^9.2]: [Обработчики событий](https://metanit.com/web/javascript/9.2.php)
 [^9.3]: [Передача данных в обработчик события. Объект Event](https://metanit.com/web/javascript/9.3.php)
+[^9.4]: [Распространение событий](https://metanit.com/web/javascript/9.4.php)
 [^9.7]: [Программный вызов событий](https://metanit.com/web/javascript/9.7.php)
 [^9.8]: [Определение своих событий](https://metanit.com/web/javascript/9.8.php)
 [^dispatch-events]: [Генерация пользовательских событий](https://learn.javascript.ru/dispatch-events)
