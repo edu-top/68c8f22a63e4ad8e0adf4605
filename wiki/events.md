@@ -27,6 +27,7 @@
     - [Итого](#итого-1)
   - [События мыши](#события-мыши)
     - [MouseEvent](#mouseevent)
+  - [События клавиатуры](#события-клавиатуры)
   - [Программный вызов событий](#программный-вызов-событий)
     - [Конструктор Event](#конструктор-event)
     - [Метод dispatchEvent](#метод-dispatchevent)
@@ -1248,6 +1249,193 @@ blueRect.addEventListener("click", handleClick);
 </html>
 ```
 
+### События клавиатуры
+Другим распространенным типом событий являются события клавиатуры.[^9.6]
+
+- `keydown`: возникает при нажатии клавиши клавиатуры и длится, пока нажата клавиша
+
+- `keyup`: возникает при отпускании клавиши клавиатуры
+
+- `keypress`: возникает при нажатии клавиши клавиатуры, но после события `keydown` и до события `keyup`. Надо учитывать, что данное событие генерируется только для тех клавиш, которые формируют вывод в виде символов, например, при печати символов. Нажатия на остальные клавиши, например, на <kbd>Alt</kbd>, не учитываются.
+
+Для работы с событиями клавиатуры определен объект **`KeyboardEvent`**, который добавляет к свойствам объекта `Event` ряд специфичных для клавиатуры свойств:
+
+- **`altKey`**: возвращает `true`, если была нажата клавиша <kbd>Alt</kbd> во время генерации события
+
+- **`key`**: возвращает символ нажатой клавиши, например, при нажатии на клавишу <kbd>T</kbd> это свойство будет содержать "T". А если нажата клавиша <kbd>Я</kbd>, то это свойство будет содержать "Я"
+
+- **`code`**: возвращает строковое представление нажатой клавиши физической клавиатуры QWERTY, например, при нажатии на клавишу <kbd>T</kbd> это свойство будет содержать "KeyT", а при нажатии на клавишу <kbd>;</kbd> (точка запятой), то свойство возвратит "Semicolon".
+
+  При использовании этого свойства следует учитывать ряд момент. Прежде всего используется клавиатура QWERTY. То есть мы переключим раскладку, к примеру, на русскоязычную и нажмем на клавишу <kbd>Я</kbd>, то значением будет "KeyZ" — на клавиатуре QWERTY клавиша <kbd>Z</kbd> представляет ту же клавишу, что и на русскоязычной раскладке <kbd>Я</kbd>
+
+  Другой момент — учитывается именно физическая клавитура. Если нажата клавиша на виртуальной клавиатуре, то возвращаемое значение будет устанавливаться браузером исходя из того, какой клавише на физической клавиатуре соответствовало нажатие.
+
+- **`ctrlKey`**: возвращает `true`, если была нажата клавиша <kbd>Ctrl</kbd> во время генерации события
+
+- **`metaKey`**: возвращает `true`, если была нажата во время генерации события метаклавиша клавиатуры
+
+- **`shiftKey`**: возвращает `true`, если была нажата клавиша <kbd>Shift</kbd> во время генерации события
+
+Например, мы можем с помощью клавиш клавиатуры перемещать элемент на веб-странице:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>METANIT.COM</title>
+    <style>
+    #blueRect{
+        width:100px;
+        height:100px;
+        background-color:blue;
+    }
+    </style>
+</head>
+<body>
+<div id="blueRect"></div>
+
+<script>
+const blueRect = document.getElementById("blueRect");
+// получаем стиль для blueRect
+const blueRectStyle = window.getComputedStyle(blueRect);
+// устанавливаем обработчик нажатия клавиши
+window.addEventListener("keydown", moveRect);
+
+function moveRect(e){
+    const left = parseInt(blueRectStyle.marginLeft); //смещение от левого края
+    const top = parseInt(blueRectStyle.marginTop);  // смещения от левой границы
+
+    switch(e.key){
+
+        case "ArrowLeft":  // если нажата клавиша влево
+            if(left>0)
+                blueRect.style.marginLeft = left - 10 + "px";
+            break;
+        case "ArrowUp":   // если нажата клавиша вверх
+            if(top>0)
+                blueRect.style.marginTop = top - 10 + "px";
+            break;
+        case "ArrowRight":   // если нажата клавиша вправо
+            if(left < document.documentElement.clientWidth - 100)
+                blueRect.style.marginLeft = left + 10 + "px";
+            break;
+        case "ArrowDown":   // если нажата клавиша вниз
+            if(top < document.documentElement.clientHeight - 100)
+                blueRect.style.marginTop = top + 10 + "px";
+            break;
+    }
+}
+</script>
+</body>
+</html>
+```
+
+В данном случае обрабатывается событие `keydown`, в обработчке которого управляем стилевыми свойствами элемента `blueRect`. Так как при прикреплении обработчика стиль элемента может быть не установлен, то явным образом вычисляем его с помощью метода `window.getComputedStyle()`:
+```js
+const blueRectStyle = window.getComputedStyle(blueRect);
+```
+В обработчике события из этого стиля выбираем значения свойств `marginLeft` и `marginTop`.
+
+```js
+const left = parseInt(blueRectStyle.marginLeft); //смещение от левого края
+const top = parseInt(blueRectStyle.marginTop);  // смещения от левой границы
+```
+
+Затем м помощью свойства `e.key` получаем нажатую клавишу. Список кодов клавиш клавиатуры можно посмотреть на странице https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values.
+
+Здесь нам интересуют четыре клавиши: вверх, вниз, влево, вправо. Им соответственно будут соответствовать названия "ArrowUp", "ArrowDown", "ArrowLeft" и "ArrowRight". Если одна из них нажата, производим действия: увеличение или уменьшение отступа элемента от верхней или левой границы. Ну и чтобы элемент не выходил за границы окна, проверяем предельные значения с помощью `document.documentElement.clientWidth` (ширина корневого элемента) и `document.documentElement.clientHeight` (высота корневого элемента).
+
+Стоит отметить, что этот код не очень оптимален, поскольку для проверки значений нам приходится вычислять положение `blueRect` по горизонтали и вертикали. Плюс необходимо вычислять при каждом вызове обработчика проверяем правый (`document.documentElement.clientWidth - 100`) и нижний край (`document.documentElement.clientHeight - 100;`) области документа, чтобы `blueRect` не вышел за предел видимого пространства. В этом случае мы можем добавить дополнительные абстракции в виде текущих координат `blueRect` и положения правой и нижней границ видимой области. Так, изменим код JavaScript следующим образом:
+```js
+const blueRect = document.getElementById("blueRect");
+const position = [20, 20];  // позиция blueRect
+
+// перемещаем blueRect на позицию в position
+function setPosition() {
+    blueRect.style.marginLeft = position[0] + "px";
+    blueRect.style.marginTop = position[1] + "px";
+}
+
+function init(){
+    const rightLimit = document.documentElement.clientWidth - 100;  // правый край
+    const bottomLimit = document.documentElement.clientHeight - 100;    // нижний край
+
+    setPosition();  // устанавливаем начальную позицию для blueRect
+
+    function moveRect(e){
+        switch(e.key){
+
+        case "ArrowLeft":  // если нажата клавиша влево
+            if(position[0] > 0)
+                position[0] = position[0] - 10;
+            break;
+        case "ArrowUp":   // если нажата клавиша вверх
+            if(position[1] > 0)
+                position[1] = position[1] - 10;
+            break;
+        case "ArrowRight":   // если нажата клавиша вправо
+            if(position[0] < rightLimit)
+                position[0] = position[0] + 10;
+            break;
+        case "ArrowDown":   // если нажата клавиша вниз
+            if(position[1] < bottomLimit)
+                position[1] = position[1] + 10;
+            break;
+        }
+        setPosition();
+    }
+    window.addEventListener("keydown", moveRect);
+}
+//  при загрузке страницы выполняем функцию init
+window.addEventListener("load", init);
+```
+
+Теперь координаты `blueRect` хранятся в массиве `position`, где первое значение — это отступ слева, а второе значение — отступ сверху. Чтобы по этим координатам установить реальную позицию `blueRect` на странице определена функция `setPosition`.
+
+```js
+const position = [20, 20];  // позиция blueRect
+
+// перемещаем blueRect на позицию в position
+function setPosition() {
+    blueRect.style.marginLeft = position[0] + "px";
+    blueRect.style.marginTop = position[1] + "px";
+}
+```
+
+Прикрепляем к событию загрузки окна — **`load`** обработчик — функцию `init`:
+```js
+window.addEventListener("load", init);
+```
+
+В функции `init` определяем правый и нижний край для перемещения `blueRect`, а также устанавливаем его начальную позицию:
+```js
+const rightLimit = document.documentElement.clientWidth - 100;  // правый край
+const bottomLimit = document.documentElement.clientHeight - 100;    // нижний край
+setPosition();  // устанавливаем начальную позицию для blueRect
+```
+
+Далее определяем обработчик `moveRect`, в котором изменяем значения в массиве `position`:
+```js
+function moveRect(e){
+    switch(e.key){
+
+    case "ArrowLeft":  // если нажата клавиша влево
+        if(position[0] > 0)
+            position[0] = position[0] - 10;
+        break;
+    //............
+    }
+    setPosition();
+}
+```
+
+И после всех изменений переустанавливаем позицию с помощью функции `setPosition`.
+
+В конце прикрепляем обработчик к нажатию клавиши клавиатуры:
+```js
+window.addEventListener("keydown", moveRect);
+```
+
 ### Программный вызов событий
 События могут возникать не только в следствие действий пользователя на веб-странице. События также можно генерировать программно.
 
@@ -1878,3 +2066,4 @@ Current balance: 0 Requested Sum:  50
 [^bubbling-and-capturing]: [Всплытие и погружение](https://learn.javascript.ru/bubbling-and-capturing)
 [^event-delegation]: [Делегирование событий](https://learn.javascript.ru/event-delegation)
 [^9.5]: [События мыши](https://metanit.com/web/javascript/9.5.php)
+[^9.6]: [События клавиатуры](https://metanit.com/web/javascript/9.6.php)
