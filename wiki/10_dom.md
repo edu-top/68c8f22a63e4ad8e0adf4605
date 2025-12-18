@@ -20,6 +20,10 @@
       - [Количество элементов](#количество-элементов)
     - [Получение элементов одного уровня](#получение-элементов-одного-уровня)
     - [nodeValue и получение текстового содержимого](#nodevalue-и-получение-текстового-содержимого)
+  - [Элементы](#элементы)
+    - [Свойства элементов](#свойства-элементов)
+    - [Управление текстом элемента](#управление-текстом-элемента)
+    - [Управление кодом HTML](#управление-кодом-html)
   - [Практическая работа. Реализация поведения "подсказка"](#практическая-работа-реализация-поведения-подсказка)
     - [Задание](#задание)
   - [Источники информации](#источники-информации)
@@ -1182,6 +1186,225 @@ for(textNode of pageText.childNodes){
 
 Хотя мы так можем получить текстовое содержимое элементов, но это не самый оптимальный способ, и далее мы рассмотрим другие способы.[^8.4]
 
+### Элементы
+Для работы с элементами на веб-странице мы можем использовать как функциональность типа `Node`, который представляет любой узел веб-страницы, так и функциональность типа **`HTMLElement`**, который собственно представляет элемент. То есть объекты `HTMLElement` — это фактически те же самые узлы — объекты `Node`, у которых тип узла (свойство `nodeType`) равно 1.
+
+Каждый элемент веб-страницы соответствует определенному типу в JavaScript. Но все эти типы являются подтипами типа **`HTMLElement`**, который определяет базовую функциональность элементов. Вкратце перечислим актуальные типы элементов:
+
+| Тег | Тип
+-- | --
+`<a>` | `HTMLAnchorElement`
+`<abbr>` | `HTMLElement`
+`<address>` | `HTMLElement`
+`<area>` | `HTMLAreaElement`
+`<audio>` | `HTMLAudioElement`
+`<b>` | `HTMLElement`
+`<base>` | `HTMLBaseElement`
+`<bdo>` | `HTMLElement`
+`<blockquote>` | `HTMLQuoteElement`
+`<body>` | `HTMLBodyElement`
+`<br>` | `HTMLBRElement`
+`<button>` | `HTMLButtonElement`
+`<caption>` | `HTMLTableCaptionElement`
+`<canvas>` | `HTMLCanvasElement`
+`<cite>` | `HTMLElement`
+`<code>` | `HTMLElement`
+`<col>`, `<colgroup`> | `HTMLTableColElement`
+`<data>` | `HTMLDataElement`
+`<datalist>` | `HTMLDataListElement`
+`<dd>` | `HTMLElement`
+`<del>` | `HTMLModElement`
+`<dfn>` | `HTMLElement`
+`<div>` | `HTMLDivElement`
+`<dl>` | `HTMLDListElement`
+`<dt>` | `HTMLElement`
+`<em>` | `HTMLElement`
+`<embed>` | `HTMLEmbedElement`
+`<fieldset>` | `HTMLFieldSetElement`
+`<form>` | `HTMLFormElement`
+`<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>`, `<h6>` | `HTMLHeadingElement`
+`<head>` | `HTMLHeadElement`
+`<hr>` | `HTMLHRElement`
+`<html>` | `HTMLHtmlElement`
+`<i>` | `HTMLElement`
+`<iframe>` | `HTMLIFrameElement`
+`<img>` | `HTMLImageElement`
+`<input>` | `HTMLInputElement`
+`<ins>` | `HTMLModElement`
+`<kbd>` | `HTMLElement`
+`<keygen>` | `HTMLKeygenElement`
+`<label>` | `HTMLLabelElement`
+`<legend>` | `HTMLLegendElement`
+`<li>` | `HTMLLIElement`
+`<link>` | `HTMLLinkElement`
+`<map>` | `HTMLMapElement`
+`<media>` | `HTMLMediaElement`
+`<meta>` | `HTMLMetaElement`
+`<meter>` | `HTMLMeterElement`
+`<noscript>` | `HTMLElement`
+`<object>` | `HTMLObjectElement`
+`<ol>` | `HTMLOListElement`
+`<optgroup>` | `HTMLOptGroupElement`
+`<option>` | `HTMLOptionElement`
+`<output>` | `HTMLOutputElement`
+`<p>` | `HTMLParagraphElement`
+`<param>` | `HTMLParamElement`
+`<pre>` | `HTMLPreElement`
+`<progress>` | `HTMLProgressElement`
+`<q>` | `HTMLQuoteElement`
+`<s>` | `HTMLElement`
+`<samp>` | `HTMLElement`
+`<script>` | `HTMLScriptElement`
+`<select>` | `HTMLSelectElement`
+`<small>` | `HTMLElement`
+`<source>` | `HTMLSourceElement`
+`<span>` | `HTMLSpanElement`
+`<strong>` | `HTMLElement`
+`<style>` | `HTMLStyleElement`
+`<sub>` | `HTMLElement`
+`<sup>` | `HTMLElement`
+`<table>` | `HTMLTableElement`
+`<tbody>` | `HTMLTableSectionElement`
+`<td>` | `HTMLTableCellElement`
+`<textarea>` | `HTMLTextAreaElement`
+`<tfoot>` | `HTMLTableSectionElement`
+`<th>` | `HTMLTableHeaderCellElement`
+`<thead>` | `HTMLTableSectionElement`
+`<time>` | `HTMLTimeElement`
+`<title>` | `HTMLTitleElement`
+`<tr>` | `HTMLTableRowElement`
+`<track>` | `HTMLTrackElement`
+`<ul>` | `HTMLUListElement`
+`<var>` | `HTMLElement` / `HTMLUnknownElement`
+`<video>` | `HTMLVideoElement`
+
+Мы можем получить конкретный тип элемента с помощью метода **`Object.getPrototypeOf()`**:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DevPM</title>
+</head>
+<body>
+    <h1 id="header">Home Page</h1>
+    <script>
+    const header = document.getElementById("header");
+    console.log(Object.getPrototypeOf(header)); // HTMLHeadingElement
+    </script>
+</body>
+</html>
+```
+
+#### Свойства элементов
+Тип `Element` предоставляет ряд свойств, которые хранят информацию об элементе:
+
+- **`tagName`**: возвращает тег элемента
+
+- **`textContent`**: представляет текстовое содержимое элемента
+
+- **`innerText`**: представляет текстовое содержимое элемента (аналогично `textContent`)
+
+- **`innerHTML`**: представляет html-код элемента
+
+Одним из ключевых свойств объекта `Element` является свойство **`tagName`**, которое возвращает тег элемента:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DevPM</title>
+</head>
+<body>
+    <h1 id="header">Home Page</h1>
+    <script>
+    const header = document.getElementById("header");
+    console.log(header.tagName);  // H1
+    </script>
+</body>
+</html>
+```
+
+#### Управление текстом элемента
+Свойство **`textContent`** позволяет получить или изменить текстовое содержимое элемента:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DevPM</title>
+</head>
+<body>
+    <h1 id="header">Home Page</h1>
+    <script>
+    const header = document.getElementById("header");
+    // получаем текст элемента
+    console.log(header.textContent);  // Home Page
+    // изменяем текст элемента
+    header.textContent = "Hello World";
+    </script>
+</body>
+</html>
+```
+
+Аналогично можно использовать другое свойство для управление текстом — **`innerText`**:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DevPM</title>
+</head>
+<body>
+    <h1 id="header">Home Page</h1>
+    <script>
+    const header = document.getElementById("header");
+    // получаем текст элемента
+    console.log(header.innerText);  // Home Page
+    // изменяем текст элемента
+    header.innerText = "Hello World2";
+    </script>
+</body>
+</html>
+```
+
+Тем не менее между **`textContent`** и **`innerText`** есть некоторые различия:
+
+- **`textContent`** получает содержимое всех элементов, включая `<script>` и `<style>`, тогда как **`innerText`** этого не делает
+
+- **`innerText`** умеет считывать стили и не возвращает содержимое скрытых элементов, тогда как **`textContent`** этого не делает.
+
+- **`innerText`** позволяет получить CSS, а **`textContent`** — нет.
+
+#### Управление кодом HTML
+Ни **`textContent`**, ни **`innerText`** не позволяют ни получить, ни изменить код html элемента. Например:
+```js
+header.innerText = "<span style='color:navy;'>Hello World</span>";
+```
+
+Это изменит только текст, но не html код. Для управления html применяется свойство **`innerHTML`**:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DevPM</title>
+</head>
+<body>
+    <h1 id="header">Home Page</h1>
+    <script>
+    const header = document.getElementById("header");
+    // получаем html-код элемента
+    console.log(header.innerHTML);  // Home Page
+    // изменяем html-код элемента
+    header.innerHTML = "<span style='color:navy;'>Hello World</span>";
+    </script>
+</body>
+</html>
+```
+
+[^8.6]
+
 ### Практическая работа. Реализация поведения "подсказка"
 
 #### Задание
@@ -1233,3 +1456,4 @@ for(textNode of pageText.childNodes){
 [^8.3]: [Свойства объекта document](https://metanit.com/web/javascript/8.3.php)
 [^8.2]: [Поиск элементов на веб-странице](https://metanit.com/web/javascript/8.2.php)
 [^8.4]: [Объект Node. Навигация по DOM](https://metanit.com/web/javascript/8.4.php)
+[^8.6]: [Элементы](https://metanit.com/web/javascript/8.6.php)
