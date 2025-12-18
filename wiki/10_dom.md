@@ -2,6 +2,7 @@
 
 - [Объектная модель документа](#объектная-модель-документа)
   - [Введение в DOM](#введение-в-dom)
+    - [Редкие типы узлов XML DOM](#редкие-типы-узлов-xml-dom)
   - [Практическая работа. Реализация поведения "подсказка"](#практическая-работа-реализация-поведения-подсказка)
     - [Задание](#задание)
   - [Источники информации](#источники-информации)
@@ -84,6 +85,95 @@
 | `Notation`              | 12       | ❌     | ⚠️  | Устарел                            |
 
 **Вывод**: в веб-разработке активно используются только `Document`, `Element`, `Text`, `DocumentFragment`, `Comment`. Остальные — артефакты XML/DTD 1998 года.
+
+#### Редкие типы узлов XML DOM
+**DTD** (Document Type Definition) — это определение типа документа, первое средство валидации структуры XML.
+
+DTD описывает правила построения XML-документа:
+
+- Какие элементы допустимы и в какой последовательности
+
+- Какие атрибуты разрешены у элементов
+
+- Тип содержимого элементов (#PCDATA, другие элементы)
+
+- Вложенность и обязательность
+
+Синтаксис в XML
+```xml
+<!DOCTYPE root-element [
+  <!ELEMENT note (to,from,heading,body)>  <!-- структура -->
+  <!ELEMENT to (#PCDATA)>                 <!-- только текст -->
+  <!ATTLIST note type CDATA #REQUIRED>    <!-- атрибуты -->
+]>
+<note type="important">
+  <to>Иван</to>
+  <from>Петр</from>
+</note>
+```
+
+В браузере `document.doctype` возвращает объект `DocumentType`:
+```js
+console.log(document.doctype);
+// #documentType html // для HTML5
+console.log(document.doctype.name);    // "html"
+console.log(document.doctype.publicId); // ""
+```
+
+В настоящее время считается устаревшим стандартом (1998), заменен XML Schema (XSD):
+
+- Нет типов данных (только текст/элементы)
+
+- Сложный синтаксис
+
+- HTML5 использует упрощенный `<!DOCTYPE html>`
+
+Таким образом, DTD — исторический артефакт для валидации простых XML. В веб-разработке остался только как `<!DOCTYPE>` для активации standards mode.
+
+`EntityReference` — ссылка на сущность из DTD. Заменяется на значение сущности при парсинге.
+
+```xml
+<!DOCTYPE doc [
+  <!ENTITY copy "©">
+]>
+<doc>&copy; текст</doc>  <!-- EntityReference: &copy; -->
+```
+
+В DOM: `nodeName = "copy"`, `nodeType = 5`.​
+
+`ProcessingInstruction` — инструкция обработки (PI) для приложений (XML-стили, XSLT).
+
+```xml
+<?xml-stylesheet type="text/xsl" href="style.xsl"?>
+```
+
+В DOM: `nodeName = "xml-stylesheet"`, `nodeValue = 'type="text/xsl" href="style.xsl"'`, `nodeType = 7`.
+
+`CDATASection` обозначает секцию CDATA — текст, не парсируемый как XML (для HTML в XML).
+
+```xml
+<![CDATA[<script>alert("ok")</script>]]>  <!-- Текст как есть -->
+```
+
+В DOM: `nodeType = 4`, обычный текстовый узел с особым флагом.
+
+`Entity` — объявление сущности из DTD (необрабатанная).
+
+```xml
+<!ENTITY logo SYSTEM "logo.gif">
+```
+
+В DOM: `document.doctype.entities.getNamedItem("logo"), nodeType = 6`.
+
+`Notation` — нотация DTD — описание внешних типов данных (старые изображения).
+
+```xml
+<!NOTATION GIF PUBLIC "image/gif">
+```
+
+В DOM: `document.doctype.notations.getNamedItem("GIF")`, `nodeType = 12`.
+
+Все эти узлы — артефакты XML 1.0 (1998) для DTD. В веб-разработке практически не встречаются, остались только в legacy XML.
 
 ### Практическая работа. Реализация поведения "подсказка"
 
