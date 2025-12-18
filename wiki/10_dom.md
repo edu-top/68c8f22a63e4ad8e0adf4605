@@ -14,6 +14,12 @@
     - [Поиск во вложенных элементах](#поиск-во-вложенных-элементах)
     - [Селекторы CSS](#селекторы-css)
     - [Дополнительные замечания](#дополнительные-замечания)
+  - [Объект Node. Навигация по DOM](#объект-node-навигация-по-dom)
+    - [Получение родительского элемента](#получение-родительского-элемента)
+    - [Получение дочерних элементов](#получение-дочерних-элементов)
+      - [Количество элементов](#количество-элементов)
+    - [Получение элементов одного уровня](#получение-элементов-одного-уровня)
+    - [nodeValue и получение текстового содержимого](#nodevalue-и-получение-текстового-содержимого)
   - [Практическая работа. Реализация поведения "подсказка"](#практическая-работа-реализация-поведения-подсказка)
     - [Задание](#задание)
   - [Источники информации](#источники-информации)
@@ -832,6 +838,350 @@ PHP
 
 Ряд методов — `getElementsByTagName()`, `getElementsByClassName()`, `getElementsByName()`, `querySelectorAll()` — возвращает список элементов в виде объекта `NodeList`, который аналогичен массиву и который мы можем перебрать и получить каждый отдельный элемент из этого набора. Однако метод `querySelectorAll()` возвращает статический список `NodeList`, тогда как остальные методы возвращают нестатический список. В чем разница? При изменении элементов нестатического списка все модификации сразу же применяются к веб-странице. При изменении элементов из статического списка такие модификации могут примениться не сразу.[^8.2]
 
+### Объект Node. Навигация по DOM
+Каждый отдельный узел, будь то html-элемент, его атрибут или текст, в структуре DOM представлен объектом **`Node`**. Может возникнуть вопрос: как связаны элементы веб-страницы и узлы веб-страницы? И тут надо отметить, что любой элемент веб-страницы является узлом, но не любой узел является элементом (например, атрибуты и текст элементов также являются отдельными узлами).[^8.4]
+
+Объект **`Node`** предоставляет ряд свойств, с помощью которых мы можем получить информацию о данном узле:
+
+- **`childNodes`**: содержит коллекцию дочерних узлов
+
+- **`children`**: содержит коллекцию дочерних узлов, которые являются элементами
+
+- **`firstChild`**: возвращает первый дочерний узел текущего узла
+
+- **`firstElementChild`**: возвращает первый дочерний узел, который является элементом
+
+- **`lastChild`**: возвращает последний дочерний узел текущего узла
+
+- **`lastElementChild`**: возвращает последний дочерний узел, который является элементом
+
+- **`previousSibling`**: возвращает предыдущий узел, который находится на одном уровне с текущим
+
+- **`nextSibling`**: возвращает следующий узел, который находится на одном уровне с текущим
+
+- **`previousElementSibling`**: возвращает предыдущий узел, который является элементом и который находится на одном уровне с текущим
+
+- **`nextElementSibling`**: возвращает следующий узел, который является элементом и который находится на одном уровне с текущим
+
+- **`ownerDocument`**: возвращает корневой узел документа
+
+- **`parentNode`**: возвращает родительский узел для текущего узла
+
+- **`parentElement`**: возвращает родительский узел, который является элементом
+
+- **`nodeName`**: возвращает имя узла
+
+- **`nodeType`**: возвращает тип узла в виде числа
+
+- **`nodeValue`**: возвращает текст текстового узла
+
+Прежде всего мы можем использовать свойства **`nodeName`** и **`nodeType`**, чтобы узнать тип узла:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DevPM</title>
+</head>
+<body>
+    <div id="article">
+        <h1 id="header">Home Page</h1>
+        <p>Page Text</p>
+    </div>
+<script>
+const article = document.getElementById("article");
+console.log(article.nodeName);  // DIV
+console.log(article.nodeType);  // 1
+</script>
+</body>
+</html>
+```
+
+Здесь получаем информацию по элементу с `id="header"`. В частности, свойство `nodeName` возвратит имя тега элемента — **`div`**, а свойство `nodeType` — число 1. Каждому типу узлов соответствует определенное число:
+
+| nodeType | Название константы          | Тип узла              | Описание                | nodeName           | nodeValue  |
+| -------- | --------------------------- | --------------------- | ----------------------- | ------------------ | ---------- |
+| 1        | `ELEMENT_NODE`                | Элемент               | HTML-элемент `<div>`, `<p>` | имя тега           | `null`       |
+| 2        | `ATTRIBUTE_NODE`              | Атрибут               | `href="..."` (устарело)   | имя атрибута       | значение   |
+| 3        | `TEXT_NODE`                   | Текст                 | Текст между тегами      | `#text`              | содержимое |
+| 4        | `CDATA_SECTION_NODE`          | CDATASection          | `<![CDATA[...]]>`         | `#cdata-section`     | содержимое |
+| 5        | `ENTITY_REFERENCE_NODE`       | `EntityReference`       | `&copy;`                  | имя сущности       | `null`       |
+| 6        | `ENTITY_NODE`                 | `Entity`                | `<!ENTITY logo>`          | имя сущности       | `null`       |
+| 7        | `PROCESSING_INSTRUCTION_NODE` | `ProcessingInstruction` | `<?xml-stylesheet?>`      | `target`             | содержимое |
+| 8        | `COMMENT_NODE`                | `Comment`               | `<!-- комментарий -->`    | `#comment`           | текст      |
+| 9        | `DOCUMENT_NODE`               | `Document`              | Корень документа        | `#document`          | `null`       |
+| 10       | `DOCUMENT_TYPE_NODE`          | `DocumentType`          | `<!DOCTYPE html>`         | имя `DOCTYPE`        | `null`       |
+| 11       | `DOCUMENT_FRAGMENT_NODE`      | `DocumentFragment`      | Временный контейнер     | `#document-fragment` | `null`       |
+| 12       | `NOTATION_NODE`               | `Notation`              | `<!NOTATION GIF>`         | имя нотации        | `null`       |
+
+RDF в контексте DOM не имеет специального `nodeType` — это формат данных (XML/RDFa/JSON-LD), парсится в обычные `Element`/`Text` узлы:
+```xml
+<!-- RDF/XML → ELEMENT_NODE (1) + TEXT_NODE (3) -->
+<rdf:Description rdf:about="ivan">
+  <foaf:name>Иван</foaf:name>  <!-- nodeType = 1, 3 -->
+</rdf:Description>
+```
+
+Таким образом, `nodeType` определяет DOM-структуру, RDF — семантику данных внутри `Element`/`Text` узлов.
+
+#### Получение родительского элемента
+Для получения родительского элемента применяются свойства **`parentNode`** и **`parentElement`**. Например:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DevPM</title>
+</head>
+<body>
+    <div id="article">
+        <h1 id="header">Home Page</h1>
+        <p>Page Text</p>
+    </div>
+    <script>
+    // выбираем все элемент c id="header"
+    const header = document.getElementById("header");
+    // получаем родительский элемента
+    const headerParent = header?.parentElement;
+    // можно так
+    // const headerParent = header?.parentNode;
+    console.log(headerParent);    // выводим родительский элемент на консоль
+    </script>
+</body>
+</html>
+```
+
+Здесь выводим на консоль элемент, в который помещен элемент с `id="header"`.
+
+Стоит отметить, что хотя оба метода в принципе возвращают один и тот же элемент, однако есть исключение — элемент `<html>`. Для него родительским узлом будет объект `document`, а вот родительского элемента у него не будет (будет значение `null`):
+```js
+const htmlEl = document.getElementsByTagName("html")[0];
+const parentElem = htmlEl.parentElement;
+const parentNode = htmlEl.parentNode;
+console.log(parentElem);    // null
+console.log(parentNode);    // объект document
+```
+
+#### Получение дочерних элементов
+Метод **`hasChildNodes()`** возвращает `true`, если элемент содержит вложенные узлы:
+```js
+const article = document.querySelector("div");
+if(article.hasChildNodes()){
+    console.log("There are child nodes");
+}
+else{
+    console.log("No child nodes");
+}
+```
+
+Для получения дочерних элементов можно использовать свойство **`children`**:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DevPM Vault</title>
+</head>
+<body>
+    <div id="article">
+        <h1 id="header">Home Page</h1>
+        <p>Page Text</p>
+    </div>
+<script>
+// выбираем элемент c id="article"
+const article = document.getElementById("article");
+
+for(elem of article.children){
+    console.log(elem);
+}
+</script>
+</body>
+</html>
+```
+
+Здесь получаем элемент с `id="article"` и в цикле проходим по всем его дочерним элементам. А это два элемента:
+```html
+<h1 id="header">Home Page</h1>
+<p>Page Text</p>
+```
+
+Если же нам надо выбрать вообще все дочерние узлы (не только элементы, но и атрибуты и текст), то применяется метод **`childNodes`**:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DevPM</title>
+</head>
+<body>
+    <div id="article">
+        <h1 id="header">Home Page</h1>
+        <p>Page Text</p>
+    </div>
+<script>
+// выбираем элемент c id="article"
+const article = document.getElementById("article");
+
+for(node of article.childNodes){
+    let type = "";
+    if(node.nodeType===1) type="элемент";
+    else if(node.nodeType===2) type="атрибут";
+    else if(node.nodeType===3) type="текст";
+
+    console.log(node.nodeName, ": ", type);
+}
+</script>
+</body>
+</html>
+```
+
+Здесь мы выбираем тот же элемент, но теперь перебираем его узлы. Выбираем элемент `div` с классом `article` и пробегаемся по его дочерним узлам. И в цикле выводим имя узла и его тип с помощью свойств `nodeName` и `nodeType`.
+
+И несмотря на то, что в блоке `div#article` только два элемента: заголовок `h1` и параграф, консоль отобразит нам пять узлов.
+
+```
+#text :  текст
+H1 :  элемент
+#text :  текст
+P :  элемент
+#text :  текст
+```
+
+Дело в том, что пробелы между узлами также считаются за отдельные текстовые узлы. Если бы пробелов не было:
+```html
+<div id="article"><h1 id="header">Home Page</h1><p>Page Text</p></div>
+```
+
+то при переборе мы бы обнаружили только два дочерних узла, как и ожидалось.
+
+Кроме того, для получения первого и последнего узла/элемента применяются свойства **`firstChild`**/**`firstElementChild`** и **`lastChild`**/**`lastElementChild`** соответственно.
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DevPM</title>
+</head>
+<body>
+    <div id="article">
+        <h1 id="header">Home Page</h1>
+        <p>Page Text</p>
+    </div>
+<script>
+const article = document.getElementById("article");
+console.log("First Child:", article.firstElementChild);
+console.log("Last Child:", article.lastElementChild);
+</script>
+</body>
+</html>
+```
+
+Консольный вывод:
+```
+First Child: <h1 id="header">Home Page</h1>​
+Last Child: <p>Page Text</p>​
+```
+
+##### Количество элементов
+Для получения количества дочерних элементов можно применять свойство **`childElementCount`**. Это значение будет эквивалентно значению `children.length`:
+```js
+const article = document.getElementById("article");
+console.log(article.childElementCount); // 2
+console.log(article.children.length); // 2
+```
+
+#### Получение элементов одного уровня
+Свойства **`previousSibling`**/**`previousElementSibling`** и **`nextSibling`**/**`nextElementSibling`** позволяют получить предыдущий и следующий элементы, которые располагаются на одном уровне с текущим. Например:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DevPM</title>
+</head>
+<body>
+    <div id="article">
+        <h1 id="header">Home Page</h1>
+        <p>Page Text 1</p>
+        <p>Page Text 2</p>
+        <p>Page Text 3</p>
+    </div>
+    <script>
+    const article = document.getElementById("article");
+    let tempNode = article.firstElementChild;
+    while(tempNode != null){
+        console.log(tempNode);
+        tempNode = tempNode.nextElementSibling
+    }
+    </script>
+</body>
+</html>
+```
+
+Здесь опять же получаем элемент с `id="article"`. Затем получаем его первый элемент в переменную `tempNode` и в цикле, пока `tempNode` не будет равен `null`, выводим его значение на консоль и потом присваиваем этой переменной следующий элемент того же уровня (соседний элемент)
+```js
+tempNode = tempNode.nextElementSibling
+```
+
+Таким образом, мы перебирем все элементы одного уровня. Консольный вывод:
+```
+<h1 id="header">Home Page</h1>
+<p>Page Text 1</p>
+<p>Page Text 2</p>
+<p>Page Text 3</p>
+```
+
+Также можно перебрать узлы в обратном порядке — сначала получаем последний узел, а затем обращаемся к предыдущему сестринскому узлу:
+```js
+const article = document.getElementById("article");
+let tempNode = article.lastElementChild;
+while(tempNode != null){
+    console.log(tempNode);
+    tempNode = tempNode.previousElementSibling;
+}
+```
+
+#### nodeValue и получение текстового содержимого
+Свойство **`nodeValue`** позволяет получить содержимое текстового узла, то есть его текст. Например:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>METANIT.COM</title>
+</head>
+<body>
+    <div id="article">
+        <h1 id="header">Home Page</h1>
+        <p id="text">Page Text</p>
+    </div>
+    <script>
+    // получаем элемент с id="text"
+    const pageText = document.getElementById("text");
+    console.log(pageText.nodeValue);    // null
+    for(textNode of pageText.childNodes){
+        console.log(textNode.nodeValue);
+    }
+    </script>
+</body>
+</html>
+```
+
+В данном случае мы пытаемся получить текст элемента с `id="text"`. Сначала получаем данный элемент в константу `pageText`. Однако напрямую мы не можем у него вызвать у него свойство `nodeValue`. Если мы это сделаем, то получим **`null`**:
+```js
+console.log(pageText.nodeValue);    // null
+```
+
+Потому что полученный нами элемент не является текстовым узлом. Текстовый узел располагается внутри элемента `pageText`. И чтобы получить текст, нам надо обратиться к этому текстовому узлу через коллекцию `childNodes`:
+```js
+for(textNode of pageText.childNodes){
+    console.log(textNode.nodeValue);
+}
+```
+
+Хотя мы так можем получить текстовое содержимое элементов, но это не самый оптимальный способ, и далее мы рассмотрим другие способы.[^8.4]
+
 ### Практическая работа. Реализация поведения "подсказка"
 
 #### Задание
@@ -882,3 +1232,4 @@ PHP
 [^8.1]: [Введение в DOM](https://metanit.com/web/javascript/8.1.php)
 [^8.3]: [Свойства объекта document](https://metanit.com/web/javascript/8.3.php)
 [^8.2]: [Поиск элементов на веб-странице](https://metanit.com/web/javascript/8.2.php)
+[^8.4]: [Объект Node. Навигация по DOM](https://metanit.com/web/javascript/8.4.php)
