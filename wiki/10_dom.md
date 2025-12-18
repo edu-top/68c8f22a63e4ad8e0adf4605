@@ -3,6 +3,7 @@
 - [Объектная модель документа](#объектная-модель-документа)
   - [Введение в DOM](#введение-в-dom)
     - [Редкие типы узлов XML DOM](#редкие-типы-узлов-xml-dom)
+    - [XSLT-стили](#xslt-стили)
   - [Практическая работа. Реализация поведения "подсказка"](#практическая-работа-реализация-поведения-подсказка)
     - [Задание](#задание)
   - [Источники информации](#источники-информации)
@@ -174,6 +175,177 @@ console.log(document.doctype.publicId); // ""
 В DOM: `document.doctype.notations.getNamedItem("GIF")`, `nodeType = 12`.
 
 Все эти узлы — артефакты XML 1.0 (1998) для DTD. В веб-разработке практически не встречаются, остались только в legacy XML.
+
+#### XSLT-стили
+*[XML]: eXtensible Markup Language
+*[XSL]: eXtensible Stylesheet Language
+*[RSS]: Really Simple Syndication
+*[XSLT]: XSL Transformations
+*[RDF]: Resource Description Framework
+*[OWL]: Web Ontology Language
+*[FOAF]: Friend of a Friend
+*[SPARQL]: SPARQL Protocol and RDF Query Language
+*[JSON]: JavaScript Object Notation
+
+<dfn title="XML">XML</dfn> — eXtensible Markup Language (расширяемый язык разметки). Структурированный формат данных с пользовательскими тегами (1998).
+```xml
+<user id="1">
+  <name>Иван</name>
+  <age>30</age>
+</user>
+```
+
+<dfn title="XSL">XSL</dfn> — eXtensible Stylesheet Language (семейство). Включает:
+
+- XSLT — преобразование XML в HTML/XML
+
+- XPath — запросы к XML
+
+- XSL-FO — форматирование (PDF)
+
+```xml
+<?xml-stylesheet type="text/xsl" href="style.xsl"?>
+```
+
+<dfn title="XSLT стили">XSLT стили</dfn> — это таблицы преобразований XML (XSL Transformations), которые определяют, как XML-документ преобразуется в другой формат (HTML, другой XML).
+
+**Как работают**
+1. XML-документ содержит данные
+
+2. XSLT-стиль содержит правила преобразования (ё<xsl:template>ё)
+
+3. XSLT-процессор (браузер, Saxon) применяет стиль к данным
+
+```xml
+<!-- data.xml -->
+<users>
+  <user id="1"><name>Иван</name></user>
+</users>
+```
+
+```xml
+<!-- style.xsl -->
+<xsl:stylesheet version="1.0">
+  <xsl:template match="/users">
+    <ul>
+      <xsl:for-each select="user">
+        <li><xsl:value-of select="name"/></li>
+      </xsl:for-each>
+    </ul>
+  </xsl:template>
+</xsl:stylesheet>
+```
+
+Результат: `<ul><li>Иван</li></ul>`
+
+*Подключение через `ProcessingInstruction`*:
+```xml
+<!-- В XML-документе -->
+<?xml-stylesheet type="text/xsl" href="style.xsl"?>
+<users>...</users>
+```
+
+Браузер автоматически применяет XSLT и показывает HTML.
+
+| Задача      | Пример                  |
+| ----------- | ----------------------- |
+| XML → HTML | Данные → веб-страница  |
+| XML → XML  | Конвертация форматов    |
+| Отчеты      | XML-данные → PDF/Excel |
+| RSS → HTML | Ленты новостей          |
+
+Современный статус — устаревшая технология (1999):
+
+- ✅ Server-side: Node.js (xslt4node), Java (Saxon)
+
+- ❌ Client-side: Браузеры не поддерживают (кроме IE)
+
+- ❌ SPA: React/Vue заменили полностью
+
+**Вывод**: XSLT — мощный инструмент для серверных XML-преобразований, но в веб-фронтенде заменен JavaScript-фреймворками.
+
+<dfn title="RSS">RSS</dfn> — RDF Site Summary / Really Simple Syndication. Формат лент новостей на базе XML.
+
+```xml
+<rss version="2.0">
+  <channel>
+    <item>
+      <title>Новость</title>
+      <link>https://example.com</link>
+      <pubDate>2025-12-18</pubDate>
+    </item>
+  </channel>
+</rss>
+```
+
+| Технология | Назначение     | Год  | Статус                     |
+| ---------- | -------------- | ---- | -------------------------- |
+| XML        | Данные/конфиги | 1998 | ✅ JSON заменил             |
+| XSL/XSLT   | XML → HTML    | 1999 | ❌ Устарело (JS фреймворки) |
+| RSS        | Ленты новостей | 1999 | ✅ Жив (подкасты, блоги)    |
+
+**Вывод**: XML — универсальный формат данных, XSL — устаревшие стили/преобразования, RSS — живой стандарт новостных фидов.
+
+<dfn title="RDF">RDF</dfn> (Resource Description Framework) — Среда описания ресурсов, модель данных для Семантической паутины (Semantic Web).
+
+RDF представляет данные как граф триплетов:
+```
+субъект → предикат → объект
+Иван    → возраст   → 30
+```
+
+Всё идентифицируется URI (уникальными ссылками).
+
+*Пример*:
+```
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+<ivan> foaf:name "Иван Иванов" .
+<ivan> foaf:age 30 .
+<ivan> foaf:knows <maria> .
+```
+
+Графически:
+```
+[Иван] ──name───> "Иван Иванов"
+       ──age───> 30
+       ──knows──> [Мария]
+```
+
+*Форматы*:
+| Синтаксис | Пример                                   | Использование      |
+| --------- | ---------------------------------------- | ------------------ |
+| Turtle    | `@prefix foaf: <...>`                    | Читаемый человеком |
+| RDF/XML   | `<rdf:Description>`                      | Legacy             |
+| JSON-LD   | `{"@id": "ivan"}`                        | Современный веб    |
+| RDFa      | `<span property="foaf:name">Иван</span>` | В HTML             |
+
+RSS 1.0 использует RDF для описания лент:
+```xml
+<rdf:RDF>
+  <item rdf:about="http://example.com/post1">
+    <title>Новость</title>
+  </item>
+</rdf:RDF>
+```
+
+*Назначение*
+| Область               | Пример                                       |
+| --------------------- | -------------------------------------------- |
+| Семантическая паутина | Linked Data, DBpedia                         |
+| Онтологии             | OWL (Web Ontology Language)                  |
+| Метаданные            | FOAF (Friend of a Friend)                    |
+| SPARQL-запросы        | SELECT ?person WHERE { ?person foaf:age 30 } |
+
+Статус — живой стандарт W3C (1999–наст. время):
+
+- ✅ JSON-LD — в Schema.org, Google Knowledge Graph
+
+- ✅ SPARQL — запросы к RDF
+
+- ❌ RDF/XML — устарел
+
+**Вывод**: RDF — фундамент Семантической паутины, позволяет машинам понимать связи между данными. Сегодня популярен через JSON-LD в SEO и структурированных данных.
 
 ### Практическая работа. Реализация поведения "подсказка"
 
