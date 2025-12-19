@@ -33,6 +33,10 @@
     - [Замена элемента](#замена-элемента)
     - [Удаление элемента](#удаление-элемента)
       - [Удаление всех элементов](#удаление-всех-элементов)
+  - [Управление атрибутами элементов](#управление-атрибутами-элементов)
+    - [Получение атрибута](#получение-атрибута)
+    - [Установка атрибутов](#установка-атрибутов)
+    - [Удаление атрибута](#удаление-атрибута)
   - [Практическая работа. Реализация поведения "подсказка"](#практическая-работа-реализация-поведения-подсказка)
     - [Задание](#задание)
   - [Источники информации](#источники-информации)
@@ -1643,6 +1647,102 @@ while(article.firstChild){
 }
 ```
 
+### Управление атрибутами элементов
+Для управления атрибутами элементов JavaScript предоставляет ряд методов:
+
+- **`getAttribute(attr)`**: возвращает значение атрибута `attr`
+
+- **`createAttribute(attr)`**: создает атрибут `attr`
+
+- **`setAttribute(attr, value)`**: устанавливает для атрибута `attr` значение `value`. Если атрибута нет, то он добавляется
+
+- **`removeAttribute(attr)`**: удаляет атрибут `attr` и его значение[^8.9]
+
+#### Получение атрибута
+Для получения атрибута у элемента вызывается метод **`getAttribute()`**, в который передается имя атрибута. Например, пусть у нас на странице есть следующий элемент, который представляет ссылку:
+```html
+<a id="home" class="link" href="index.html">Home</a>
+```
+
+Получим атрибуты этого элемента:
+```js
+// получаем элемент
+const element = document.getElementById("home");
+// получаем атрибуты элемента
+console.log(element.getAttribute("id"));    // home
+console.log(element.getAttribute("class")); // link
+console.log(element.getAttribute("href"));  // index.html
+```
+
+Стоит отметить, что атрибуты элементы также доступны через его свойства, которые называются аналогично атрибутам (за редким исключением):
+```js
+// получаем элемент
+const element = document.getElementById("home");
+// получаем атрибуты элемента
+console.log(element.id);    // home
+console.log(element.className); // link
+console.log(element.href);  // file:///Users/user/Documents/app/index.html
+```
+
+Исключение касается в частности атрибута "class", который доступен через свойство **`className`**.
+
+Также свойства могут возвращать немного отличающиеся значения. Например, свойство `href` возвращает полную ссылку, а метод `getAttribute("href")` — непосредственное значение атрибута.
+
+То же самое касается и атрибута **`style`**:
+```html
+<a id="home" style="color:red;" href="index.html">Home</a>
+<script>
+// получаем элемент
+const element = document.getElementById("home");
+// получаем атрибуты элемента
+console.log(element.style);    // CSSStyleDeclaration
+console.log(element.getAttribute("style")); // color:red;
+</script>
+```
+
+Метод `getAttribute("style")` возвращает стиль в виде текста, а свойство `style` — объект `CSSStyleDeclaration`, с помощью свойств которого можно получить отдельные аспекты стиля.
+
+#### Установка атрибутов
+Для установки значения атрибутов применяется метод **`setAttribute(attr, value)`**, первый параметр которого — устанавливаемый атрибут, а второй — его значение:
+```html
+<a id="home" href="index.html">Home</a>
+<script>
+// получаем элемент
+const element = document.getElementById("home");
+// устанавливаем атрибут href
+element.setAttribute("href", "https://example.com");
+// устанавливаем атрибут style
+element.setAttribute("style", "color:navy;");
+</script>
+```
+
+Здесь изменяем атрибут "href" и устанавливаем атрибут "style". Поскольку атрибут "style" изначально отсутствует, то он будет добавлен. Но стоит отметить, что в реальности это приведет к тому, что будет создан узел `Node`, который представляет атрибут. У этого узла будет установлено соответствующее значение, и затем узел атрибута добавляется в коллекцию дочерних узлов элемента. То есть фактически это будет выглядеть следующим образом:
+```html
+<a id="home" href="https://example.com">Home</a>
+<script>
+// получаем элемент
+const element = document.getElementById("home");
+// создаем узел-атрибут style
+const attribute = document.createAttribute("style");
+// устанавливаем значение узла-атрибута
+attribute.value = "color:navy;";
+// устанавливаем узел атрибута
+element.setAttributeNode(attribute);
+</script>
+```
+
+#### Удаление атрибута
+Для удаления атрибута применяется метод **`removeAttribute()`**, в который передается удаляемый атрибут:
+```html
+<a id="home" href="https://metanit.com" style="color:navy;">Home</a>
+<script>
+// получаем элемент
+const element = document.getElementById("home");
+// удаляем атрибут style
+element.removeAttribute("style");
+</script>
+```
+
 ### Практическая работа. Реализация поведения "подсказка"
 
 #### Задание
@@ -1696,3 +1796,4 @@ while(article.firstChild){
 [^8.4]: [Объект Node. Навигация по DOM](https://metanit.com/web/javascript/8.4.php)
 [^8.6]: [Элементы](https://metanit.com/web/javascript/8.6.php)
 [^8.5]: [Создание, добавление, замена и удаление элементов](https://metanit.com/web/javascript/8.5.php)
+[^8.9]: [Управление атрибутами элементов](https://metanit.com/web/javascript/8.9.php)
