@@ -37,6 +37,10 @@
     - [Получение атрибута](#получение-атрибута)
     - [Установка атрибутов](#установка-атрибутов)
     - [Удаление атрибута](#удаление-атрибута)
+  - [Управление стилем и классами элементов](#управление-стилем-и-классами-элементов)
+    - [Свойство style](#свойство-style)
+    - [Свойство className](#свойство-classname)
+    - [Свойство classList](#свойство-classlist)
   - [Практическая работа. Реализация поведения "подсказка"](#практическая-работа-реализация-поведения-подсказка)
     - [Задание](#задание)
   - [Источники информации](#источники-информации)
@@ -1743,6 +1747,146 @@ element.removeAttribute("style");
 </script>
 ```
 
+### Управление стилем и классами элементов
+Для работы со стилевыми свойствами элементов в JavaScript применяются, главным образом, два подхода:
+
+- изменение свойства **`style`**;
+
+- изменение значения атрибута **`class`**.[^8.7]
+
+#### Свойство style
+Свойство **`style`** представляет сложный объект **`CSSStyleDeclaration`** и напрямую сопоставляется с атрибутом `style` html-элемента. Этот объект содержит набор свойств CSS, к которым можно обратиться следующим образом:
+```js
+element.style.свойствоCSS
+```
+
+Например, установим цвет шрифта заголовка:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DevPM</title>
+</head>
+<body>
+    <h1 id="header">Home Page</h1>
+    <script>
+    const header = document.getElementById("header");
+    // получаем значение свойства color
+    console.log(header.style.color);    // пустая строка
+    // изменяем значение свойства color
+    header.style.color = "navy";
+    // повторно получаем значение свойства color
+    console.log(header.style.color);    // navy
+    </script>
+</body>
+</html>
+```
+
+Здесь для заголовка в качестве цвета устанавливаем синий цвет `navy`. В данном случае название свойства `color` совпадает со свойством css. Аналогично мы могли бы установить цвет с помощью css:
+```css
+#header{
+    color:navy;
+}
+```
+
+Однако ряд свойств css в названиях имеют дефис, например, `font-family`. В JavaScript для этих свойств дефис не употребляется. Только первая буква, которая идет после дефиса, переводится в верхний регистр:
+```js
+const header = document.getElementById("header");
+header.style.fontFamily = "Verdana";
+```
+
+#### Свойство className
+С помощью свойства **`className`** можно получить или установить значение атрибута `class` элемента html. Например:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DevPM</title>
+    <style>
+        .header-color {color:navy;}
+        .header-font {font-family: Verdana;}
+    </style>
+</head>
+<body>
+    <h1 id="header" class="header-font">Home Page</h1>
+    <script>
+    const header = document.getElementById("header");
+    // получаем текущий класс
+    console.log(header.className);  // header-font
+    // устанавливаем класс элемента
+    header.className = "header-color";
+    // получаем текущий класс
+    console.log(header.className);  // header-color
+    </script>
+</body>
+</html>
+```
+
+Здесь получаем текущий класс заголовка и затем изменяем его на новый класс — "header-color". Благодаря использованию классов не придется настраивать каждое отдельное свойство css с помощью свойства `style`.
+
+Но при этом надо учитывать, что прежнее значение атрибута `class` удаляется. Поэтому, если нам надо добавить класс, надо объединить его название со старым классом:
+```js
+header.className = header.className + " header-color";
+```
+
+И если надо вовсе удалить все классы, то можно присвоить свойству пустую строку:
+```js
+header.className = "";
+```
+
+#### Свойство classList
+Выше было рассмотрено, как добавлять классы к элементу, однако для управления множеством классов гораздо удобнее использовать свойство **`classList`**. Это свойство представляет объект, реализующий следующие методы:
+
+- **`add(className)`**: добавляет класс `className`
+
+- **`remove(className)`**: удаляет класс `className`
+
+- **`toggle(className)`**: переключает у элемента класс на `className`. Если класса нет, то он добавляется, если есть, то удаляется
+
+Например:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DevPM</title>
+    <style>
+        .header-color {color:navy;}
+        .header-font {font-family: Verdana;}
+        .header-size {font-size: 22px;}
+    </style>
+</head>
+<body>
+    <h1 id="header" class="header-size">Home Page</h1>
+    <script>
+    const header = document.getElementById("header");
+    header.classList.remove("header-size");     //  удаляем класс header-size
+    header.classList.add("header-font");        // добавляем класс header-font
+    header.classList.toggle("header-color");    // переключаем класс header-color
+    </script>
+</body>
+</html>
+```
+
+Стоит отметить, что метод `toggle()` дополнительно может принимать условие в качестве второго параметра — если это условие верно (возвращает `true`), то класс переключается:
+```js
+const i = 5;
+const condition = i > 0; // условие
+const header = document.getElementById("header");
+header.classList.toggle("header-color", condition);    // переключаем класс header-color по условию
+```
+
+При необходимости мы можем перебрать все классы из списка `classList` или получить отдельные классы по индексу:
+```js
+// перебор списка классов
+for(headerClass of header.classList){
+    console.log(headerClass);
+}
+console.log(header.classList[0]);   // первый установленный класс
+```
+
 ### Практическая работа. Реализация поведения "подсказка"
 
 #### Задание
@@ -1797,3 +1941,4 @@ element.removeAttribute("style");
 [^8.6]: [Элементы](https://metanit.com/web/javascript/8.6.php)
 [^8.5]: [Создание, добавление, замена и удаление элементов](https://metanit.com/web/javascript/8.5.php)
 [^8.9]: [Управление атрибутами элементов](https://metanit.com/web/javascript/8.9.php)
+[^8.7]: [Изменение стиля элементов](https://metanit.com/web/javascript/8.7.php)
