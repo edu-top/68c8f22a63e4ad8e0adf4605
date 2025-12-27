@@ -15,7 +15,7 @@
     - [Просмотр структуры DOM](#просмотр-структуры-dom)
     - [Взаимодействие с консолью](#взаимодействие-с-консолью)
     - [Итого](#итого)
-  - [DOM-узлы. Навигация по объектам DOM](#dom-узлы-навигация-по-объектам-dom)
+  - [Узлы. Навигация по объектам DOM](#узлы-навигация-по-объектам-dom)
     - [Объект Node](#объект-node)
       - [Классы DOM-узлов](#классы-dom-узлов)
       - [Свойства узлов](#свойства-узлов)
@@ -36,6 +36,13 @@
       - [Дочерние элементы в DOM](#дочерние-элементы-в-dom)
       - [Вопрос о соседях](#вопрос-о-соседях)
       - [Выделите ячейки по диагонали](#выделите-ячейки-по-диагонали)
+  - [Элементы](#элементы)
+    - [Свойства элементов](#свойства-элементов)
+    - [Управление текстом элемента](#управление-текстом-элемента)
+    - [Управление кодом HTML](#управление-кодом-html)
+      - [innerHTML: содержимое элемента](#innerhtml-содержимое-элемента)
+      - [innerHTML+= осуществляет перезапись](#innerhtml-осуществляет-перезапись)
+      - [outerHTML: HTML элемента целиком](#outerhtml-html-элемента-целиком)
   - [Поиск элементов на веб-странице](#поиск-элементов-на-веб-странице)
     - [Получение элементов по id](#получение-элементов-по-id)
     - [Поиск по определенному тегу](#поиск-по-определенному-тегу)
@@ -53,10 +60,6 @@
     - [Итого](#итого-2)
     - [Задачи](#задачи-1)
       - [Поиск элементов](#поиск-элементов)
-  - [Элементы](#элементы)
-    - [Свойства элементов](#свойства-элементов)
-    - [Управление текстом элемента](#управление-текстом-элемента)
-    - [Управление кодом HTML](#управление-кодом-html)
   - [Создание, добавление, замена и удаление элементов](#создание-добавление-замена-и-удаление-элементов)
     - [Создание элементов](#создание-элементов)
     - [Добавление элементов](#добавление-элементов)
@@ -743,7 +746,7 @@ HTML/XML документы представлены в браузере в ви
 
 У DOM-узлов есть свойства и методы, которые позволяют выбирать любой из элементов, изменять, перемещать их на странице и многое другое. Мы вернёмся к ним в последующих разделах.[^dom-nodes]
 
-### DOM-узлы. Навигация по объектам DOM
+### Узлы. Навигация по объектам DOM
 
 #### Объект Node
 DOM позволяет нам делать что угодно с элементами и их содержимым, но для начала нужно получить соответствующий DOM-объект.
@@ -1776,6 +1779,338 @@ td.style.backgroundColor = 'red';
 
 ![Table](../img/table-diagonal.png)
 
+### Элементы
+Для работы с элементами на веб-странице мы можем использовать как функциональность типа `Node`, который представляет любой узел веб-страницы, так и функциональность типа **`HTMLElement`**, который собственно представляет элемент. То есть объекты `HTMLElement` — это фактически те же самые узлы — объекты `Node`, у которых тип узла (свойство `nodeType`) равно 1.
+
+Каждый элемент веб-страницы соответствует определенному типу в JavaScript. Но все эти типы являются подтипами типа **`HTMLElement`**, который определяет базовую функциональность элементов. Вкратце перечислим актуальные типы элементов:
+
+| Тег | Тип
+-- | --
+`<a>` | `HTMLAnchorElement`
+`<abbr>` | `HTMLElement`
+`<address>` | `HTMLElement`
+`<area>` | `HTMLAreaElement`
+`<audio>` | `HTMLAudioElement`
+`<b>` | `HTMLElement`
+`<base>` | `HTMLBaseElement`
+`<bdo>` | `HTMLElement`
+`<blockquote>` | `HTMLQuoteElement`
+`<body>` | `HTMLBodyElement`
+`<br>` | `HTMLBRElement`
+`<button>` | `HTMLButtonElement`
+`<caption>` | `HTMLTableCaptionElement`
+`<canvas>` | `HTMLCanvasElement`
+`<cite>` | `HTMLElement`
+`<code>` | `HTMLElement`
+`<col>`, `<colgroup`> | `HTMLTableColElement`
+`<data>` | `HTMLDataElement`
+`<datalist>` | `HTMLDataListElement`
+`<dd>` | `HTMLElement`
+`<del>` | `HTMLModElement`
+`<dfn>` | `HTMLElement`
+`<div>` | `HTMLDivElement`
+`<dl>` | `HTMLDListElement`
+`<dt>` | `HTMLElement`
+`<em>` | `HTMLElement`
+`<embed>` | `HTMLEmbedElement`
+`<fieldset>` | `HTMLFieldSetElement`
+`<form>` | `HTMLFormElement`
+`<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>`, `<h6>` | `HTMLHeadingElement`
+`<head>` | `HTMLHeadElement`
+`<hr>` | `HTMLHRElement`
+`<html>` | `HTMLHtmlElement`
+`<i>` | `HTMLElement`
+`<iframe>` | `HTMLIFrameElement`
+`<img>` | `HTMLImageElement`
+`<input>` | `HTMLInputElement`
+`<ins>` | `HTMLModElement`
+`<kbd>` | `HTMLElement`
+`<keygen>` | `HTMLKeygenElement`
+`<label>` | `HTMLLabelElement`
+`<legend>` | `HTMLLegendElement`
+`<li>` | `HTMLLIElement`
+`<link>` | `HTMLLinkElement`
+`<map>` | `HTMLMapElement`
+`<media>` | `HTMLMediaElement`
+`<meta>` | `HTMLMetaElement`
+`<meter>` | `HTMLMeterElement`
+`<noscript>` | `HTMLElement`
+`<object>` | `HTMLObjectElement`
+`<ol>` | `HTMLOListElement`
+`<optgroup>` | `HTMLOptGroupElement`
+`<option>` | `HTMLOptionElement`
+`<output>` | `HTMLOutputElement`
+`<p>` | `HTMLParagraphElement`
+`<param>` | `HTMLParamElement`
+`<pre>` | `HTMLPreElement`
+`<progress>` | `HTMLProgressElement`
+`<q>` | `HTMLQuoteElement`
+`<s>` | `HTMLElement`
+`<samp>` | `HTMLElement`
+`<script>` | `HTMLScriptElement`
+`<select>` | `HTMLSelectElement`
+`<small>` | `HTMLElement`
+`<source>` | `HTMLSourceElement`
+`<span>` | `HTMLSpanElement`
+`<strong>` | `HTMLElement`
+`<style>` | `HTMLStyleElement`
+`<sub>` | `HTMLElement`
+`<sup>` | `HTMLElement`
+`<table>` | `HTMLTableElement`
+`<tbody>` | `HTMLTableSectionElement`
+`<td>` | `HTMLTableCellElement`
+`<textarea>` | `HTMLTextAreaElement`
+`<tfoot>` | `HTMLTableSectionElement`
+`<th>` | `HTMLTableHeaderCellElement`
+`<thead>` | `HTMLTableSectionElement`
+`<time>` | `HTMLTimeElement`
+`<title>` | `HTMLTitleElement`
+`<tr>` | `HTMLTableRowElement`
+`<track>` | `HTMLTrackElement`
+`<ul>` | `HTMLUListElement`
+`<var>` | `HTMLElement` / `HTMLUnknownElement`
+`<video>` | `HTMLVideoElement`
+
+Мы можем получить конкретный тип элемента с помощью метода **`Object.getPrototypeOf()`**:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DevPM</title>
+</head>
+<body>
+    <h1 id="header">Home Page</h1>
+    <script>
+    const header = document.getElementById("header");
+    console.log(Object.getPrototypeOf(header)); // HTMLHeadingElement
+    </script>
+</body>
+</html>
+```
+
+#### Свойства элементов
+Тип `Element` предоставляет ряд свойств, которые хранят информацию об элементе:
+
+- **`tagName`**: возвращает тег элемента
+
+- **`textContent`**: представляет текстовое содержимое элемента
+
+- **`innerText`**: представляет текстовое содержимое элемента (аналогично `textContent`)
+
+- **`innerHTML`**: представляет html-код элемента
+
+Одним из ключевых свойств объекта `Element` является свойство **`tagName`**, которое возвращает тег элемента:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DevPM</title>
+</head>
+<body>
+    <h1 id="header">Home Page</h1>
+    <script>
+    const header = document.getElementById("header");
+    console.log(header.tagName);  // H1
+    </script>
+</body>
+</html>
+```
+
+#### Управление текстом элемента
+Свойство **`textContent`** позволяет получить или изменить текстовое содержимое элемента:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DevPM</title>
+</head>
+<body>
+    <h1 id="header">Home Page</h1>
+    <script>
+    const header = document.getElementById("header");
+    // получаем текст элемента
+    console.log(header.textContent);  // Home Page
+    // изменяем текст элемента
+    header.textContent = "Hello World";
+    </script>
+</body>
+</html>
+```
+
+Аналогично можно использовать другое свойство для управление текстом — **`innerText`**:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DevPM</title>
+</head>
+<body>
+    <h1 id="header">Home Page</h1>
+    <script>
+    const header = document.getElementById("header");
+    // получаем текст элемента
+    console.log(header.innerText);  // Home Page
+    // изменяем текст элемента
+    header.innerText = "Hello World2";
+    </script>
+</body>
+</html>
+```
+
+Тем не менее между **`textContent`** и **`innerText`** есть некоторые различия:
+
+- **`textContent`** получает содержимое всех элементов, включая `<script>` и `<style>`, тогда как **`innerText`** этого не делает
+
+- **`innerText`** умеет считывать стили и не возвращает содержимое скрытых элементов, тогда как **`textContent`** этого не делает.
+
+- **`innerText`** позволяет получить CSS, а **`textContent`** — нет.
+
+#### Управление кодом HTML
+
+##### innerHTML: содержимое элемента
+Ни **`textContent`**, ни **`innerText`** не позволяют ни получить, ни изменить код html элемента.[^8.6] Например:
+```js
+header.innerText = "<span style='color:navy;'>Hello World</span>";
+```
+
+Это изменит только текст, но не html код. Для управления html применяется свойство **`innerHTML`**:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DevPM</title>
+</head>
+<body>
+    <h1 id="header">Home Page</h1>
+    <script>
+    const header = document.getElementById("header");
+    // получаем html-код элемента
+    console.log(header.innerHTML);  // Home Page
+    // изменяем html-код элемента
+    header.innerHTML = "<span style='color:navy;'>Hello World</span>";
+    </script>
+</body>
+</html>
+```
+
+Свойство [`innerHTML`](https://w3c.github.io/DOM-Parsing/#widl-Element-innerHTML) позволяет получить HTML-содержимое элемента в виде строки.
+
+Мы также можем изменять его. Это один из самых мощных способов менять содержимое на странице.
+
+Пример ниже показывает содержимое `document.body`, а затем полностью заменяет его:
+```html
+<body>
+  <p>Параграф</p>
+  <div>DIV</div>
+
+  <script>
+    alert( document.body.innerHTML ); // читаем текущее содержимое
+    document.body.innerHTML = 'Новый BODY!'; // заменяем содержимое
+  </script>
+
+</body>
+```
+
+Мы можем попробовать вставить некорректный HTML, браузер исправит наши ошибки:
+```html
+<body>
+
+  <script>
+    document.body.innerHTML = '<b>тест'; // забыли закрыть тег
+    alert( document.body.innerHTML ); // <b>тест</b> (исправлено)
+  </script>
+
+</body>
+```
+
+!!! info "Скрипты не выполнятся"
+
+    Если `innerHTML` вставляет в документ тег `<script>` – он становится частью HTML, но не запускается.
+
+##### innerHTML+= осуществляет перезапись
+
+Мы можем добавить HTML к элементу, используя `elem.innerHTML+="ещё html"`.
+
+Вот так:
+```js
+chatDiv.innerHTML += "<div>Привет<img src='smile.gif'/> !</div>";
+chatDiv.innerHTML += "Как дела?";
+```
+
+На практике этим следует пользоваться с большой осторожностью, так как фактически происходит *не* добавление, а перезапись.
+
+Технически эти две строки делают одно и то же:
+```js
+elem.innerHTML += "...";
+// это более короткая запись для:
+elem.innerHTML = elem.innerHTML + "..."
+```
+
+Другими словами, `innerHTML+=` делает следующее:
+
+1. Старое содержимое удаляется.
+2. На его место становится новое значение `innerHTML` (с добавленной строкой).
+
+**Так как содержимое «обнуляется» и переписывается заново, все изображения и другие ресурсы будут перезагружены.**
+
+В примере `chatDiv` выше строка `chatDiv.innerHTML+="Как дела?"` заново создаёт содержимое HTML и перезагружает *smile.gif* (надеемся, картинка закеширована). Если в `chatDiv` много текста и изображений, то эта перезагрузка будет очень заметна.
+
+Есть и другие побочные эффекты. Например, если существующий текст выделен мышкой, то при переписывании `innerHTML` большинство браузеров снимут выделение. А если это поле ввода `<input>` с текстом, введённым пользователем, то текст будет удалён. И т.д.
+
+К счастью, есть и другие способы добавить содержимое, не использующие `innerHTML`, которые мы изучим позже.
+
+##### outerHTML: HTML элемента целиком
+Свойство `outerHTML` содержит HTML элемента целиком. Это как `innerHTML` плюс сам элемент.
+
+Посмотрим на пример:
+```html
+<div id="elem">Привет <b>Мир</b></div>
+
+<script>
+  alert(elem.outerHTML); // <div id="elem">Привет <b>Мир</b></div>
+</script>
+```
+
+**Будьте осторожны: в отличие от `innerHTML`, запись в `outerHTML` не изменяет элемент. Вместо этого элемент заменяется целиком во внешнем контексте.**
+
+Да, звучит странно, и это действительно необычно, поэтому здесь мы и отмечаем это особо.
+
+Рассмотрим пример:
+```html
+<div>Привет, мир!</div>
+
+<script>
+  let div = document.querySelector('div');
+
+  // заменяем div.outerHTML на <p>...</p>
+  div.outerHTML = '<p>Новый элемент</p>'; // (*)
+
+  // Содержимое div осталось тем же!
+  alert(div.outerHTML); // <div>Привет, мир!</div> (**)
+</script>
+```
+
+Какая-то магия, да?
+
+В строке `(*)` мы заменили `div` на `<p>Новый элемент</p>`. Во внешнем документе мы видим новое содержимое вместо `<div>`. Но, как видно в строке `(**)`, старая переменная `div` осталась прежней!
+
+Это потому, что использование `outerHTML` не изменяет DOM-элемент, а удаляет его из внешнего контекста и вставляет вместо него новый HTML-код.
+
+То есть, при `div.outerHTML=...` произошло следующее:
+
+- `div` был удалён из документа.
+- Вместо него был вставлен другой HTML `<p>Новый элемент</p>`.
+- В `div` осталось старое значение. Новый HTML не сохранён ни в какой переменной.
+
+Здесь легко сделать ошибку: заменить `div.outerHTML`, а потом продолжить работать с `div`, как будто там новое содержимое. Но это не так. Подобное верно для `innerHTML`, но не для `outerHTML`.
+
+Мы можем писать в `elem.outerHTML`, но надо иметь в виду, что это не меняет элемент, в который мы пишем. Вместо этого создаётся новый HTML на его месте. Мы можем получить ссылки на новые элементы, обратившись к DOM.
+
 ### Поиск элементов на веб-странице
 Свойства навигации по DOM хороши, когда элементы расположены рядом. А что, если нет? Как получить произвольный элемент страницы?
 
@@ -2438,225 +2773,6 @@ let divs = document.getElementsByTagName('div');
 6. Последний `input` в этой форме.
 
 Откройте страницу [table.html](https://learn.javascript.ru/task/find-elements/table.html) в отдельном окне и используйте для этого браузерные инструменты разработчика.[^searching-elements-dom]
-
-### Элементы
-Для работы с элементами на веб-странице мы можем использовать как функциональность типа `Node`, который представляет любой узел веб-страницы, так и функциональность типа **`HTMLElement`**, который собственно представляет элемент. То есть объекты `HTMLElement` — это фактически те же самые узлы — объекты `Node`, у которых тип узла (свойство `nodeType`) равно 1.
-
-Каждый элемент веб-страницы соответствует определенному типу в JavaScript. Но все эти типы являются подтипами типа **`HTMLElement`**, который определяет базовую функциональность элементов. Вкратце перечислим актуальные типы элементов:
-
-| Тег | Тип
--- | --
-`<a>` | `HTMLAnchorElement`
-`<abbr>` | `HTMLElement`
-`<address>` | `HTMLElement`
-`<area>` | `HTMLAreaElement`
-`<audio>` | `HTMLAudioElement`
-`<b>` | `HTMLElement`
-`<base>` | `HTMLBaseElement`
-`<bdo>` | `HTMLElement`
-`<blockquote>` | `HTMLQuoteElement`
-`<body>` | `HTMLBodyElement`
-`<br>` | `HTMLBRElement`
-`<button>` | `HTMLButtonElement`
-`<caption>` | `HTMLTableCaptionElement`
-`<canvas>` | `HTMLCanvasElement`
-`<cite>` | `HTMLElement`
-`<code>` | `HTMLElement`
-`<col>`, `<colgroup`> | `HTMLTableColElement`
-`<data>` | `HTMLDataElement`
-`<datalist>` | `HTMLDataListElement`
-`<dd>` | `HTMLElement`
-`<del>` | `HTMLModElement`
-`<dfn>` | `HTMLElement`
-`<div>` | `HTMLDivElement`
-`<dl>` | `HTMLDListElement`
-`<dt>` | `HTMLElement`
-`<em>` | `HTMLElement`
-`<embed>` | `HTMLEmbedElement`
-`<fieldset>` | `HTMLFieldSetElement`
-`<form>` | `HTMLFormElement`
-`<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>`, `<h6>` | `HTMLHeadingElement`
-`<head>` | `HTMLHeadElement`
-`<hr>` | `HTMLHRElement`
-`<html>` | `HTMLHtmlElement`
-`<i>` | `HTMLElement`
-`<iframe>` | `HTMLIFrameElement`
-`<img>` | `HTMLImageElement`
-`<input>` | `HTMLInputElement`
-`<ins>` | `HTMLModElement`
-`<kbd>` | `HTMLElement`
-`<keygen>` | `HTMLKeygenElement`
-`<label>` | `HTMLLabelElement`
-`<legend>` | `HTMLLegendElement`
-`<li>` | `HTMLLIElement`
-`<link>` | `HTMLLinkElement`
-`<map>` | `HTMLMapElement`
-`<media>` | `HTMLMediaElement`
-`<meta>` | `HTMLMetaElement`
-`<meter>` | `HTMLMeterElement`
-`<noscript>` | `HTMLElement`
-`<object>` | `HTMLObjectElement`
-`<ol>` | `HTMLOListElement`
-`<optgroup>` | `HTMLOptGroupElement`
-`<option>` | `HTMLOptionElement`
-`<output>` | `HTMLOutputElement`
-`<p>` | `HTMLParagraphElement`
-`<param>` | `HTMLParamElement`
-`<pre>` | `HTMLPreElement`
-`<progress>` | `HTMLProgressElement`
-`<q>` | `HTMLQuoteElement`
-`<s>` | `HTMLElement`
-`<samp>` | `HTMLElement`
-`<script>` | `HTMLScriptElement`
-`<select>` | `HTMLSelectElement`
-`<small>` | `HTMLElement`
-`<source>` | `HTMLSourceElement`
-`<span>` | `HTMLSpanElement`
-`<strong>` | `HTMLElement`
-`<style>` | `HTMLStyleElement`
-`<sub>` | `HTMLElement`
-`<sup>` | `HTMLElement`
-`<table>` | `HTMLTableElement`
-`<tbody>` | `HTMLTableSectionElement`
-`<td>` | `HTMLTableCellElement`
-`<textarea>` | `HTMLTextAreaElement`
-`<tfoot>` | `HTMLTableSectionElement`
-`<th>` | `HTMLTableHeaderCellElement`
-`<thead>` | `HTMLTableSectionElement`
-`<time>` | `HTMLTimeElement`
-`<title>` | `HTMLTitleElement`
-`<tr>` | `HTMLTableRowElement`
-`<track>` | `HTMLTrackElement`
-`<ul>` | `HTMLUListElement`
-`<var>` | `HTMLElement` / `HTMLUnknownElement`
-`<video>` | `HTMLVideoElement`
-
-Мы можем получить конкретный тип элемента с помощью метода **`Object.getPrototypeOf()`**:
-```html
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <title>DevPM</title>
-</head>
-<body>
-    <h1 id="header">Home Page</h1>
-    <script>
-    const header = document.getElementById("header");
-    console.log(Object.getPrototypeOf(header)); // HTMLHeadingElement
-    </script>
-</body>
-</html>
-```
-
-#### Свойства элементов
-Тип `Element` предоставляет ряд свойств, которые хранят информацию об элементе:
-
-- **`tagName`**: возвращает тег элемента
-
-- **`textContent`**: представляет текстовое содержимое элемента
-
-- **`innerText`**: представляет текстовое содержимое элемента (аналогично `textContent`)
-
-- **`innerHTML`**: представляет html-код элемента
-
-Одним из ключевых свойств объекта `Element` является свойство **`tagName`**, которое возвращает тег элемента:
-```html
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <title>DevPM</title>
-</head>
-<body>
-    <h1 id="header">Home Page</h1>
-    <script>
-    const header = document.getElementById("header");
-    console.log(header.tagName);  // H1
-    </script>
-</body>
-</html>
-```
-
-#### Управление текстом элемента
-Свойство **`textContent`** позволяет получить или изменить текстовое содержимое элемента:
-```html
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <title>DevPM</title>
-</head>
-<body>
-    <h1 id="header">Home Page</h1>
-    <script>
-    const header = document.getElementById("header");
-    // получаем текст элемента
-    console.log(header.textContent);  // Home Page
-    // изменяем текст элемента
-    header.textContent = "Hello World";
-    </script>
-</body>
-</html>
-```
-
-Аналогично можно использовать другое свойство для управление текстом — **`innerText`**:
-```html
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <title>DevPM</title>
-</head>
-<body>
-    <h1 id="header">Home Page</h1>
-    <script>
-    const header = document.getElementById("header");
-    // получаем текст элемента
-    console.log(header.innerText);  // Home Page
-    // изменяем текст элемента
-    header.innerText = "Hello World2";
-    </script>
-</body>
-</html>
-```
-
-Тем не менее между **`textContent`** и **`innerText`** есть некоторые различия:
-
-- **`textContent`** получает содержимое всех элементов, включая `<script>` и `<style>`, тогда как **`innerText`** этого не делает
-
-- **`innerText`** умеет считывать стили и не возвращает содержимое скрытых элементов, тогда как **`textContent`** этого не делает.
-
-- **`innerText`** позволяет получить CSS, а **`textContent`** — нет.
-
-#### Управление кодом HTML
-Ни **`textContent`**, ни **`innerText`** не позволяют ни получить, ни изменить код html элемента. Например:
-```js
-header.innerText = "<span style='color:navy;'>Hello World</span>";
-```
-
-Это изменит только текст, но не html код. Для управления html применяется свойство **`innerHTML`**:
-```html
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <title>DevPM</title>
-</head>
-<body>
-    <h1 id="header">Home Page</h1>
-    <script>
-    const header = document.getElementById("header");
-    // получаем html-код элемента
-    console.log(header.innerHTML);  // Home Page
-    // изменяем html-код элемента
-    header.innerHTML = "<span style='color:navy;'>Hello World</span>";
-    </script>
-</body>
-</html>
-```
-
-[^8.6]
 
 ### Создание, добавление, замена и удаление элементов
 JavaScript предоставляет ряд методов для управления элементами на веб-страницы. В частности, мы можем создавать и добавлять новые элементы или заменять и удалять уже имеющиеся. Рассмотрим эти методы.[^8.5]
