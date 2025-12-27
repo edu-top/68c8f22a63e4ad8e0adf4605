@@ -16,10 +16,14 @@
     - [Взаимодействие с консолью](#взаимодействие-с-консолью)
     - [Итого](#итого)
   - [Навигация по DOM-элементам](#навигация-по-dom-элементам)
+    - [Объект Node](#объект-node)
     - [Сверху: documentElement и body](#сверху-documentelement-и-body)
-    - [Дети: childNodes, firstChild, lastChild](#дети-childnodes-firstchild-lastchild)
+    - [Получение родительского элемента](#получение-родительского-элемента)
+    - [Получение элементов одного уровня](#получение-элементов-одного-уровня)
+    - [Получение потомков](#получение-потомков)
+      - [Количество элементов](#количество-элементов)
     - [DOM-коллекции](#dom-коллекции)
-    - [Соседи и родитель](#соседи-и-родитель)
+    - [nodeValue и получение текстового содержимого](#nodevalue-и-получение-текстового-содержимого)
     - [Навигация только по элементам](#навигация-только-по-элементам)
     - [Ещё немного ссылок: таблицы](#ещё-немного-ссылок-таблицы)
     - [Свойства объекта document](#свойства-объекта-document)
@@ -45,12 +49,6 @@
     - [Итого](#итого-2)
     - [Задачи](#задачи-1)
       - [Поиск элементов](#поиск-элементов)
-  - [Объект Node. Навигация по DOM](#объект-node-навигация-по-dom)
-    - [Получение родительского элемента](#получение-родительского-элемента)
-    - [Получение дочерних элементов](#получение-дочерних-элементов)
-      - [Количество элементов](#количество-элементов)
-    - [Получение элементов одного уровня](#получение-элементов-одного-уровня)
-    - [nodeValue и получение текстового содержимого](#nodevalue-и-получение-текстового-содержимого)
   - [Элементы](#элементы)
     - [Свойства элементов](#свойства-элементов)
     - [Управление текстом элемента](#управление-текстом-элемента)
@@ -742,7 +740,94 @@ HTML/XML документы представлены в браузере в ви
 У DOM-узлов есть свойства и методы, которые позволяют выбирать любой из элементов, изменять, перемещать их на странице и многое другое. Мы вернёмся к ним в последующих разделах.[^dom-nodes]
 
 ### Навигация по DOM-элементам
+
+#### Объект Node
 DOM позволяет нам делать что угодно с элементами и их содержимым, но для начала нужно получить соответствующий DOM-объект.
+
+Каждый отдельный узел, будь то html-элемент, его атрибут или текст, в структуре DOM представлен объектом **`Node`**. Может возникнуть вопрос: как связаны элементы веб-страницы и узлы веб-страницы? И тут надо отметить, что любой элемент веб-страницы является узлом, но не любой узел является элементом (например, атрибуты и текст элементов также являются отдельными узлами).[^8.4]
+
+Объект **`Node`** предоставляет ряд свойств, с помощью которых мы можем получить информацию о данном узле:
+
+- **`childNodes`**: содержит коллекцию дочерних узлов
+
+- **`children`**: содержит коллекцию дочерних узлов, которые являются элементами
+
+- **`firstChild`**: возвращает первый дочерний узел текущего узла
+
+- **`firstElementChild`**: возвращает первый дочерний узел, который является элементом
+
+- **`lastChild`**: возвращает последний дочерний узел текущего узла
+
+- **`lastElementChild`**: возвращает последний дочерний узел, который является элементом
+
+- **`previousSibling`**: возвращает предыдущий узел, который находится на одном уровне с текущим
+
+- **`nextSibling`**: возвращает следующий узел, который находится на одном уровне с текущим
+
+- **`previousElementSibling`**: возвращает предыдущий узел, который является элементом и который находится на одном уровне с текущим
+
+- **`nextElementSibling`**: возвращает следующий узел, который является элементом и который находится на одном уровне с текущим
+
+- **`ownerDocument`**: возвращает корневой узел документа
+
+- **`parentNode`**: возвращает родительский узел для текущего узла
+
+- **`parentElement`**: возвращает родительский узел, который является элементом
+
+- **`nodeName`**: возвращает имя узла
+
+- **`nodeType`**: возвращает тип узла в виде числа
+
+- **`nodeValue`**: возвращает текст текстового узла
+
+Прежде всего мы можем использовать свойства **`nodeName`** и **`nodeType`**, чтобы узнать тип узла:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DevPM</title>
+</head>
+<body>
+    <div id="article">
+        <h1 id="header">Home Page</h1>
+        <p>Page Text</p>
+    </div>
+<script>
+const article = document.getElementById("article");
+console.log(article.nodeName);  // DIV
+console.log(article.nodeType);  // 1
+</script>
+</body>
+</html>
+```
+
+Здесь получаем информацию по элементу с `id="header"`. В частности, свойство `nodeName` возвратит имя тега элемента — **`div`**, а свойство `nodeType` — число 1. Каждому типу узлов соответствует определенное число:
+
+| nodeType | Название константы          | Тип узла              | Описание                | nodeName           | nodeValue  |
+| -------- | --------------------------- | --------------------- | ----------------------- | ------------------ | ---------- |
+| 1        | `ELEMENT_NODE`                | Элемент               | HTML-элемент `<div>`, `<p>` | имя тега           | `null`       |
+| 2        | `ATTRIBUTE_NODE`              | Атрибут               | `href="..."` (устарело)   | имя атрибута       | значение   |
+| 3        | `TEXT_NODE`                   | Текст                 | Текст между тегами      | `#text`              | содержимое |
+| 4        | `CDATA_SECTION_NODE`          | CDATASection          | `<![CDATA[...]]>`         | `#cdata-section`     | содержимое |
+| 5        | `ENTITY_REFERENCE_NODE`       | `EntityReference`       | `&copy;`                  | имя сущности       | `null`       |
+| 6        | `ENTITY_NODE`                 | `Entity`                | `<!ENTITY logo>`          | имя сущности       | `null`       |
+| 7        | `PROCESSING_INSTRUCTION_NODE` | `ProcessingInstruction` | `<?xml-stylesheet?>`      | `target`             | содержимое |
+| 8        | `COMMENT_NODE`                | `Comment`               | `<!-- комментарий -->`    | `#comment`           | текст      |
+| 9        | `DOCUMENT_NODE`               | `Document`              | Корень документа        | `#document`          | `null`       |
+| 10       | `DOCUMENT_TYPE_NODE`          | `DocumentType`          | `<!DOCTYPE html>`         | имя `DOCTYPE`        | `null`       |
+| 11       | `DOCUMENT_FRAGMENT_NODE`      | `DocumentFragment`      | Временный контейнер     | `#document-fragment` | `null`       |
+| 12       | `NOTATION_NODE`               | `Notation`              | `<!NOTATION GIF>`         | имя нотации        | `null`       |
+
+RDF в контексте DOM не имеет специального `nodeType` — это формат данных (XML/RDFa/JSON-LD), парсится в обычные `Element`/`Text` узлы:
+```xml
+<!-- RDF/XML → ELEMENT_NODE (1) + TEXT_NODE (3) -->
+<rdf:Description rdf:about="ivan">
+  <foaf:name>Иван</foaf:name>  <!-- nodeType = 1, 3 -->
+</rdf:Description>
+```
+
+Таким образом, `nodeType` определяет DOM-структуру, RDF — семантику данных внутри `Element`/`Text` узлов.
 
 Все операции с DOM начинаются с объекта `document`. Это главная «точка входа» в DOM. Из него мы можем получить доступ к любому узлу.
 
@@ -797,7 +882,124 @@ DOM позволяет нам делать что угодно с элемент
 
     В DOM значение `null` значит «не существует» или «нет такого узла».
 
-#### Дети: childNodes, firstChild, lastChild
+#### Получение родительского элемента
+Для получения родительского элемента применяются свойства **`parentNode`** и **`parentElement`**. Например:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DevPM</title>
+</head>
+<body>
+    <div id="article">
+        <h1 id="header">Home Page</h1>
+        <p>Page Text</p>
+    </div>
+    <script>
+    // выбираем все элемент c id="header"
+    const header = document.getElementById("header");
+    // получаем родительский элемента
+    const headerParent = header?.parentElement;
+    // можно так
+    // const headerParent = header?.parentNode;
+    console.log(headerParent);    // выводим родительский элемент на консоль
+    </script>
+</body>
+</html>
+```
+
+Здесь выводим на консоль элемент, в который помещен элемент с `id="header"`.
+
+Стоит отметить, что хотя оба метода в принципе возвращают один и тот же элемент, однако есть исключение — элемент `<html>`. Для него родительским узлом будет объект `document`, а вот родительского элемента у него не будет (будет значение `null`):
+```js
+const htmlEl = document.getElementsByTagName("html")[0];
+const parentElem = htmlEl.parentElement;
+const parentNode = htmlEl.parentNode;
+console.log(parentElem);    // null
+console.log(parentNode);    // объект document
+```
+
+#### Получение элементов одного уровня
+*Соседи* (*siblings*) – это узлы, у которых один и тот же родитель.
+
+Например, здесь `<head>` и `<body>` соседи:
+```html
+<html>
+  <head>...</head><body>...</body>
+</html>
+```
+
+- говорят, что `<body>` – «следующий» или «правый» сосед `<head>`
+- также можно сказать, что `<head>` «предыдущий» или «левый» сосед `<body>`.
+
+Следующий узел того же родителя (следующий сосед) – в свойстве `nextSibling`, а предыдущий – в `previousSibling`.
+
+Таким образом, свойства **`previousSibling`**/**`previousElementSibling`** и **`nextSibling`**/**`nextElementSibling`** позволяют получить предыдущий и следующий элементы, которые располагаются на одном уровне с текущим. Например:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DevPM</title>
+</head>
+<body>
+    <div id="article">
+        <h1 id="header">Home Page</h1>
+        <p>Page Text 1</p>
+        <p>Page Text 2</p>
+        <p>Page Text 3</p>
+    </div>
+    <script>
+    const article = document.getElementById("article");
+    let tempNode = article.firstElementChild;
+    while(tempNode != null){
+        console.log(tempNode);
+        tempNode = tempNode.nextElementSibling
+    }
+    </script>
+</body>
+</html>
+```
+
+Здесь опять же получаем элемент с `id="article"`. Затем получаем его первый элемент в переменную `tempNode` и в цикле, пока `tempNode` не будет равен `null`, выводим его значение на консоль и потом присваиваем этой переменной следующий элемент того же уровня (соседний элемент)
+```js
+tempNode = tempNode.nextElementSibling
+```
+
+Таким образом, мы перебирем все элементы одного уровня. Консольный вывод:
+```
+<h1 id="header">Home Page</h1>
+<p>Page Text 1</p>
+<p>Page Text 2</p>
+<p>Page Text 3</p>
+```
+
+Также можно перебрать узлы в обратном порядке — сначала получаем последний узел, а затем обращаемся к предыдущему сестринскому узлу:
+```js
+const article = document.getElementById("article");
+let tempNode = article.lastElementChild;
+while(tempNode != null){
+    console.log(tempNode);
+    tempNode = tempNode.previousElementSibling;
+}
+```
+
+Как помним, родитель доступен через `parentNode`.
+
+Например:
+```js
+// родителем <body> является <html>
+alert( document.body.parentNode === document.documentElement ); // выведет true
+
+// после <head> идёт <body>
+alert( document.head.nextSibling ); // HTMLBodyElement
+
+// перед <body> находится <head>
+alert( document.body.previousSibling ); // HTMLHeadElement
+```
+
+#### Получение потомков
 Здесь и далее мы будем использовать два принципиально разных термина:
 
 - **Дочерние узлы** (или **дети**, *child nodes*) – элементы, которые являются непосредственными детьми узла. Другими словами, элементы, которые лежат непосредственно внутри данного. Например, `<head>` и `<body>` являются детьми элемента `<html>`.
@@ -820,6 +1022,86 @@ DOM позволяет нам делать что угодно с элемент
 ```
 
 …А потомки `<body>` – это и прямые дети `<div>`, `<ul>` и вложенные в них: `<li>` (ребёнок `<ul>`) и `<b>` (ребёнок `<li>`) – в общем, все элементы поддерева.
+
+Для получения дочерних элементов можно использовать свойство **`children`**:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DevPM Vault</title>
+</head>
+<body>
+    <div id="article">
+        <h1 id="header">Home Page</h1>
+        <p>Page Text</p>
+    </div>
+<script>
+// выбираем элемент c id="article"
+const article = document.getElementById("article");
+
+for(elem of article.children){
+    console.log(elem);
+}
+</script>
+</body>
+</html>
+```
+
+Здесь получаем элемент с `id="article"` и в цикле проходим по всем его дочерним элементам. А это два элемента:
+```html
+<h1 id="header">Home Page</h1>
+<p>Page Text</p>
+```
+
+Если же нам надо выбрать вообще все дочерние узлы (не только элементы, но и атрибуты и текст), то применяется метод **`childNodes`**:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DevPM</title>
+</head>
+<body>
+    <div id="article">
+        <h1 id="header">Home Page</h1>
+        <p>Page Text</p>
+    </div>
+<script>
+// выбираем элемент c id="article"
+const article = document.getElementById("article");
+
+for(node of article.childNodes){
+    let type = "";
+    if(node.nodeType===1) type="элемент";
+    else if(node.nodeType===2) type="атрибут";
+    else if(node.nodeType===3) type="текст";
+
+    console.log(node.nodeName, ": ", type);
+}
+</script>
+</body>
+</html>
+```
+
+Здесь мы выбираем тот же элемент, но теперь перебираем его узлы. Выбираем элемент `div` с классом `article` и пробегаемся по его дочерним узлам. И в цикле выводим имя узла и его тип с помощью свойств `nodeName` и `nodeType`.
+
+И несмотря на то, что в блоке `div#article` только два элемента: заголовок `h1` и параграф, консоль отобразит нам пять узлов.
+
+```
+#text :  текст
+H1 :  элемент
+#text :  текст
+P :  элемент
+#text :  текст
+```
+
+Дело в том, что пробелы между узлами также считаются за отдельные текстовые узлы. Если бы пробелов не было:
+```html
+<div id="article"><h1 id="header">Home Page</h1><p>Page Text</p></div>
+```
+
+то при переборе мы бы обнаружили только два дочерних узла, как и ожидалось.
 
 **Коллекция `childNodes` содержит список всех детей, включая текстовые узлы.**
 
@@ -847,6 +1129,35 @@ DOM позволяет нам делать что угодно с элемент
 
 Обратим внимание на маленькую деталь. Если запустить пример выше, то последним будет выведен элемент `<script>`. На самом деле, в документе есть ещё «какой-то HTML-код», но на момент выполнения скрипта браузер ещё до него не дошёл, поэтому скрипт не видит его.
 
+Кроме того, для получения первого и последнего узла/элемента применяются свойства **`firstChild`**/**`firstElementChild`** и **`lastChild`**/**`lastElementChild`** соответственно.
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DevPM</title>
+</head>
+<body>
+    <div id="article">
+        <h1 id="header">Home Page</h1>
+        <p>Page Text</p>
+    </div>
+<script>
+const article = document.getElementById("article");
+console.log("First Child:", article.firstElementChild);
+console.log("Last Child:", article.lastElementChild);
+</script>
+</body>
+</html>
+```
+
+Консольный вывод:
+```
+First Child: <h1 id="header">Home Page</h1>​
+Last Child: <p>Page Text</p>​
+```
+
 **Свойства `firstChild` и `lastChild` обеспечивают быстрый доступ к первому и последнему дочернему элементу.**
 
 Они, по сути, являются всего лишь сокращениями. Если у тега есть дочерние узлы, условие ниже всегда верно:
@@ -855,7 +1166,24 @@ elem.childNodes[0] === elem.firstChild
 elem.childNodes[elem.childNodes.length - 1] === elem.lastChild
 ```
 
-Для проверки наличия дочерних узлов существует также специальная функция `elem.hasChildNodes()`.
+Для проверки наличия дочерних узлов существует также специальная функция `elem.hasChildNodes()`. Метод **`hasChildNodes()`** возвращает `true`, если элемент содержит вложенные узлы:
+```js
+const article = document.querySelector("div");
+if(article.hasChildNodes()){
+    console.log("There are child nodes");
+}
+else{
+    console.log("No child nodes");
+}
+```
+
+##### Количество элементов
+Для получения количества дочерних элементов можно применять свойство **`childElementCount`**. Это значение будет эквивалентно значению `children.length`:
+```js
+const article = document.getElementById("article");
+console.log(article.childElementCount); // 2
+console.log(article.children.length); // 2
+```
 
 #### DOM-коллекции
 Как мы уже видели, `childNodes` похож на массив. На самом деле это не массив, а *коллекция* – особый перебираемый объект-псевдомассив.
@@ -911,34 +1239,45 @@ alert( Array.from(document.body.childNodes).filter ); // сделали масс
     </body>
     ```
 
-#### Соседи и родитель
-*Соседи* (*siblings*) – это узлы, у которых один и тот же родитель.
-
-Например, здесь `<head>` и `<body>` соседи:
+#### nodeValue и получение текстового содержимого
+Свойство **`nodeValue`** позволяет получить содержимое текстового узла, то есть его текст. Например:
 ```html
+<!DOCTYPE html>
 <html>
-  <head>...</head><body>...</body>
+<head>
+    <meta charset="utf-8" />
+    <title>METANIT.COM</title>
+</head>
+<body>
+    <div id="article">
+        <h1 id="header">Home Page</h1>
+        <p id="text">Page Text</p>
+    </div>
+    <script>
+    // получаем элемент с id="text"
+    const pageText = document.getElementById("text");
+    console.log(pageText.nodeValue);    // null
+    for(textNode of pageText.childNodes){
+        console.log(textNode.nodeValue);
+    }
+    </script>
+</body>
 </html>
 ```
 
-- говорят, что `<body>` – «следующий» или «правый» сосед `<head>`
-- также можно сказать, что `<head>` «предыдущий» или «левый» сосед `<body>`.
-
-Следующий узел того же родителя (следующий сосед) – в свойстве `nextSibling`, а предыдущий – в `previousSibling`.
-
-Родитель доступен через `parentNode`.
-
-Например:
+В данном случае мы пытаемся получить текст элемента с `id="text"`. Сначала получаем данный элемент в константу `pageText`. Однако напрямую мы не можем у него вызвать у него свойство `nodeValue`. Если мы это сделаем, то получим **`null`**:
 ```js
-// родителем <body> является <html>
-alert( document.body.parentNode === document.documentElement ); // выведет true
-
-// после <head> идёт <body>
-alert( document.head.nextSibling ); // HTMLBodyElement
-
-// перед <body> находится <head>
-alert( document.body.previousSibling ); // HTMLHeadElement
+console.log(pageText.nodeValue);    // null
 ```
+
+Потому что полученный нами элемент не является текстовым узлом. Текстовый узел располагается внутри элемента `pageText`. И чтобы получить текст, нам надо обратиться к этому текстовому узлу через коллекцию `childNodes`:
+```js
+for(textNode of pageText.childNodes){
+    console.log(textNode.nodeValue);
+}
+```
+
+Хотя мы так можем получить текстовое содержимое элементов, но это не самый оптимальный способ, и далее мы рассмотрим другие способы.[^8.4]
 
 #### Навигация только по элементам
 Навигационные свойства, описанные выше, относятся ко *всем* узлам в документе. В частности, в `childNodes` находятся и текстовые узлы и узлы-элементы и узлы-комментарии, если они есть.
@@ -1888,350 +2227,6 @@ let divs = document.getElementsByTagName('div');
 6. Последний `input` в этой форме.
 
 Откройте страницу [table.html](https://learn.javascript.ru/task/find-elements/table.html) в отдельном окне и используйте для этого браузерные инструменты разработчика.[^searching-elements-dom]
-
-### Объект Node. Навигация по DOM
-Каждый отдельный узел, будь то html-элемент, его атрибут или текст, в структуре DOM представлен объектом **`Node`**. Может возникнуть вопрос: как связаны элементы веб-страницы и узлы веб-страницы? И тут надо отметить, что любой элемент веб-страницы является узлом, но не любой узел является элементом (например, атрибуты и текст элементов также являются отдельными узлами).[^8.4]
-
-Объект **`Node`** предоставляет ряд свойств, с помощью которых мы можем получить информацию о данном узле:
-
-- **`childNodes`**: содержит коллекцию дочерних узлов
-
-- **`children`**: содержит коллекцию дочерних узлов, которые являются элементами
-
-- **`firstChild`**: возвращает первый дочерний узел текущего узла
-
-- **`firstElementChild`**: возвращает первый дочерний узел, который является элементом
-
-- **`lastChild`**: возвращает последний дочерний узел текущего узла
-
-- **`lastElementChild`**: возвращает последний дочерний узел, который является элементом
-
-- **`previousSibling`**: возвращает предыдущий узел, который находится на одном уровне с текущим
-
-- **`nextSibling`**: возвращает следующий узел, который находится на одном уровне с текущим
-
-- **`previousElementSibling`**: возвращает предыдущий узел, который является элементом и который находится на одном уровне с текущим
-
-- **`nextElementSibling`**: возвращает следующий узел, который является элементом и который находится на одном уровне с текущим
-
-- **`ownerDocument`**: возвращает корневой узел документа
-
-- **`parentNode`**: возвращает родительский узел для текущего узла
-
-- **`parentElement`**: возвращает родительский узел, который является элементом
-
-- **`nodeName`**: возвращает имя узла
-
-- **`nodeType`**: возвращает тип узла в виде числа
-
-- **`nodeValue`**: возвращает текст текстового узла
-
-Прежде всего мы можем использовать свойства **`nodeName`** и **`nodeType`**, чтобы узнать тип узла:
-```html
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <title>DevPM</title>
-</head>
-<body>
-    <div id="article">
-        <h1 id="header">Home Page</h1>
-        <p>Page Text</p>
-    </div>
-<script>
-const article = document.getElementById("article");
-console.log(article.nodeName);  // DIV
-console.log(article.nodeType);  // 1
-</script>
-</body>
-</html>
-```
-
-Здесь получаем информацию по элементу с `id="header"`. В частности, свойство `nodeName` возвратит имя тега элемента — **`div`**, а свойство `nodeType` — число 1. Каждому типу узлов соответствует определенное число:
-
-| nodeType | Название константы          | Тип узла              | Описание                | nodeName           | nodeValue  |
-| -------- | --------------------------- | --------------------- | ----------------------- | ------------------ | ---------- |
-| 1        | `ELEMENT_NODE`                | Элемент               | HTML-элемент `<div>`, `<p>` | имя тега           | `null`       |
-| 2        | `ATTRIBUTE_NODE`              | Атрибут               | `href="..."` (устарело)   | имя атрибута       | значение   |
-| 3        | `TEXT_NODE`                   | Текст                 | Текст между тегами      | `#text`              | содержимое |
-| 4        | `CDATA_SECTION_NODE`          | CDATASection          | `<![CDATA[...]]>`         | `#cdata-section`     | содержимое |
-| 5        | `ENTITY_REFERENCE_NODE`       | `EntityReference`       | `&copy;`                  | имя сущности       | `null`       |
-| 6        | `ENTITY_NODE`                 | `Entity`                | `<!ENTITY logo>`          | имя сущности       | `null`       |
-| 7        | `PROCESSING_INSTRUCTION_NODE` | `ProcessingInstruction` | `<?xml-stylesheet?>`      | `target`             | содержимое |
-| 8        | `COMMENT_NODE`                | `Comment`               | `<!-- комментарий -->`    | `#comment`           | текст      |
-| 9        | `DOCUMENT_NODE`               | `Document`              | Корень документа        | `#document`          | `null`       |
-| 10       | `DOCUMENT_TYPE_NODE`          | `DocumentType`          | `<!DOCTYPE html>`         | имя `DOCTYPE`        | `null`       |
-| 11       | `DOCUMENT_FRAGMENT_NODE`      | `DocumentFragment`      | Временный контейнер     | `#document-fragment` | `null`       |
-| 12       | `NOTATION_NODE`               | `Notation`              | `<!NOTATION GIF>`         | имя нотации        | `null`       |
-
-RDF в контексте DOM не имеет специального `nodeType` — это формат данных (XML/RDFa/JSON-LD), парсится в обычные `Element`/`Text` узлы:
-```xml
-<!-- RDF/XML → ELEMENT_NODE (1) + TEXT_NODE (3) -->
-<rdf:Description rdf:about="ivan">
-  <foaf:name>Иван</foaf:name>  <!-- nodeType = 1, 3 -->
-</rdf:Description>
-```
-
-Таким образом, `nodeType` определяет DOM-структуру, RDF — семантику данных внутри `Element`/`Text` узлов.
-
-#### Получение родительского элемента
-Для получения родительского элемента применяются свойства **`parentNode`** и **`parentElement`**. Например:
-```html
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <title>DevPM</title>
-</head>
-<body>
-    <div id="article">
-        <h1 id="header">Home Page</h1>
-        <p>Page Text</p>
-    </div>
-    <script>
-    // выбираем все элемент c id="header"
-    const header = document.getElementById("header");
-    // получаем родительский элемента
-    const headerParent = header?.parentElement;
-    // можно так
-    // const headerParent = header?.parentNode;
-    console.log(headerParent);    // выводим родительский элемент на консоль
-    </script>
-</body>
-</html>
-```
-
-Здесь выводим на консоль элемент, в который помещен элемент с `id="header"`.
-
-Стоит отметить, что хотя оба метода в принципе возвращают один и тот же элемент, однако есть исключение — элемент `<html>`. Для него родительским узлом будет объект `document`, а вот родительского элемента у него не будет (будет значение `null`):
-```js
-const htmlEl = document.getElementsByTagName("html")[0];
-const parentElem = htmlEl.parentElement;
-const parentNode = htmlEl.parentNode;
-console.log(parentElem);    // null
-console.log(parentNode);    // объект document
-```
-
-#### Получение дочерних элементов
-Метод **`hasChildNodes()`** возвращает `true`, если элемент содержит вложенные узлы:
-```js
-const article = document.querySelector("div");
-if(article.hasChildNodes()){
-    console.log("There are child nodes");
-}
-else{
-    console.log("No child nodes");
-}
-```
-
-Для получения дочерних элементов можно использовать свойство **`children`**:
-```html
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <title>DevPM Vault</title>
-</head>
-<body>
-    <div id="article">
-        <h1 id="header">Home Page</h1>
-        <p>Page Text</p>
-    </div>
-<script>
-// выбираем элемент c id="article"
-const article = document.getElementById("article");
-
-for(elem of article.children){
-    console.log(elem);
-}
-</script>
-</body>
-</html>
-```
-
-Здесь получаем элемент с `id="article"` и в цикле проходим по всем его дочерним элементам. А это два элемента:
-```html
-<h1 id="header">Home Page</h1>
-<p>Page Text</p>
-```
-
-Если же нам надо выбрать вообще все дочерние узлы (не только элементы, но и атрибуты и текст), то применяется метод **`childNodes`**:
-```html
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <title>DevPM</title>
-</head>
-<body>
-    <div id="article">
-        <h1 id="header">Home Page</h1>
-        <p>Page Text</p>
-    </div>
-<script>
-// выбираем элемент c id="article"
-const article = document.getElementById("article");
-
-for(node of article.childNodes){
-    let type = "";
-    if(node.nodeType===1) type="элемент";
-    else if(node.nodeType===2) type="атрибут";
-    else if(node.nodeType===3) type="текст";
-
-    console.log(node.nodeName, ": ", type);
-}
-</script>
-</body>
-</html>
-```
-
-Здесь мы выбираем тот же элемент, но теперь перебираем его узлы. Выбираем элемент `div` с классом `article` и пробегаемся по его дочерним узлам. И в цикле выводим имя узла и его тип с помощью свойств `nodeName` и `nodeType`.
-
-И несмотря на то, что в блоке `div#article` только два элемента: заголовок `h1` и параграф, консоль отобразит нам пять узлов.
-
-```
-#text :  текст
-H1 :  элемент
-#text :  текст
-P :  элемент
-#text :  текст
-```
-
-Дело в том, что пробелы между узлами также считаются за отдельные текстовые узлы. Если бы пробелов не было:
-```html
-<div id="article"><h1 id="header">Home Page</h1><p>Page Text</p></div>
-```
-
-то при переборе мы бы обнаружили только два дочерних узла, как и ожидалось.
-
-Кроме того, для получения первого и последнего узла/элемента применяются свойства **`firstChild`**/**`firstElementChild`** и **`lastChild`**/**`lastElementChild`** соответственно.
-
-```html
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <title>DevPM</title>
-</head>
-<body>
-    <div id="article">
-        <h1 id="header">Home Page</h1>
-        <p>Page Text</p>
-    </div>
-<script>
-const article = document.getElementById("article");
-console.log("First Child:", article.firstElementChild);
-console.log("Last Child:", article.lastElementChild);
-</script>
-</body>
-</html>
-```
-
-Консольный вывод:
-```
-First Child: <h1 id="header">Home Page</h1>​
-Last Child: <p>Page Text</p>​
-```
-
-##### Количество элементов
-Для получения количества дочерних элементов можно применять свойство **`childElementCount`**. Это значение будет эквивалентно значению `children.length`:
-```js
-const article = document.getElementById("article");
-console.log(article.childElementCount); // 2
-console.log(article.children.length); // 2
-```
-
-#### Получение элементов одного уровня
-Свойства **`previousSibling`**/**`previousElementSibling`** и **`nextSibling`**/**`nextElementSibling`** позволяют получить предыдущий и следующий элементы, которые располагаются на одном уровне с текущим. Например:
-```html
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <title>DevPM</title>
-</head>
-<body>
-    <div id="article">
-        <h1 id="header">Home Page</h1>
-        <p>Page Text 1</p>
-        <p>Page Text 2</p>
-        <p>Page Text 3</p>
-    </div>
-    <script>
-    const article = document.getElementById("article");
-    let tempNode = article.firstElementChild;
-    while(tempNode != null){
-        console.log(tempNode);
-        tempNode = tempNode.nextElementSibling
-    }
-    </script>
-</body>
-</html>
-```
-
-Здесь опять же получаем элемент с `id="article"`. Затем получаем его первый элемент в переменную `tempNode` и в цикле, пока `tempNode` не будет равен `null`, выводим его значение на консоль и потом присваиваем этой переменной следующий элемент того же уровня (соседний элемент)
-```js
-tempNode = tempNode.nextElementSibling
-```
-
-Таким образом, мы перебирем все элементы одного уровня. Консольный вывод:
-```
-<h1 id="header">Home Page</h1>
-<p>Page Text 1</p>
-<p>Page Text 2</p>
-<p>Page Text 3</p>
-```
-
-Также можно перебрать узлы в обратном порядке — сначала получаем последний узел, а затем обращаемся к предыдущему сестринскому узлу:
-```js
-const article = document.getElementById("article");
-let tempNode = article.lastElementChild;
-while(tempNode != null){
-    console.log(tempNode);
-    tempNode = tempNode.previousElementSibling;
-}
-```
-
-#### nodeValue и получение текстового содержимого
-Свойство **`nodeValue`** позволяет получить содержимое текстового узла, то есть его текст. Например:
-```html
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <title>METANIT.COM</title>
-</head>
-<body>
-    <div id="article">
-        <h1 id="header">Home Page</h1>
-        <p id="text">Page Text</p>
-    </div>
-    <script>
-    // получаем элемент с id="text"
-    const pageText = document.getElementById("text");
-    console.log(pageText.nodeValue);    // null
-    for(textNode of pageText.childNodes){
-        console.log(textNode.nodeValue);
-    }
-    </script>
-</body>
-</html>
-```
-
-В данном случае мы пытаемся получить текст элемента с `id="text"`. Сначала получаем данный элемент в константу `pageText`. Однако напрямую мы не можем у него вызвать у него свойство `nodeValue`. Если мы это сделаем, то получим **`null`**:
-```js
-console.log(pageText.nodeValue);    // null
-```
-
-Потому что полученный нами элемент не является текстовым узлом. Текстовый узел располагается внутри элемента `pageText`. И чтобы получить текст, нам надо обратиться к этому текстовому узлу через коллекцию `childNodes`:
-```js
-for(textNode of pageText.childNodes){
-    console.log(textNode.nodeValue);
-}
-```
-
-Хотя мы так можем получить текстовое содержимое элементов, но это не самый оптимальный способ, и далее мы рассмотрим другие способы.[^8.4]
 
 ### Элементы
 Для работы с элементами на веб-странице мы можем использовать как функциональность типа `Node`, который представляет любой узел веб-страницы, так и функциональность типа **`HTMLElement`**, который собственно представляет элемент. То есть объекты `HTMLElement` — это фактически те же самые узлы — объекты `Node`, у которых тип узла (свойство `nodeType`) равно 1.
