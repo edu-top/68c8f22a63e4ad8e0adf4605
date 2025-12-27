@@ -44,6 +44,9 @@
     - [Переопределение методов базового класса.](#переопределение-методов-базового-класса)
     - [Наследование и приватные поля и методы](#наследование-и-приватные-поля-и-методы)
     - [Проверка принадлежности объекта классу](#проверка-принадлежности-объекта-классу)
+  - [Практическая работа. Реализация ООП-библиотеки для геометрических расчетов](#практическая-работа-реализация-ооп-библиотеки-для-геометрических-расчетов)
+    - [Задание](#задание)
+    - [Полное задание](#полное-задание)
   - [Источники информации](#источники-информации)
 
 ### Особенности ООП в JavaScript
@@ -2033,6 +2036,473 @@ console.log(sam instanceof Manager); // false
 ```
 
 Здесь константа sam представляет объект класса `Employee`, который унаследован от `Person`, соответственно выражения `sam instanceof Person` и `sam instanceof Employee` возвратят `true`. А вот объектом класса `Manager` константа `sam` не является, поэтому выражение `sam instanceof Manager` возвратит `false`.[^4.15]
+
+### Практическая работа. Реализация ООП-библиотеки для геометрических расчетов
+
+#### Задание
+Разработать объектно-ориентированную библиотеку классов для вычисления характеристик плоских и объемных геометрических фигур. Библиотека должна демонстрировать базовые принципы ООП. Основные требования к архитектуре и функциональности:
+
+1. **Базовый класс** `Shape` (абстрактный)
+
+    **Свойства**: `id` (автоматически генерируемый уникальный идентификтор), `name`.
+
+    **Методы**:
+
+    - `getArea(): number`
+
+    - `getPerimeter(): number`
+
+    - `getColor(): string` — геттер
+
+    - `move(x: number, y: number): void` — перемещение (абстрактный)
+
+    - `scale(factor: number): void` — масштабирование (абстрактный)
+
+2. **2D-фигуры** (наследуют `Shape`)
+
+    Класс `Polygon` (базовый для многоугольников):
+
+    - Приватное свойство `#vertices: Point2D[]`
+
+    - Конструктор принимает массив вершин
+
+    - Методы: `addVertex(point)`, `removeVertex(index)`
+
+    `Circle`:
+
+    - Радиус `r`
+
+    - Центр `center: Point2D`
+
+    `Rectangle` (наследует `Polygon`):
+
+    - Свойства: `width`, `height`
+
+    - Конструктор: `(x, y, width, height)`
+
+    `Triangle` (наследует `Polygon`):
+
+    - Проверяет не вырожденность (площадь > 0)
+
+    - Дополнительно: `getAngles(): {A: number, B: number, C: number}`
+
+    `RegularPolygon` (наследует `Polygon`):
+
+    - Радиус описанной окружности `R`
+
+    - Количество сторон `sides`
+
+    - Автоматически генерирует вершины
+
+3. **3D фигуры** (наследуют `Shape3D`)
+
+    Класс `Shape3D` (наследует `Shape`):
+
+    - Новые абстрактные методы: `getVolume(): number`, `getSurfaceArea(): number`
+
+    - Свойство `position: Point3D`
+
+    `Sphere`:
+
+    - Радиус `r`
+
+    `Cylinder`:
+
+    - Радиус основания `r`, высота `h`
+
+    `Cube`:
+
+    - Длина ребра `side`
+
+    `Pyramid` (составной объект):
+
+    - Композиция: `base: Polygon`, `apex: Point3D`
+
+    - Переопределяет методы родителя
+
+4. **Вспомогательные классы**
+
+    `Point2D` и `Point3D`:
+
+    - Методы: `distanceTo(other)`, `equals(other)`, арифметика (`add`, `subtract`, `scale`)
+
+    `Vector2D` и `Vector3D`:
+
+    - Нормализация, скалярное произведение, угол между векторами
+
+5. **Валидация**: все конструкторы проверяют корректность входных данных
+
+#### Полное задание
+Разработать объектно-ориентированную библиотеку MathShapesJS для вычисления характеристик плоских и объемных геометрических фигур. Библиотека должна демонстрировать принципы ООП: инкапсуляцию, наследование, полиморфизм, абстракцию и композицию.
+
+Требования к архитектуре:
+
+1. Базовый класс `Shape` (абстрактный)
+
+    **Свойства**: `id` (уникальный UUID), `name`.
+
+    **Методы**:
+
+    - `getArea(): number` — абстрактный (`throw Error`)
+
+    - `getPerimeter(): number` — абстрактный (`throw Error`)
+
+    - `getColor(): string` — геттер
+
+    - `setColor(color: string): void` — сеттер с валидацией HEX/RGB
+
+    - `toJSON(): object` — сериализация
+
+    - `renderSVG(): string` — SVG разметка фигуры
+
+    - `move(x: number, y: number): void` — перемещение (абстрактный)
+
+    - `scale(factor: number): void` — масштабирование (абстрактный)
+
+2. 2D фигуры (наследуют `Shape`)
+
+    Класс `Polygon` (базовый для многоугольников):
+
+    - Приватное свойство `#vertices: Point2D[]`
+
+    - Конструктор принимает массив вершин
+
+    - Методы: `addVertex(point)`, `removeVertex(index)`
+
+    `Circle`:
+
+    - Радиус `r`
+
+    - Центр `center: Point2D`
+
+    `Rectangle` (наследует `Polygon`):
+
+    - Свойства: `width`, `height`
+
+    - Конструктор: `(x, y, width, height)`
+
+    `Triangle` (наследует `Polygon`):
+
+    - Проверяет не вырожденность (площадь > 0)
+
+    - Дополнительно: `getAngles(): {A: number, B: number, C: number}`
+
+    `RegularPolygon` (наследует `Polygon`):
+
+    - Радиус описанной окружности `R`
+
+    - Количество сторон `sides`
+
+    - Автоматически генерирует вершины
+
+3. 3D фигуры (наследуют `Shape3D`)
+
+    Класс `Shape3D` (наследует `Shape`):
+
+    - Новые абстрактные методы: `getVolume(): number`, `getSurfaceArea(): number`
+
+    - Свойство `position: Point3D`
+
+    `Sphere`:
+
+    - Радиус `r`
+
+    `Cylinder`:
+
+    - Радиус основания `r`, высота `h`
+
+    `Cube`:
+
+    - Длина ребра `side`
+
+    `Pyramid` (составной объект):
+
+    - Композиция: `base: Polygon`, `apex: Point3D`
+
+    - Переопределяет методы родителя
+
+    4. Вспомогательные классы
+
+    `Point2D` и `Point3D`:
+
+    - Методы: `distanceTo(other)`, `equals(other)`, арифметика (`add`, `subtract`, `scale`)
+
+    `Vector2D` и `Vector3D`:
+
+    - Нормализация, скалярное произведение, угол между векторами
+
+5. Сервисный класс `ShapeCollection`
+
+    Хранит массив фигур `Shape[]`
+
+    Методы:
+
+    - `add(shape: Shape)`, `remove(id: string)`
+
+    - `findByArea(min: number, max: number): Shape[]`
+
+    - `getTotalArea(): number`
+
+    - `sortBy(callback: (a: Shape, b: Shape) => number)`
+
+    - `filter(predicate: (shape: Shape) => boolean)`
+
+    - `groupByColor(): Map<string, Shape[]>`
+
+    - `exportToJSON(): string`
+
+    - `importFromJSON(json: string): void`
+
+6. Фабрика `ShapeFactory`
+
+    Статические методы создания фигур:
+
+    ```js
+    ShapeFactory.circle(center, radius);
+    ShapeFactory.rectangle(x, y, width, height);
+    ShapeFactory.sphere(position, radius);
+    ```
+
+Функциональные требования
+1. **Валидация**: Все конструкторы проверяют корректность входных данных
+
+2. **Точность**: Вычисления с погрешностью не более 1e-10
+
+3. **Производительность**: `ShapeCollection` с 1000+ фигур работает < 100ms
+
+4. **Сериализация**: Полная поддержка JSON в обе стороны
+
+Методы вычисления (реализовать точно)
+
+2D:
+```
+Circle: area = πr², perimeter = 2πr
+Rectangle: area = w×h, perimeter = 2(w+h)
+Triangle: площадь Герона, периметр суммы длин сторон
+```
+
+3D:
+```
+Sphere: V = 4/3πr³, S = 4πr²
+Cylinder: V = πr²h, S = 2πr(r+h)
+Cube: V = a³, S = 6a²
+Pyramid: V = 1/3Sh, S = Sоснования + боковые грани
+```
+
+Интерфейсы и типы
+```
+interface Drawable {
+  renderSVG(): string;
+}
+
+interface Movable {
+  move(x: number, y: number): void;
+}
+
+interface Scalable {
+  scale(factor: number): void;
+}
+```
+
+Тестовые сценарии
+1. Создать 5 кругов разного радиуса → вычислить суммарную площадь
+
+2. Сравнить площадь треугольника с ромбом (проверка полиморфизма)
+
+3. Создать пирамиду с квадратным основанием → вычислить объём
+
+4. `ShapeCollection`: добавить 100 случайных фигур → найти топ-10 по площади
+
+5. Сериализация/десериализация коллекции
+
+Дополнительные задания (бонус +20%)
+1. **Canvas рендеринг**: метод `render(ctx: CanvasRenderingContext2D)`
+
+2. **Интерактивность**: обработка событий мыши (drag&drop фигур)
+
+3. **Оптимизация**: `Proxy` для реактивного обновления `totalArea`
+
+4. **Visitor паттерн**: отдельный класс `AreaCalculator`, `PerimeterCalculator`
+
+5. **Модульная система**: каждый класс в отдельном ES6 модуле
+
+Критерии оценки (100 баллов)
+```
+Архитектура и ООП принципы: 30
+Корректность вычислений: 25
+Инкапсуляция/валидация: 15
+Производительность: 10
+Тестируемость/документация: 10
+Дополнительные фичи: 10
+```
+
+Пример использования
+```js
+const circle = ShapeFactory.circle({x: 100, y: 100}, 50);
+const rect = ShapeFactory.rectangle(0, 0, 200, 100);
+
+const collection = new ShapeCollection();
+collection.add(circle).add(rect);
+
+console.log(collection.getTotalArea()); // ~17853.98
+console.log(collection.findByArea(1000, 10000)); // [circle]
+```
+
+**Задание**: Геометрическая библиотека MathShapesJS (чистый JavaScript)
+
+**Цель**: Разработать объектно-ориентированную библиотеку для вычисления характеристик 2D геометрических фигур. Демонстрировать принципы ООП: инкапсуляцию, наследование, полиморфизм, абстракцию.
+
+**Требования к архитектуре**
+1. Базовый класс Shape (абстрактный)
+
+```js
+class Shape {
+  constructor(name, color = '#000000') {
+    if (this.constructor === Shape) {
+      throw new Error('Нельзя создать экземпляр абстрактного класса Shape');
+    }
+    this.#id = crypto.randomUUID();
+    this.#name = name;
+    this.#color = this.#validateColor(color);
+  }
+
+  #id; #name; #color; // приватные поля
+
+  // Абстрактные методы (throw Error в базовом классе)
+  getArea() { throw new Error('Метод getArea() должен быть реализован'); }
+  getPerimeter() { throw new Error('Метод getPerimeter() должен быть реализован'); }
+  move(x, y) { throw new Error('Метод move() должен быть реализован'); }
+
+  getColor() { return this.#color; }
+  setColor(color) { this.#color = this.#validateColor(color); }
+
+  #validateColor(color) { /* HEX/RGB валидация */ }
+  toJSON() { /* сериализация */ }
+  renderSVG() { /* SVG разметка */ }
+}
+```
+
+2. Конкретные классы фигур
+
+`Circle`:
+
+- Конструктор: `new Circle(centerX, centerY, radius)`
+
+- Формулы: πr², 2πr
+
+`Rectangle`:
+
+- Конструктор: `new Rectangle(x, y, width, height)`
+
+- Формулы: w×h, 2(w+h)
+
+`Triangle` (наследует `Polygon`):
+
+- Конструктор: new Triangle(x1,y1, x2,y2, x3,y3)
+
+- Площадь Герона, проверка невырожденности
+
+`RegularPolygon`:
+
+- Конструктор: `new RegularPolygon(centerX, centerY, radius, sides)`
+
+- Автогенерация вершин
+
+3. Вспомогательный класс `Point2D`
+
+```js
+class Point2D {
+  constructor(x, y) { this.x = x; this.y = y; }
+  distanceTo(other) { /* евклидово расстояние */ }
+  equals(other) { /* сравнение */ }
+}
+```
+
+4. Сервисный класс `ShapeCollection`
+
+```js
+const collection = new ShapeCollection();
+collection.add(circle).add(rect);
+console.log(collection.getTotalArea()); // полиморфизм!
+```
+
+**Задача 1**: Базовая иерархия (30 баллов)
+1. Реализовать `Shape`, `Circle`, `Rectangle` с приватными полями (`#`)
+
+2. Абстрактные методы `getArea()`, `getPerimeter()` с `throw Error`
+
+3. Геттеры/сеттеры для цвета с валидацией HEX (`#rrggbb`)
+
+4. Метод `renderSVG()` возвращает строку SVG
+
+5. Тестировать: `circle.getArea() === Math.PI * r * r`
+
+**Задача 2**: Наследование и многоугольники (20 баллов)
+1. Создать `Polygon` (базовый для многоугольников)
+
+2. `Triangle` наследует `Polygon`
+
+3. Проверка невырожденности треугольника (площадь > 0)
+
+4. Реализовать площадь Герона: s = (a+b+c)/2, area = √(s(s-a)(s-b)(s-c))
+
+**Задача 3**: Регулярные многоугольники (15 баллов)
+1. `RegularPolygon` генерирует вершины по формуле: x = cx + R·cos(2πi/n), y = cy + R·sin(2πi/n)
+
+2. Автоматически вычисляет площадь и периметр
+
+3. Тест: правильный шестиугольник имеет площадь 1.5√3·R²
+
+**Задача 4**: `ShapeCollection` и полиморфизм (20 баллов)
+
+```js
+class ShapeCollection {
+  #shapes = [];
+  add(shape) { /* duck typing проверка */ }
+  getTotalArea() { /* ∑ shape.getArea() */ }
+  findByArea(min, max) { /* фильтрация */ }
+  sortByArea() { /* сортировка */ }
+  toJSON() { /* сериализация массива */ }
+}
+```
+
+Тест: смешать круги/прямоугольники/треугольники → `getTotalArea()`
+
+**Задача 5**: Фабрика и утилиты (15 баллов)
+
+```js
+class ShapeFactory {
+  static circle(cx, cy, r) { return new Circle(cx, cy, r); }
+  static square(x, y, side) { /* удобный конструктор */ }
+  static random(n) { /* n случайных фигур */ }
+}
+```
+
+- `move(x,y)` и `scale(factor)` для всех фигур
+
+Критерии оценки (100 баллов)
+```
+Правильность формул: 25
+Инкапсуляция (# поля, геттеры/сеттеры): 20
+Наследование/полиморфизм: 20
+Валидация данных: 15
+ShapeCollection функционал: 10
+Кодстайл/JSDoc: 10
+```
+
+Тестовый сценарий (обязательно!)
+```js
+// Запуск в консоли
+const circle = ShapeFactory.circle(0, 0, 10);
+const rect = new Rectangle(0, 0, 20, 5);
+const triangle = new Triangle(0,0, 4,0, 2,3);
+
+const coll = new ShapeCollection([circle, rect, triangle]);
+console.log(coll.getTotalArea().toFixed(2)); // ~343.54
+
+coll.move(100, 100); // все фигуры переместились
+console.log(coll.toJSON());
+```
 
 ### Источники информации
 [^4.5]: [Функции-конструкторы объектов](https://metanit.com/web/javascript/4.5.php)
