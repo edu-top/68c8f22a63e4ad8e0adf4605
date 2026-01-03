@@ -160,7 +160,7 @@
 
 На картинке ниже в общих чертах показано, что доступно для JavaScript в браузерном окружении:
 
-![Window object](../img/windowObjects.svg)
+![Window object](../svg/windowObjects.svg)
 
 Как мы видим, имеется корневой объект `window`, который выступает в 2 ролях:
 
@@ -830,7 +830,7 @@ DOM позволяет нам делать что угодно с элемент
 
 На рисунке ниже изображены основные классы:
 
-![DOM class hierarchy](../img/_dom-class-hierarchy.svg)
+![DOM class hierarchy](../svg/dom-class-hierarchy.svg)
 
 Существуют следующие классы:
 
@@ -1241,7 +1241,7 @@ Url: "app/picure3.png" Alt:"Картинка 3"
 #### Навигационные свойства
 Так выглядят основные ссылки, по которым можно переходить между узлами DOM:
 
-![DOM navigation links](../img/dom-links.svg)
+![DOM navigation links](../svg/dom-links.svg)
 
 Поговорим об этом подробнее.
 
@@ -1721,7 +1721,7 @@ for(textNode of pageText.childNodes){
 
 Поэтому давайте рассмотрим дополнительный набор ссылок, которые учитывают только *узлы-элементы*:
 
-![DOM links elements](../img/dom-links-elements.svg)
+![DOM links elements](../svg/dom-links-elements.svg)
 
 Эти ссылки похожи на те, что раньше, только в ряде мест стоит слово `Element`:
 
@@ -3378,7 +3378,7 @@ div.innerHTML = "<strong>Всем привет!</strong> Вы прочитали
 
 Наглядная иллюстрация того, куда эти методы вставляют:
 
-![Before prepend append after](../img/before-prepend-append-after.svg)
+![Before prepend append after](../svg/before-prepend-append-after.svg)
 
 Итоговый список будет таким:
 ```html
@@ -3450,7 +3450,7 @@ after
 
 Варианты вставки:
 
-![Insert adjacent](../img/insert-adjacent.svg)
+![Insert adjacent](../svg/insert-adjacent.svg)
 
 Мы можем легко заметить сходство между этой и предыдущей картинкой. Точки вставки фактически одинаковые, но этот метод вставляет HTML.
 
