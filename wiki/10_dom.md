@@ -1830,11 +1830,50 @@ for(textNode of pageText.childNodes){
 - `<ul>`?
 - второй `<li>` (с именем Пит)?
 
+<details>
+<summary>Решение</summary>
+
+Есть несколько способов для получения элементов, например:
+
+DOM-узел элемента `<div>`:
+```js
+document.body.firstElementChild
+// или
+document.body.children[0]
+// или (первый узел пробел, поэтому выбираем второй)
+document.body.childNodes[1]
+```
+
+DOM-узел элемента `<ul>`:
+```js
+document.body.lastElementChild
+// или
+document.body.children[1]
+```
+
+Второй `<li>` (с именем Пит):
+```js
+// получаем <ul>, и его последнего ребёнка
+document.body.lastElementChild.lastElementChild
+```
+
+</details>
+
 ##### Вопрос о соседях
 Если `elem` – произвольный узел DOM-элемента…
 
 - Правда, что `elem.lastChild.nextSibling` всегда равен `null`?
 - Правда, что `elem.children[0].previousSibling` всегда равен `null`?
+
+<details>
+<summary>Решение</summary>
+
+1. Да. Верно. Элемент `elem.lastChild` всегда последний, у него нет ссылки `nextSibling`.
+2. Нет. Неверно. Потому что `elem.children[0]` – потомок-элемент. Но перед ним могут быть другие узлы. Например, `previousSibling` может быть текстовым узлом.
+
+Обратите внимание, что в обоих случаях, если детей нет, то будет ошибка. При этом `elem.lastChild` равен `null`, а значит – ошибка при попытке доступа к `elem.lastChild.nextSibling`.
+
+</details>
 
 ##### Выделите ячейки по диагонали
 Напишите код, который выделит красным цветом все ячейки в таблице по диагонали.
@@ -1848,6 +1887,15 @@ td.style.backgroundColor = 'red';
 Должно получиться так:
 
 ![Table](../img/table-diagonal.png)
+
+<details>
+<summary>Решение</summary>
+
+Для получения доступа к диагональным ячейкам таблицы используем свойства `rows` и `cells`.
+
+[Исходный код](../src/10_dom/diagonal-selection.html)
+
+</details>
 
 ### Элементы
 Для работы с элементами на веб-странице мы можем использовать как функциональность типа `Node`, который представляет любой узел веб-страницы, так и функциональность типа **`HTMLElement`**, который собственно представляет элемент. То есть объекты `HTMLElement` — это фактически те же самые узлы — объекты `Node`, у которых тип узла (свойство `nodeType`) равно 1.
@@ -2346,6 +2394,8 @@ for (let li of document.querySelectorAll('li')) {
 ```
 
 Так мы сможем получить количество потомков как `li.getElementsByTagName('li').length`.
+
+[Исходный код](../src/10_dom/counting-descendants.html)
 
 </details>
 
@@ -3133,6 +3183,46 @@ let divs = document.getElementsByTagName('div');
 6. Последний `input` в этой форме.
 
 Откройте страницу [table.html](https://learn.javascript.ru/task/find-elements/table.html) в отдельном окне и используйте для этого браузерные инструменты разработчика.[^searching-elements-dom]
+
+<details>
+<summary>Решение</summary>
+
+Есть много путей как это сделать.
+
+Вот некоторые:
+```js
+// 1. Таблица с `id="age-table"`.
+let table = document.getElementById('age-table')
+
+// 2. Все label в этой таблице
+table.getElementsByTagName('label')
+// или
+document.querySelectorAll('#age-table label')
+
+// 3. Первый td в этой таблице
+table.rows[0].cells[0]
+// или
+table.getElementsByTagName('td')[0]
+// или
+table.querySelector('td')
+
+// 4. Форма с name="search"
+// предполагаем, что есть только один элемент с таким name в документе
+let form = document.getElementsByName('search')[0]
+// или, именно форма:
+document.querySelector('form[name="search"]')
+
+// 5. Первый input в этой форме
+form.getElementsByTagName('input')[0]
+// или
+form.querySelector('input')
+
+// 6. Последний input в этой форме
+let inputs = form.querySelectorAll('input') // найти все input
+inputs[inputs.length-1] // взять последний
+```
+
+</details>
 
 ### Изменение документа
 Модификации DOM – это ключ к созданию «живых» страниц.
@@ -4840,6 +4930,8 @@ let links = document.querySelectorAll(selector);
 
 links.forEach(link => link.style.color = 'orange');
 ```
+
+[Исходный код](../src/10_dom/orange-links.html)
 
 </details>
 
