@@ -1,0 +1,161 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <link href="./data-tooltip.css" rel="stylesheet">
+  <style>
+    table {
+      border-collapse: collapse;
+      margin: 1em 0.5em;
+    }
+    th, td {
+      border: 1px solid black;
+      padding: 4px;
+    }
+    th {
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+      padding-right: 16px; /* место под стрелку */
+    }
+    th::after {
+      content: "";
+      position: absolute;
+      right: 4px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 10px;
+      color: #333;
+    }
+    th[data-order="asc"]::after {
+      content: "▲";
+    }
+    th[data-order="desc"]::after {
+      content: "▼";
+    }
+    th:hover {
+      background: yellow;
+    }
+  </style>
+  <script src="./data-tooltip.js" defer></script>
+</head>
+
+<body>
+
+  <table id="grid">
+    <thead>
+      <tr>
+        <th data-type="number">Id</th>
+        <th data-type="string">Логин</th>
+        <th data-type="string" data-tooltip="Сортировать по возрастанию">Почта</th>
+        <th data-type="string">Фамилия</th>
+        <th data-type="string">Имя</th>
+        <th data-type="number" data-tooltip="Сортировать по убыванию">Возраст</th>
+        <th data-type="string">Роль</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>5</td>
+        <td>Вася</td>
+        <td>vasya@example.com</td>
+        <td>Иванов</td>
+        <td>Василий</td>
+        <td>25</td>
+        <td>user</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Петя</td>
+        <td>petya@example.com</td>
+        <td>Петров</td>
+        <td>Пётр</td>
+        <td>30</td>
+        <td>admin</td>
+      </tr>
+      <tr>
+        <td>12</td>
+        <td>Женя</td>
+        <td>zhenya@example.com</td>
+        <td>Сидоров</td>
+        <td>Евгений</td>
+        <td>22</td>
+        <td>user</td>
+      </tr>
+      <tr>
+        <td>9</td>
+        <td>Маша</td>
+        <td>masha@example.com</td>
+        <td>Смирнова</td>
+        <td>Мария</td>
+        <td>27</td>
+        <td>moderator</td>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td>Илья</td>
+        <td>ilya@example.com</td>
+        <td>Кузнецов</td>
+        <td>Илья</td>
+        <td>19</td>
+        <td>user</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <script>
+    const grid = document.getElementById('grid');
+
+    grid.onclick = function(e) {
+      if (e.target.tagName !== 'TH') return;
+
+      const th = e.target;
+      const type = th.dataset.type;
+      const colNum = th.cellIndex;
+
+      // текущее направление (по умолчанию asc)
+      const currentOrder = th.dataset.order === 'desc' ? 'desc' : 'asc';
+      const newOrder = currentOrder === 'asc' ? 'desc' : 'asc';
+
+      // сброс стрелок на всех заголовках
+      for (const header of grid.querySelectorAll('th')) {
+        header.removeAttribute('data-order');
+      }
+      // установить новое направление на текущем
+      th.dataset.order = newOrder;
+
+      sortGrid(colNum, type, newOrder);
+    };
+
+    function sortGrid(colNum, type, order) {
+      const tbody = grid.querySelector('tbody');
+      const rowsArray = Array.from(tbody.rows);
+
+      let compare;
+
+      switch (type) {
+        case 'number':
+          compare = function(rowA, rowB) {
+            return rowA.cells[colNum].innerHTML - rowB.cells[colNum].innerHTML;
+          };
+          break;
+        case 'string':
+          compare = function(rowA, rowB) {
+            return rowA.cells[colNum].innerHTML > rowB.cells[colNum].innerHTML ? 1 : -1;
+          };
+          break;
+      }
+
+      rowsArray.sort(compare);
+
+      if (order === 'desc') {
+        rowsArray.reverse();
+      }
+
+      tbody.append(...rowsArray);
+    }
+  </script>
+
+</body>
+</html>

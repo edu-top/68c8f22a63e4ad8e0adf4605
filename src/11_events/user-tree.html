@@ -1,0 +1,138 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <link href="./data-tooltip.css" rel="stylesheet">
+  <style>
+    .tree span:hover {
+      font-weight: bold;
+    }
+
+    .tree span {
+      cursor: pointer;
+      font-family: monospace;
+    }
+
+    /* Убираем буллеты у сворачиваемых узлов */
+    .tree li.branch {
+      list-style: none;
+    }
+
+    .tree li {
+      font-size: 14px;
+      padding: 2px;
+    }
+
+    .tree ul {
+      margin-left: 20px;
+    }
+
+    .tree .leaf {
+      cursor: default;
+    }
+
+    /* Маркер: фиксированный размер, поворот для развёрнутого состояния */
+    .tree .marker {
+      display: inline-block;
+      padding: 5px;
+      width: 1em;
+      text-align: center;
+      transition: transform 0.15s ease;
+    }
+
+    .tree .marker.rotated {
+      transform: rotate(90deg);
+    }
+  </style>
+  <meta charset="utf-8">
+  <script src="./data-tooltip.js" defer></script>
+</head>
+
+<body>
+
+  <ul class="tree" id="tree">
+    <li>Администраторы
+      <ul>
+        <li data-tooltip="<b>Почта</b>: alex@mail.com<br><b>Имя</b>: Алексей<br><b>Фамилия</b>: Марков">Alex</li>
+        <li>Jane</li>
+      </ul>
+    </li>
+    <li>Модераторы
+      <ul>
+        <li>Mike</li>
+        <li>Jill</li>
+        <li>Thomas</li>
+      </ul>
+    </li>
+    <li>Пользователи
+      <ul>
+        <li>John</li>
+        <li>Wayne</li>
+        <li>Mark</li>
+        <li>Donald</li>
+        <li>Phil</li>
+      </ul>
+    </li>
+  </ul>
+
+  <script>
+    // Сначала скрываем все вложенные списки
+    for (let ul of tree.querySelectorAll('ul')) {
+      ul.hidden = true;
+    }
+
+    // Теперь обрабатываем каждый <li>
+    for (let li of tree.querySelectorAll('li')) {
+      let hasChildren = li.querySelector('ul') !== null;
+
+      // Находим первый непустой текстовый узел
+      let textNode = null;
+      for (let node of li.childNodes) {
+        if (node.nodeType === Node.TEXT_NODE && node.nodeValue.trim() !== '') {
+          textNode = node;
+          break;
+        }
+      }
+
+      if (textNode) {
+        let span = document.createElement('span');
+        textNode.parentNode.insertBefore(span, textNode);
+        span.appendChild(textNode);
+
+        if (hasChildren) {
+          li.classList.add('branch');
+
+          let marker = document.createElement('span');
+          marker.className = 'marker';
+          marker.textContent = '▶'; // изначально свёрнуто
+          span.prepend(marker);
+        } else {
+          span.classList.add('leaf');
+        }
+      }
+    }
+
+    // Обработчик клика
+    tree.onclick = function(event) {
+      let span = event.target.closest('.tree span');
+      if (!span || span.classList.contains('leaf')) return;
+
+      let li = span.closest('li');
+      let childrenContainer = li.querySelector('ul');
+      if (!childrenContainer) return;
+
+      childrenContainer.hidden = !childrenContainer.hidden;
+
+      let marker = span.querySelector('.marker');
+      if (marker) {
+        if (childrenContainer.hidden) {
+          marker.classList.remove('rotated');
+        } else {
+          marker.classList.add('rotated');
+        }
+      }
+    };
+  </script>
+
+</body>
+</html>
