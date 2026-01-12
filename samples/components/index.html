@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello World</title>
+    <style>
+        hello-world{
+            font-family: Verdana;
+            font-size:22px;
+        }
+        hello-world p {
+            font-size: 30px;
+        }
+        /* делаем цвет шкалы ползунка красным */
+        input::-webkit-slider-runnable-track {
+        background: red;
+        }
+
+    </style>
+    <script src="./DateTime.js"></script>
+    <script src="./TimeFormatted.js"></script>
+</head>
+<body>
+    <hello-world id="hello"></hello-world>
+    <hello-world hellocolor="#2980b9"></hello-world>
+    <script>
+        class HelloWorld extends HTMLElement {
+            constructor() {
+                super();
+                const message = "Привет, мир!";
+                this.innerText = message;
+                // this.textContent = message;
+                let welcome = "Доброе утро!";
+                const hour = new Date().getHours();
+                if (hour > 17) {
+                welcome = "Добрый вечер!";
+                } else if (hour > 12) {
+                welcome = "Добрый день!";
+                }
+                this.innerHTML += `<p> ${welcome}</p>`;
+                this.style="cursor: pointer;"
+            }
+            showTime(){
+                console.log(new Date().toTimeString());
+            }
+            connectedCallback() {
+                this.style.color = "red";
+                if (this.hasAttribute("hellocolor")) {
+                    this.style.color = this.getAttribute("hellocolor");
+                }
+            }
+        }
+        customElements.define("hello-world", HelloWorld);
+
+        // получаем элемент
+        const hello = document.getElementById("hello");
+        // по нажатию вызываем его метод showTime
+        hello.addEventListener("click", ()=> hello.showTime());
+
+        customElements.define("time-formatted", TimeFormatted);
+        customElements.define("date-time", DateTime);
+    </script>
+    <time-formatted></time-formatted><br>
+    <time-formatted datetime="2025-01-01"
+                    year="numeric" month="long" day="numeric"
+                    hour="numeric" minute="numeric" second="numeric"
+                    time-zone-name="short"
+    ></time-formatted>
+    <date-time datetime="2025-01-01T12:00:00"></date-time>
+    <date-time id="datetimer"></date-time>
+    <script>
+        setInterval(() => datetimer.setAttribute('datetime', new Date().toISOString()), 1000);
+    </script>
+    <input type="range">
+</body>
+</html>

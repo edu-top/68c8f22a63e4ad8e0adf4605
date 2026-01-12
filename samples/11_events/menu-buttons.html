@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+
+  <div id="menu">
+    <button data-action="save">Сохранить</button>
+    <button data-action="load">Загрузить</button>
+    <button data-action="search">Поиск</button>
+  </div>
+
+  <script>
+    class Menu {
+      constructor(elem) {
+        elem.onclick = this.onClick.bind(this); // (*)
+        // elem.onclick = () => this.onClick(event);  // или просто this.onClick
+      }
+
+      save() {
+        alert('сохраняю');
+      }
+
+      load() {
+        alert('загружаю');
+      }
+
+      search() {
+        alert('ищу');
+      }
+
+      onClick(event) {
+        let action = event.target.dataset.action;
+        if (action) {
+          this[action]();
+        }
+      }
+
+    }
+
+    new Menu(menu);
+  </script>
+
+</body>
+</html>

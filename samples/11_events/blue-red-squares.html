@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DevPM</title>
+    <style>
+    #blueRect{
+        width:100px;
+        height:100px;
+        background-color:blue;
+    }
+    #redRect{
+        width:50px;
+        height:50px;
+        background-color:red;
+    }
+    </style>
+</head>
+<body>
+    <div id="blueRect">
+        <div id="redRect"></div>
+    </div>
+    <script>
+    const redRect = document.getElementById("redRect");
+    redRect.addEventListener("click", () => console.log("Событие на redRect"));
+
+    const blueRect = document.getElementById("blueRect");
+    blueRect.addEventListener("click", ()=>console.log("Событие на blueRect"));
+
+    document.body.addEventListener("click", () => console.log("Событие на body"));
+    </script>
+</body>
+</html>
