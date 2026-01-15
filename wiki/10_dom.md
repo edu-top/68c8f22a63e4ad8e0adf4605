@@ -159,8 +159,10 @@
       - [Покажите заметку рядом с элементом](#покажите-заметку-рядом-с-элементом)
       - [Покажите заметку около элемента (абсолютное позиционирование)](#покажите-заметку-около-элемента-абсолютное-позиционирование)
       - [Расположите заметку внутри элемента (абсолютное позиционирование)](#расположите-заметку-внутри-элемента-абсолютное-позиционирование)
-  - [Практическая работа. Реализация поведения "подсказка"](#практическая-работа-реализация-поведения-подсказка)
+  - [Практическая работа. Навигация по DOM-узлам](#практическая-работа-навигация-по-dom-узлам)
     - [Задание](#задание)
+  - [Практическая работа. Реализация поведения "подсказка"](#практическая-работа-реализация-поведения-подсказка)
+    - [Задание](#задание-1)
   - [Источники информации](#источники-информации)
 
 ### Введение в DOM
@@ -901,7 +903,7 @@ DOM позволяет нам делать что угодно с элемент
 - `EventTarget` – обеспечивает поддержку событий (поговорим о них дальше),
 - …и, наконец, он наследует от `Object`, поэтому доступны также методы «обычного объекта», такие как `hasOwnProperty`.
 
-Для того, чтобы узнать имя класса DOM-узла, вспомним, что обычно у объекта есть свойство `constructor`. Оно ссылается на конструктор класса, и в свойстве constructor.name` содержится его имя:
+Для того, чтобы узнать имя класса DOM-узла, вспомним, что обычно у объекта есть свойство `constructor`. Оно ссылается на конструктор класса, и в свойстве `constructor.name` содержится его имя:
 ```js
 alert( document.body.constructor.name ); // HTMLBodyElement
 ```
@@ -937,32 +939,32 @@ alert( document.body instanceof EventTarget ); // true
 
 !!! info "Спецификация IDL"
 
-В спецификации для описания классов DOM используется не JavaScript, а специальный язык [Interface description language](https://ru.wikipedia.org/wiki/%D0%AF%D0%B7%D1%8B%D0%BA_%D0%BE%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%B8%D1%8F_%D0%B8%D0%BD%D1%82%D0%B5%D1%80%D1%84%D0%B5%D0%B9%D1%81%D0%BE%D0%B2) (IDL), с которым достаточно легко разобраться.
+    В спецификации для описания классов DOM используется не JavaScript, а специальный язык [Interface description language](https://ru.wikipedia.org/wiki/%D0%AF%D0%B7%D1%8B%D0%BA_%D0%BE%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%B8%D1%8F_%D0%B8%D0%BD%D1%82%D0%B5%D1%80%D1%84%D0%B5%D0%B9%D1%81%D0%BE%D0%B2) (IDL), с которым достаточно легко разобраться.
 
-В IDL все свойства представлены с указанием их типов. Например, `DOMString`, `boolean` и т.д.
+    В IDL все свойства представлены с указанием их типов. Например, `DOMString`, `boolean` и т.д.
 
-Небольшой отрывок IDL с комментариями:
+    Небольшой отрывок IDL с комментариями:
 
-```js
-// Объявление HTMLInputElement
-// Двоеточие ":" после HTMLInputElement означает, что он наследует от HTMLElement
-interface HTMLInputElement: HTMLElement {
-  // далее идут свойства и методы элемента <input>
+    ```js
+    // Объявление HTMLInputElement
+    // Двоеточие ":" после HTMLInputElement означает, что он наследует от HTMLElement
+    interface HTMLInputElement: HTMLElement {
+      // далее идут свойства и методы элемента <input>
 
-  // "DOMString" означает, что значение свойства - строка
-  attribute DOMString accept;
-  attribute DOMString alt;
-  attribute DOMString autocomplete;
-  attribute DOMString value;
+      // "DOMString" означает, что значение свойства - строка
+      attribute DOMString accept;
+      attribute DOMString alt;
+      attribute DOMString autocomplete;
+      attribute DOMString value;
 
-  // boolean - значит, что autofocus хранит логический тип данных (true/false)
-  attribute boolean autofocus;
-  ...
-  // "void" перед методом означает, что данный метод не возвращает значение
-  void select();
-  ...
-}
-```
+      // boolean - значит, что autofocus хранит логический тип данных (true/false)
+      attribute boolean autofocus;
+      ...
+      // "void" перед методом означает, что данный метод не возвращает значение
+      void select();
+      ...
+    }
+    ```
 
 ##### Свойства узлов
 Объект **`Node`** предоставляет ряд свойств, с помощью которых мы можем получить информацию о данном узле:
@@ -1026,7 +1028,7 @@ console.log(article.nodeType);  // 1
 ##### Свойство «nodeType»
 Свойство `nodeType` предоставляет ещё один, «старомодный» способ узнать «тип» DOM-узла.
 
-Его значением является цифра:
+Его значением является число:
 
 - `elem.nodeType == 1` для узлов-элементов,
 - `elem.nodeType == 3` для текстовых узлов,
@@ -1082,7 +1084,7 @@ RDF в контексте DOM не имеет специального `nodeType
 В современных скриптах, чтобы узнать тип узла, мы можем использовать метод `instanceof` и другие способы проверить класс, но иногда `nodeType` проще использовать. Мы не можем изменить значение `nodeType`, только прочитать его.
 
 ##### Тег: nodeName и tagName
-Получив DOM-узел, мы можем узнать имя его тега из свойств `nodeName` и `tagName`:
+Получив DOM-узел, мы можем узнать имя его тега из свойств `nodeName` и `tagName`.
 
 Например:
 ```js
@@ -1612,7 +1614,7 @@ console.log(article.children.length); // 2
 ```
 
 ##### DOM-коллекции
-Как мы уже видели, `childNodes` похож на массив. На самом деле это не массив, а *коллекция* – особый перебираемый объект-псевдомассив.
+Как мы уже видели, `childNodes` похож на массив. На самом деле это не массив, а <dfn title="коллекция">коллекция</dfn> – особый перебираемый объект-псевдомассив.
 
 И есть два важных следствия из этого:
 
@@ -6318,6 +6320,83 @@ positionAt(blockquote, "top-in", note);
 
 </details>
 
+### Практическая работа. Навигация по DOM-узлам
+
+#### Задание
+
+1. **Дочерние элементы в DOM**
+
+    Для страницы:
+    ```html
+    <html>
+    <body>
+      <div>Пользователи:</div>
+      <ul>
+        <li>Джон</li>
+        <li>Пётр</li>
+      </ul>
+    </body>
+    </html>
+    ```
+
+    Написать код, позволяющий получить:
+
+    - элемент `<div>`;
+    - `<ul>`;
+    - второй `<li>` (с именем Пит).
+
+    <details>
+    <summary>Решение</summary>
+
+    Есть несколько способов для получения элементов, например:
+
+    DOM-узел элемента `<div>`:
+    ```js
+    document.body.firstElementChild
+    // или
+    document.body.children[0]
+    // или (первый узел пробел, поэтому выбираем второй)
+    document.body.childNodes[1]
+    ```
+
+    DOM-узел элемента `<ul>`:
+    ```js
+    document.body.lastElementChild
+    // или
+    document.body.children[1]
+    ```
+
+    Второй `<li>` (с именем Пётр):
+    ```js
+    // получаем <ul>, и его последнего ребёнка
+    document.body.lastElementChild.lastElementChild
+    ```
+
+    </details>
+
+2. **Выделение ячеек по диагонали**
+
+    Написать код, который выделит красным цветом все ячейки в таблице по диагонали.
+
+    Необходимо получить из таблицы `<table>` все диагональные `<td>` и выделить их, используя код:
+    ```js
+    //  в переменной td находится DOM-элемент для тега <td>
+    td.style.backgroundColor = 'red';
+    ```
+
+    Должно получиться так:
+
+    ![Table](../img/diagonal-selection.png)
+
+    <details>
+    <summary>Решение</summary>
+
+    Для получения доступа к диагональным ячейкам таблицы используем свойства `rows` и `cells`.
+
+    [Исходный код](../src/10_dom/diagonal-selection.html)
+
+    </details>
+
 ### Практическая работа. Реализация поведения "подсказка"
 
 #### Задание
@@ -6375,7 +6454,7 @@ positionAt(blockquote, "top-in", note);
 [^8.7]: [Изменение стиля элементов](https://metanit.com/web/javascript/8.7.php)
 [^browser-environment]: [Браузерное окружение, спецификации](https://learn.javascript.ru/browser-environment)
 [^dom-nodes]: [DOM-дерево](https://learn.javascript.ru/dom-nodes)
-[Навигация по DOM-элементам](https://learn.javascript.ru/dom-navigation)
+[^dom-navigation]: [Навигация по DOM-элементам](https://learn.javascript.ru/dom-navigation)
 [^searching-elements-dom]: [Поиск: getElement*, querySelector*](https://learn.javascript.ru/searching-elements-dom)
 [^basic-dom-node-properties]: [Свойства узлов: тип, тег и содержимое](https://learn.javascript.ru/basic-dom-node-properties)
 [^dom-attributes-and-properties]: [Атрибуты и свойства](https://learn.javascript.ru/dom-attributes-and-properties)
