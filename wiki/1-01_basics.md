@@ -1134,7 +1134,7 @@
 
 - Элементы HTML отмечают фрагменты содержимого, как бы сообщая браузеру: «это заголовок», «это абзац», «это ссылка» и т. д.
 
-- HTML позволяет создать свой собственный веб-сайт.
+- HTML позволяет создать свой собственный веб-сайт.[^html_intro]
 
 ### Глоссарий
 
@@ -1199,3 +1199,4 @@ XML (*eXtensible Markup Language* — «расширяемый язык разм
 [^2.7]: [Список определений](https://metanit.com/web/html5/2.7.php)
 [^2.8]: [Таблицы](https://metanit.com/web/html5/2.8.php)
 [^default]: [HTML Tutorial](https://www.w3schools.com/html/default.asp)
+[^html_intro]: [HTML Introduction](https://www.w3schools.com/html/html_intro.asp)
