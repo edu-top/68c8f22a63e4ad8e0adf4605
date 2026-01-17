@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DevPM</title>
+</head>
+<body>
+    <button id="btn">Pay</button>
+    <script>
+    const button = document.getElementById("btn");
+    document.addEventListener("payment_success", (e)=>{
+        console.log("Payment succeeded!");
+        console.log("Payment Sum:", e.detail.paymentSum);
+        console.log("Current balance:", e.detail.balance);
+    });
+    document.addEventListener("payment_fail", (e)=>{
+        console.error("Payment failed");
+        console.error("Current balance:", e.detail.balance, "Requested Sum: ", e.detail.paymentSum);
+    });
+    const myAcc = new Account(100);
+    button.addEventListener("click", ()=>myAcc.pay(50));
+
+    function Account(money) {
+        _money = money;
+        this.pay=function(sum){
+            const data = {
+                paymentSum: sum,
+                balance: _money
+            };
+            if(_money >= sum){
+                _money -= sum;
+
+                const event = new CustomEvent("payment_success", {
+                    detail: data
+                });
+                document.dispatchEvent(event);
+            }
+            else{
+                const event = new CustomEvent("payment_fail", {
+                    detail: data
+                });
+                document.dispatchEvent(event);
+            }
+        }
+    }
+    </script>
+</body>
+</html>
