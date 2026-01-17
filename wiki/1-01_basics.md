@@ -26,6 +26,8 @@
   - [Заголовки](#заголовки)
   - [Форматирование текста](#форматирование-текста)
   - [Работа с изображениями](#работа-с-изображениями)
+  - [Списки](#списки)
+    - [Горизонтальный список](#горизонтальный-список)
   - [Практическая работа 1-01. Форматирование текста](#практическая-работа-1-01-форматирование-текста)
   - [Источники информации](#источники-информации)
 
@@ -629,6 +631,151 @@
 
 ![Обтекание изображения текстом в HTML5](../img/696557da63e4ad8e0adf499e-1.23.png)
 
+### Списки
+
+Для создания списков в HTML5 применяются элементы `<ol>` (по умолчанию нумерованный список) и `<ul>` (по умолчанию ненумерованный список):
+```html
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Списки в HTML5</title>
+    </head>
+    <body>
+        <h2>Нумерованный список</h2>
+        <ol>
+            <li>iPhone 6S</li>
+            <li>Galaxy S7</li>
+            <li>Nexus 5X</li>
+            <li>Lumia 950</li>
+        </ol>
+        <h2>Ненумерованный список</h2>
+        <ul>
+            <li>iPhone 6S</li>
+            <li>Galaxy S7</li>
+            <li>Nexus 5X</li>
+            <li>Lumia 950</li>
+        </ul>
+    </body>
+</html>
+```
+
+![Списки в HTML5](../img/696b84b863e4ad8e0adf49a0-1.24.png)
+
+В нумерованном списке для нумерации элементов по умолчанию используется стандартные цифры от 1. В ненумерованном списке каждый элемент предваряется черной точкой.
+
+При необходимости мы можем настроить нумерацию или отражаемый рядом с элементом символ с помощью стиля **`list-style-type`**. Данный стиль может принимать множество различных значений. Отметим только основные и часто используемые. Для нумерованных списков стиль `list-style-type` может принимать следующие значения:
+
+- `decimal`: десятичные числа, отсчет идет от 1
+
+- `decimal-leading-zero`: десятичные числа, которые предваряются нулем, например, 01, 02, 03, … 98, 99
+
+- `lower-roman`: строчные римские цифры, например, i, ii, iii, iv, v
+
+- `upper-roman`: заглавные римские цифры, например, I, II, III, IV, V…
+
+- `lower-alpha`: строчные римские буквы, например, a, b, c..., z
+
+- `upper-alpha`: заглавные римские буквы, например, A, B, C, … Z
+
+Для нумерованных список с помощью атрибута **`start`** можно дополнительно задать символ, с которого будет начинаться нумерация. Например:
+```html
+<h2>list-style-type = decimal</h2>
+<ol style="list-style-type:decimal;" start="3">
+    <li>iPhone 6S</li>
+    <li>Galaxy S7</li>
+    <li>Nexus 5X</li>
+    <li>Lumia 950</li>
+</ol>
+<h2>list-style-type = upper-roman</h2>
+<ol style="list-style-type:upper-roman;">
+    <li>iPhone 6S Plus</li>
+    <li>Galaxy S7 Edge</li>
+    <li>Nexus 6P</li>
+    <li>Lumia 950 XL</li>
+</ol>
+<h2>list-style-type = lower-alpha</h2>
+<ol style="list-style-type:lower-alpha;">
+    <li>LG G 5</li>
+    <li>Huawei P8</li>
+    <li>Asus ZenFone 2</li>
+</ol>
+```
+
+![Нумерованный список в HTML5](../img/696b84b863e4ad8e0adf49a0-1.25.png)
+
+Для ненумерованного списка атрибут `list-style-type` может принимать следующие значения:
+
+- `disc`: черный диск
+
+- `circle`: пустой кружочек
+
+- `square`: черный квадратик
+
+Например:
+```html
+<h2>list-style-type = disc</h2>
+<ul style="list-style-type:disc;">
+    <li>iPhone 6S</li>
+    <li>Galaxy S7</li>
+    <li>Nexus 5X</li>
+    <li>Lumia 950</li>
+</ul>
+<h2>list-style-type = circle</h2>
+<ul style="list-style-type:circle;">
+    <li>iPhone 6S Plus</li>
+    <li>Galaxy S7 Edge</li>
+    <li>Nexus 6P</li>
+    <li>Lumia 950 XL</li>
+</ul>
+<h2>list-style-type = square</h2>
+<ul style="list-style-type:square;">
+    <li>LG G 5</li>
+    <li>Huawei P8</li>
+    <li>Asus ZenFone 2</li>
+</ul>
+```
+
+Неупорядоченный список в HTML5
+Еще одну интересную возможность по настройке списков предоставляет стиль **`list-style-image`**. Он задает изображение, которое будет отображаться рядом с элементом списка:
+```html
+<ul style="list-style-image:url(phone_touch.png);">
+    <li>iPhone 6S</li>
+    <li>Galaxy S7</li>
+    <li>Nexus 5X</li>
+    <li>Lumia 950</li>
+</ul>
+```
+
+![Картинки в списке в HTML5](../img/696b84b863e4ad8e0adf49a0-1.27.png)
+
+Стиль `list-style-image` в качестве значения принимает `url(phone_touch.png)`, где "phone_touch.png" — это название файла изображения. То есть в данном случае предполагается, что в одной папке с веб-страницей *index.html* у меня находится файл изображения *phone_touch.png*.
+
+#### Горизонтальный список
+Одним из распространенных способов стилизации списков представляет создание горизонтального списка. Для этого для всех элементов списка надо установить стиль `display:inline`:
+```html
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Горизонтальный список в HTML5</title>
+        <style>
+            ul#menu li {
+                display:inline;
+            }
+        </style>
+    </head>
+    <body>
+        <ul id="menu">
+            <li>Главная</li>
+            <li>Блог</li>
+            <li>Форум</li>
+            <li>О сайте</li>
+        </ul>
+    </body>
+</html>
+```
+
 ### Практическая работа 1-01. Форматирование текста
 Создать веб-страницу с текстовым содержимым, отформатированным в соответствии с прилагаемым образцом. Для форматирования использовать только элементы HTML.
 
@@ -648,3 +795,4 @@
 [^2.2]: [Заголовки](https://metanit.com/web/html5/2.2.php)
 [^2.3]: [Форматирование текста](https://metanit.com/web/html5/2.3.php)
 [^2.4]: [Работа с изображениями](https://metanit.com/web/html5/2.4.php)
+[^2.5]: [Списки](https://metanit.com/web/html5/2.5.php)
