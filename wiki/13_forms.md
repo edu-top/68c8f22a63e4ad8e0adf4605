@@ -8,6 +8,8 @@
     - [Свойства и методы форм](#свойства-и-методы-форм)
     - [Элементы форм](#элементы-форм)
     - [Свойства элементов форм](#свойства-элементов-форм)
+  - [Кнопки](#кнопки)
+    - [Очистка формы](#очистка-формы)
   - [Источники информации](#источники-информации)
 
 ### Формы и их элементы
@@ -160,5 +162,148 @@ const keyField = searchForm.elements["key"];
 keyField.focus();
 ```
 
+### Кнопки
+Для отправки введенных данных на форме используются кнопки. Для создания кнопки используется либо элемент `button`:
+```html
+<button name="send">Отправить</button>
+```
+
+Либо элемент `input`:
+```html
+<input type="submit" name="send" value="Отправить" />
+```
+
+С точки зрения функциональности в html эти элементы не совсем равноценны, но в данном случае они нас интересуют с точки зрения взаимодействия с кодом javascript.
+
+При нажатии на любой из этих двух вариантов кнопки происходит отправка формы по адресу, который указан у формы в атрибуте `action`, либо по адресу веб-страницы, если атрибут `action` не указан. Однако в коде javascript мы можем перехватить отправку, обрабатывая событие **`click`**
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+</head>
+<body>
+<form name="search">
+    <input type="text" name="key">
+    <input type="submit" name="send" value="Отправить" />
+</form>
+<script>
+function sendForm(e){
+
+    // получаем значение поля key
+    const keyBox = document.search.key;
+    const val = keyBox.value;
+    if(val.length<3){
+        alert("Недопустимая длина строки");
+        e.preventDefault();
+    }
+    else
+        alert("Отправка разрешена");
+}
+
+const sendButton = document.search.send;
+sendButton.addEventListener("click", sendForm);
+</script>
+</body>
+</html>
+```
+
+При нажатии на кнопку происходит событие `click`, и для его обработки к кнопке прикрепляем обработчик `sendForm`. В этом обработчике проверяем введенный в текстовое поле текст. Если его длина меньше 3 символов, то выводим сообщение о недостимой длине и прерываем обычный ход события с помощью вызова **`e.preventDefault()`**. В итоге форма не отправляется.
+
+Если же длина текста три и больше символов, то также выводится сообщение, и затем форма отправляется.
+
+![Отправка формы через JavaScript](../img/formsubmit.png)
+
+Также мы можем при необходимости при отправке изменить адрес, на который отправляются данные:
+```js
+function sendForm(e){
+
+    // получаем значение поля key
+    const keyBox = document.search.key;
+    const val = keyBox.value;
+    if(val.length > 3){
+        alert("Недопустимая длина строки");
+        document.search.action="PostForm";
+    }
+    else
+        alert("Отправка разрешена");
+}
+```
+
+В данном случае, если длина текста меньше 3 символов, то текст отправляется, только теперь он отправляется по адресу `PostForm`, поскольку задано свойство `action`:
+```js
+document.search.action="PostForm";
+```
+
+#### Очистка формы
+Для очистки формы предназначены следующие равноценные по функциональности кнопки:
+```html
+<button type="reset">Очистить</button>
+<input type="reset" value="Очистить" />
+```
+
+При нажатию на кнопки произойдет очистка форм. Но также функциональность по очистке полей формы можно реализовать с помощью метода `reset()`:
+```js
+function sendForm(e){
+
+    // получаем значение поля key
+    const keyBox = document.search.key;
+    const val = keyBox.value;
+    if(val.length < 3){
+        alert("Недопустимая длина строки");
+        document.search.reset();
+        e.preventDefault();
+    }
+    else
+        alert("Отправка разрешена");
+}
+```
+
+Кроме специальных кнопок отправки и очистки на форме также может использоваться обычная кнопка:
+```html
+<input type="button" name="send" value="Отправить" />
+```
+
+При нажатии на подобную кнопку отправки данных не происходит, хотя также генерируется событие `click`:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+</head>
+<body>
+<form name="search">
+    <input type="text" name="key" placeholder="Введите ключ">
+    <input type="button" name="print" value="Печать" />
+</form>
+<div id="printBlock"></div>
+<script>
+function printForm(e){
+
+    // получаем значение поля key
+    const keyBox = document.search.key;
+    const val = keyBox.value;
+    // получаем элемент printBlock
+    const printBlock = document.getElementById("printBlock");
+    // создаем новый параграф
+    const pElement = document.createElement("p");
+    // устанавливаем у него текст
+    pElement.textContent = val;
+    // добавляем параграф в printBlock
+    printBlock.appendChild(pElement);
+}
+
+const printButton = document.search.print;
+printButton.addEventListener("click", printForm);
+</script>
+</body>
+</html>
+```
+
+При нажатии на кнопку получаем введенный в текстовое поле текст, создаем новый элемент параграфа для этого текста и добавляем параграф в элемент `printBlock`.[^10.2]
+
+![Обработка нажатия кнопки в JavaScript](../img/buttonclick.png)
+
 ### Источники информации
 [^10.1]: [Формы и их элементы](https://metanit.com/web/javascript/10.1.php)
+[^10.2]: [Кнопки](https://metanit.com/web/javascript/10.2.php)
