@@ -2702,7 +2702,7 @@ alert(HTMLDocument.prototype.__proto__.__proto__.constructor.name); // Node
 Второй абзац
 ```
 
-Если нам надо получить только первый элемент, то можно к первому элементу найденной коллекции объектов:
+Если нам надо получить только первый элемент, то можно взять первый элемент найденной коллекции объектов по индексу:
 ```js
 const p = document.getElementsByTagName("p")[0];
 console.log(p.innerText);
