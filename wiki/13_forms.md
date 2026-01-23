@@ -14,6 +14,7 @@
     - [Поле ввода пароля](#поле-ввода-пароля)
     - [Скрытое поле](#скрытое-поле)
     - [Элемент textarea](#элемент-textarea)
+  - [Флажки и радиокнопки](#флажки-и-радиокнопки)
   - [Источники информации](#источники-информации)
 
 ### Формы и их элементы
@@ -509,7 +510,69 @@ const val = String.fromCharCode(e.keyCode);
 
 ![Обработка keypress в JavaScript](../img/keypress.png)
 
+### Флажки и радиокнопки
+Особую группу элементов ввода составляют флажки (чекбоксы) и радиокнопки.[^10.4]
+
+<dfn title="флажок">Флажки</dfn> (*checkboxes*) представляют поле, в которое можно поставить отметки и которое создается с помощью элемента `<input type="checkbox">`. Отличительную особенность флажка составляет свойство **`checked`**, которое в отмеченном состоянии принимает значение `true`:
+```html
+<form name="myForm">
+    <input type="checkbox" name="enabled" checked><span>Включить</span>
+</form>
+<div id="printBlock"></div>
+<script>
+const enabledBox = document.myForm.enabled;
+const printBlock = document.getElementById("printBlock");
+//  в текст printBlock передаем установленное значение
+enabledBox.addEventListener("click", (e)=> printBlock.textContent = e.target.checked);
+</script>
+```
+
+Нажатие на флажок генерирует событие `click`. В данном случае при обработке данного события мы просто выводим информацию, отмечен ли данный флажок, в блок `div`.
+
+![Checkbox в JavaScript](../img/checkbox.png)
+
+<dfn title="радиокнопка">Радиокнопки</dfn> (*radio buttons*) представляют группы кнопок, из которых мы можем выбрать только одну. Радиокнопки создаются элементом `<input type="radio">`.
+
+Выбор или нажатие на одну из них также представляет событие `click`:
+```html
+<form name="myForm">
+    <input type="radio" name="languages" value="Java" /><span>Java</span>
+    <input type="radio" name="languages" value="C#" /><span>C#</span>
+    <input type="radio" name="languages" value="C++" /><span>C++</span>
+</form>
+<div id="printBlock"></div>
+<script>
+const printBlock = document.getElementById("printBlock");
+const myForm = document.myForm;
+function onclick(e){
+    printBlock.textContent = `Вы выбрали: ${language}`;
+}
+for (let i = 0; i < myForm.languages.length; i++) {
+    myForm.languages[i].addEventListener("click", onclick);
+}
+</script>
+```
+
+При создании группы радиокнопок их атрибут `name` должен иметь одно и то же значение. В данном случае это `languages`. То есть радиокнопки образуют группу `languages`.
+
+Поскольку радиокнопок может быть много, то при прикреплении к ним обработчика события нам надо пробежаться по всему массиву радиокнопок, который можно получить по имени группы:
+```js
+for (let i = 0; i < myForm.languages.length; i++) {
+    myForm.languages[i].addEventListener("click", onclick);
+}
+```
+
+Значение выбранного радиокнопки также можно получить через объект `Event: e.target.value`.
+
+![RadioButton в JavaScript](../img/radiobutton.png)
+
+Каждая радиокнопка также, как и флажок, имеет свойство `checked`, которое возвращает значение `true`, если радиокнопка отмечена. Например, отметим последнюю радиокнопку:
+```js
+myForm.languages[myForm.languages.length-1].checked = true;
+```
+
 ### Источники информации
 [^10.1]: [Формы и их элементы](https://metanit.com/web/javascript/10.1.php)
 [^10.2]: [Кнопки](https://metanit.com/web/javascript/10.2.php)
 [^10.3]: [Текстовые поля](https://metanit.com/web/javascript/10.3.php)
+[^10.4]: [Флажки и радиокнопки](https://metanit.com/web/javascript/10.4.php)
