@@ -7,6 +7,7 @@
   <script src="./x-slider.js"></script>
   <script src="./slider-enhanced.js"></script>
   <script src="./slider-adjustible.js"></script>
+  <script src="./slider-input.js"></script>
 </head>
 
 <body>
@@ -56,11 +57,19 @@
   </script>
 
   <x-slider></x-slider>
-  <p style="margin: 50px">
+  <p style="padding: 10px; border: 1px solid lightgray">
     <enhanced-slider></enhanced-slider>
   </p>
 
-<!-- Базовый слайдер 0-9, шаг 1 -->
+  <p style="padding: 10px 10px 30px 10px; border: 1px solid lightgray">
+    <adjustible-slider min="4" max="14" step="2"></adjustible-slider>
+  </p>
+
+  <p style="padding: 10px 10px 30px 10px; border: 1px solid lightgray">
+    <input-slider min="0" max="10" step="2"></input-slider>
+  </p>
+
+  <!-- Базовый слайдер 0-9, шаг 1 -->
 <adjustible-slider style="margin: 50px"></adjustible-slider>
 
 <!-- Слайдер 0-10, шаг 2, метки через 2 -->
