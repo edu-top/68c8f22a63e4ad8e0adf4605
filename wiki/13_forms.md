@@ -4,6 +4,8 @@
 
 - [Формы и элементы управления](#формы-и-элементы-управления)
   - [Формы и их элементы](#формы-и-их-элементы)
+    - [Навигация: формы и элементы](#навигация-формы-и-элементы)
+    - [Обратная ссылка: element.form](#обратная-ссылка-elementform)
     - [Получение формы](#получение-формы)
     - [Свойства и методы форм](#свойства-и-методы-форм)
     - [Элементы форм](#элементы-форм)
@@ -30,7 +32,133 @@
 </form>
 ```
 
-В JavaScript форма представлена объектом **`HtmlFormElement`**. И после создания формы мы можем к ней обратиться различными способами.
+В JavaScript форма представлена объектом **`HtmlFormElement`**. Формы и элементы управления, такие как `<input>`, имеют множество специальных свойств и событий. И после создания формы к ней можно обратиться различными способами. Работать с формами намного удобнее, если хорошо знать их свойства и методы.
+
+#### Навигация: формы и элементы
+Формы в документе входят в специальную коллекцию `document.forms`.
+
+Это так называемая «именованная» коллекция: мы можем использовать для получения формы как её имя, так и порядковый номер в документе.
+
+```js
+document.forms.my - форма с именем "my" (name="my")
+document.forms[0] - первая форма в документе
+```
+
+Когда мы уже получили форму, любой элемент доступен в именованной коллекции `form.elements`.
+
+Например:
+```html
+<form name="my">
+  <input name="one" value="1">
+  <input name="two" value="2">
+</form>
+
+<script>
+  // получаем форму
+  let form = document.forms.my; // <form name="my"> element
+
+  // получаем элемент
+  let elem = form.elements.one; // <input name="one"> element
+
+  alert(elem.value); // 1
+</script>
+```
+
+Может быть несколько элементов с одним и тем же именем, это часто бывает с кнопками-переключателями `radio`.
+
+В этом случае `form.elements[name]` является коллекцией, например:
+```html
+<form>
+  <input type="radio" name="age" value="10">
+  <input type="radio" name="age" value="20">
+</form>
+
+<script>
+let form = document.forms[0];
+
+let ageElems = form.elements.age;
+
+alert(ageElems[0]); // [object HTMLInputElement]
+</script>
+```
+
+Эти навигационные свойства не зависят от структуры тегов внутри формы. Все элементы управления формы, как бы глубоко они не находились в форме, доступны в коллекции `form.elements`.
+
+!!! info "`<fieldset>` как «подформа»"
+    Форма может содержать один или несколько элементов `<fieldset>` внутри себя. Они также поддерживают свойство `elements`, в котором находятся элементы управления внутри них.
+
+    Например:
+    ```html
+    <body>
+    <form id="form">
+        <fieldset name="userFields">
+        <legend>info</legend>
+        <input name="login" type="text">
+        </fieldset>
+    </form>
+
+    <script>
+        alert(form.elements.login); // <input name="login">
+
+        let fieldset = form.elements.userFields;
+        alert(fieldset); // HTMLFieldSetElement
+
+        // мы можем достать элемент по имени как из формы, так и из fieldset с ним
+        alert(fieldset.elements.login == form.elements.login); // true
+    </script>
+    </body>
+    ```
+
+!!! warning "Сокращённая форма записи: `form.name`"
+    Есть более короткая запись: мы можем получить доступ к элементу через `form[index/name]`.
+
+    Другими словами, вместо `form.elements.login` мы можем написать `form.login`.
+
+    Это также работает, но есть небольшая проблема: если мы получаем элемент, а затем меняем его свойство `name`, то он всё ещё будет доступен под старым именем (также, как и под новым).
+
+    В этом легче разобраться на примере:
+    ```html
+    <form id="form">
+    <input name="login">
+    </form>
+
+    <script>
+    alert(form.elements.login == form.login); // true, ведь это одинаковые <input>
+
+    form.login.name = "username"; // изменяем свойство name у элемента input
+
+    // form.elements обновили свои имена:
+    alert(form.elements.login); // undefined
+    alert(form.elements.username); // input
+
+    // а в form мы можем использовать оба имени: новое и старое
+    alert(form.username == form.login); // true
+    </script>
+    ```
+
+    Обычно это не вызывает проблем, так как мы редко меняем имена у элементов формы.
+
+#### Обратная ссылка: element.form
+Для любого элемента форма доступна через `element.form`. Так что форма ссылается на все элементы, а эти элементы ссылаются на форму.[^form-elements]
+
+Вот иллюстрация:
+
+![Form navigation](../svg/form-navigation.svg)
+
+Пример:
+```html
+<form id="form">
+  <input type="text" name="login">
+</form>
+
+<script>
+  // form -> element
+  let login = form.login;
+
+  // element -> form
+  alert(login.form); // HTMLFormElement
+</script>
+```
 
 #### Получение формы
 Первый способ заключается в прямом обращении по имени формы:
@@ -766,3 +894,4 @@ languages.addEventListener("change", changeOption);
 [^10.3]: [Текстовые поля](https://metanit.com/web/javascript/10.3.php)
 [^10.4]: [Флажки и радиокнопки](https://metanit.com/web/javascript/10.4.php)
 [^10.5]: [Список select](https://metanit.com/web/javascript/10.5.php)
+[^form-elements]: [Свойства и методы формы](https://learn.javascript.ru/form-elements)
