@@ -15,6 +15,10 @@
     - [Скрытое поле](#скрытое-поле)
     - [Элемент textarea](#элемент-textarea)
   - [Флажки и радиокнопки](#флажки-и-радиокнопки)
+  - [Список select](#список-select)
+    - [Динамическое управление списком](#динамическое-управление-списком)
+    - [События элемента select. Обработка выбора в списке](#события-элемента-select-обработка-выбора-в-списке)
+    - [Список со множественным выбором](#список-со-множественным-выбором)
   - [Источники информации](#источники-информации)
 
 ### Формы и их элементы
@@ -571,8 +575,194 @@ for (let i = 0; i < myForm.languages.length; i++) {
 myForm.languages[myForm.languages.length-1].checked = true;
 ```
 
+### Список select
+Для создания списка используется html-элемент `select`. Причем с его помощью можно создавать как выпадающие списки, так и обычные с ординарным или множественным выбором. Например, стандартный список:
+```html
+<select name="language" size="4">
+    <option value="JS" selected="selected">JavaScript</option>
+    <option value="Java">Java</option>
+    <option value="C#">C#</option>
+    <option value="C++">C++</option>
+</select>
+```
+
+Атрибут `size` позволяет установить, сколько элементов будут отображаться одномоментно в списке. Значение `size="1"` отображает только один элемент списка, а сам список становится выпадающим. Если установить у элемента `select` атрибут **`multiple`**, то в списке можно выбрать сразу несколько значений.
+
+Каждый элемент списка представлен html-элементом `option`, у которого есть отображаемая метка и есть значения в виде атрибута value.
+
+В JavaScript элементу `select` соответствует объект **`HTMLSelectElement`**, а элементу option — объект **`HtmlOptionElement`** или просто **`Option`**.
+
+Все элементы списка в javascript доступны через коллекцию **`options`**. А каждый объект `HtmlOptionElement` имеет свойства: `index` (индекс в коллекции `options`), `text` (отображаемый текст) и `value` (значение элемента). Например, получим первый элемент списка и выведем о нем через его свойства всю информацию:
+```html
+<form name="myForm">
+    <select name="language" size="4">
+        <option value="JS" selected="selected">JavaScript</option>
+        <option value="Java">Java</option>
+        <option value="CS">C#</option>
+        <option value="CPP">C++</option>
+    </select>
+</form>
+<script>
+const firstLanguage = document.myForm.language.options[0];
+console.log("Index:", firstLanguage.index);
+console.log("Text:", firstLanguage.text);
+console.log("Value:", firstLanguage.value);
+</script>
+```
+
+![Элемент select в JavaScript](../img/selectoptions.png)
+
+Другой способ получить нужный элемент списка по индексу представляет метод **`item()`**, в который передается индекс элемента:
+```js
+const firstLanguage = myForm.language.item(0);
+console.log("Index:", firstLanguage.index);
+console.log("Text:", firstLanguage.text);
+console.log("Value:", firstLanguage.value);
+```
+
+#### Динамическое управление списком
+В javascript мы можем не только получать элементы, но и динамически управлять списком. Например, применим добавление и удаление объектов списка:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+</head>
+<body>
+<form name="myForm">
+    <select name="language" size="5">
+        <option value="JS" selected="selected">JavaScript</option>
+        <option value="Java">Java</option>
+        <option value="CS">C#</option>
+        <option value="CPP">C++</option>
+    </select>
+    <p><input type="text" name="textInput" placeholder="Введите текст" /></p>
+    <p><input type="text" name="valueInput" placeholder="Введите значение" /></p>
+    <p>
+        <input type="button" name="addButton" value="Добавить" />
+        <input type="button" name="removeButton" value="Удалить" />
+    </p>
+</form>
+
+<script>
+const myForm = document.myForm;
+const addButton = myForm.addButton,
+      removeButton = myForm.removeButton,
+      languagesSelect = myForm.language;
+// обработчик добавления элемента
+function addOption(){
+    // получаем текст для элемента
+    const text = myForm.textInput.value;
+    // получаем значение для элемента
+    const value = myForm.valueInput.value;
+    // создаем новый элемента
+    const newOption = new Option(text, value);
+    languagesSelect.options[languagesSelect.options.length]=newOption;
+}
+// обработчик удаления элемент
+function removeOption(){
+
+    const selectedIndex = languagesSelect.options.selectedIndex;
+    // удаляем элемент
+    languagesSelect.options[selectedIndex] = null;
+}
+
+addButton.addEventListener("click", addOption);
+removeButton.addEventListener("click", removeOption);
+</script>
+</body>
+</html>
+```
+
+Для добавления на форме предназначены два текстовых поля (для текстовой метки и значения элемента option) и кнопка. Для удаления выделенного элемента предназначена еще одна кнопка.
+
+За добавление в коде javascript отвечает функция `addOption`, в которой получаем введенные в текстовые поля значения, создаем новый объект `Option` и добавляем его в массив `options` объекта списка.
+
+За удаление отвечает функция `removeOption`, в которой просто получаем индекс выделенного элемента с помощью свойства **`selectedIndex`** и в коллекции `options` приравниваем по этому индексу значение `null`.
+
+![Добавление и удаление элементов списка в JavaScript](../img/addoption.png)
+
+Для добавления/удаления также в качестве альтернативы можно использовать методы элемента `select`:
+```js
+// вместо вызова
+// languagesSelect.options[languagesSelect.options.length]=newOption;
+// использовать для добавления вызов метода add
+languagesSelect.add(newOption);
+// вместо вызова
+// languagesSelect.options[selectedIndex] = null;
+// использовать для удаления метод remove
+languagesSelect.remove(selectedIndex);
+```
+
+#### События элемента select. Обработка выбора в списке
+Элемент `select` поддерживает три события: `blur` (потеря фокуса), `focus` (получение фокуса) и `change` (изменение выделенного элемента в списке). Рассмотрим применение события `select`:
+```html
+<form name="myForm">
+    <select name="language" size="5">
+        <option value="JS" selected="selected">JavaScript</option>
+        <option value="Java">Java</option>
+        <option value="CS">C#</option>
+        <option value="CPP">C++</option>
+    </select>
+</form>
+<div id="selection"></div>
+<script>
+const languagesSelect = document.myForm.language;
+const selection = document.getElementById("selection");
+
+function changeOption(){
+    const selectedOption = languagesSelect.options[languagesSelect.selectedIndex];
+    selection.textContent = "Вы выбрали: " + selectedOption.text;
+}
+
+languagesSelect.addEventListener("change", changeOption);
+</script>
+```
+
+![Выбор элементов в списке select в JavaScript](../img/selectoptions2.png)
+
+#### Список со множественным выбором
+Если у элемента `<select>` установлен атрибут **`multiple`**, то список позволяет выбрать несколько элементов. В этом случае для получения всех выделенных элементов необходимо использовать свойство **`selectedOptions`**, которое представляет объект типа **`HTMLCollection`** и содержит список выбранных элементов. А каждый объект в этом списке имеет тип **`HTMLOptionElement`**. Соответственно для получения каждого из выбранных элементов нам надо перебрать эту коллекцию:
+```html
+<form name="myForm">
+    <select name="languages" multiple>
+        <option value="JS">JavaScript</option>
+        <option value="Java">Java</option>
+        <option value="CS">C#</option>
+        <option value="CPP">C++</option>
+    </select>
+</form>
+<div id="selection"></div>
+<script>
+const languages = document.myForm.languages;
+const selection = document.getElementById("selection");
+
+function changeOption(){
+    // удаляем ранее выбранные элементы
+    while (selection.firstChild) {
+        selection.removeChild(selection.firstChild);
+    }
+    // получаем выбранные элементы
+    const options = languages.selectedOptions;
+    for (let i = 0; i < options.length; i++) {      // for each option ...
+        const option = options[i].text    // получаем выбранный элемент
+        const div = document.createElement("div");  // для каждого выбранного элемента создаем div
+        const optionText = document.createTextNode(option); // создаем текстовый узел для выбранного элемента
+        div.appendChild(optionText);    // добавляем  optionText в div
+        selection.appendChild(div)      // добавляем div в контейнер
+    }
+}
+languages.addEventListener("change", changeOption);
+</script>
+```
+
+В данном случае в обработчике события `change` проходим по каждому выбранному элементу и для каждого элемента создаем текстовый узел, который помещаем в элемент `div`, который, в свою очередь, помещаем в элемент `selection` на веб-странице.[^10.5]
+
+![обработка выбора элементов списка со множественным выбором в JavaScript](../img/multipleselect.png)
+
 ### Источники информации
 [^10.1]: [Формы и их элементы](https://metanit.com/web/javascript/10.1.php)
 [^10.2]: [Кнопки](https://metanit.com/web/javascript/10.2.php)
 [^10.3]: [Текстовые поля](https://metanit.com/web/javascript/10.3.php)
 [^10.4]: [Флажки и радиокнопки](https://metanit.com/web/javascript/10.4.php)
+[^10.5]: [Список select](https://metanit.com/web/javascript/10.5.php)
