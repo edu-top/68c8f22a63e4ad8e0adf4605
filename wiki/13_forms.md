@@ -10,6 +10,13 @@
     - [Свойства и методы форм](#свойства-и-методы-форм)
     - [Элементы форм](#элементы-форм)
     - [Свойства элементов форм](#свойства-элементов-форм)
+      - [input и textarea](#input-и-textarea)
+      - [select и option](#select-и-option)
+      - [new Option](#new-option)
+    - [Ссылки](#ссылки)
+    - [Итого](#итого)
+    - [Задачи](#задачи)
+      - [Добавьте пункт к выпадающему списку](#добавьте-пункт-к-выпадающему-списку)
   - [Кнопки](#кнопки)
     - [Очистка формы](#очистка-формы)
   - [Текстовые поля](#текстовые-поля)
@@ -301,6 +308,192 @@ const searchForm = document.forms["search"];
 const keyField = searchForm.elements["key"];
 keyField.focus();
 ```
+
+##### input и textarea
+К их значению можно получить доступ через свойство `input.value` (строка) или `input.checked` (булево значение) для чекбоксов.
+
+Вот так:
+```js
+input.value = "Новое значение";
+textarea.value = "Новый текст";
+
+input.checked = true; // для чекбоксов и переключателей
+```
+
+!!! warning "Используйте `textarea.value` вместо `textarea.innerHTML`"
+    Обратим внимание: хоть элемент `<textarea>...</textarea>` и хранит своё значение как вложенный HTML, нам не следует использовать `textarea.innerHTML` для доступа к нему.
+
+    Там хранится только тот HTML, который был изначально на странице, а не текущее значение.
+
+##### select и option
+Элемент `<select>` имеет 3 важных свойства:
+
+1. `select.options` – коллекция из подэлементов `<option>`,
+2. `select.value` – значение выбранного в данный момент `<option>`,
+3. `select.selectedIndex` – номер выбранного `<option>`.
+
+Они дают три разных способа установить значение в `<select>`:
+
+1. Найти соответствующий элемент `<option>` и установить в `option.selected` значение `true`.
+2. Установить в `select.value` значение нужного `<option>`.
+3. Установить в `select.selectedIndex` номер нужного `<option>`.
+
+Первый способ наиболее понятный, но `(2)` и `(3)` являются более удобными при работе.
+
+Вот эти способы на примере:
+```html
+<select id="select">
+  <option value="apple">Яблоко</option>
+  <option value="pear">Груша</option>
+  <option value="banana">Банан</option>
+</select>
+
+<script>
+  // все три строки делают одно и то же
+  select.options[2].selected = true;
+  select.selectedIndex = 2;
+  select.value = 'banana';
+</script>
+```
+
+В отличие от большинства других элементов управления, `<select>` позволяет нам выбрать несколько вариантов одновременно, если у него стоит атрибут `multiple`. Эту возможность используют редко, но в этом случае для работы со значениями необходимо использовать первый способ, то есть ставить или удалять свойство `selected` у подэлементов `<option>`.
+
+Их коллекцию можно получить как `select.options`, например:
+```html
+<select id="select" multiple>
+  <option value="blues" selected>Блюз</option>
+  <option value="rock" selected>Рок</option>
+  <option value="classic">Классика</option>
+</select>
+
+<script>
+  // получаем все выбранные значения из select с multiple
+  let selected = Array.from(select.options)
+    .filter(option => option.selected)
+    .map(option => option.value);
+
+  alert(selected); // blues,rock
+</script>
+```
+
+Полное описание элемента `<select>` доступно в спецификации https://html.spec.whatwg.org/multipage/forms.html#the-select-element.
+
+##### new Option
+Элемент `<option>` редко используется сам по себе, но и здесь есть кое-что интересное.
+
+В [спецификации](https://html.spec.whatwg.org/multipage/forms.html#the-option-element) есть красивый короткий синтаксис для создания элемента `<option>`:
+```js
+option = new Option(text, value, defaultSelected, selected);
+```
+
+Параметры:
+
+- `text` – текст внутри `<option>`,
+- `value` – значение,
+- `defaultSelected` – если `true`, то ставится HTML-атрибут `selected`,
+- `selected` – если `true`, то элемент `<option>` будет выбранным.
+
+Тут может быть небольшая путаница с `defaultSelected` и `selected`. Всё просто: `defaultSelected` задаёт HTML-атрибут, его можно получить как `option.getAttribute('selected')`, а `selected` – выбрано значение или нет, именно его важно поставить правильно. Впрочем, обычно ставят оба этих значения в `true` или не ставят вовсе (т.е. `false`).
+
+Пример:
+```js
+let option = new Option("Текст", "value");
+// создаст <option value="value">Текст</option>
+```
+
+Тот же элемент, но выбранный:
+```js
+let option = new Option("Текст", "value", true, true);
+```
+
+Элементы `<option>` имеют свойства:
+
+- **`option.selected`**
+
+    Выбрана ли опция.
+
+- **`option.index`**
+
+    Номер опции среди других в списке `<select>`.
+
+- **`option.value`**
+
+    Значение опции.
+
+- **`option.text`**
+
+    Содержимое опции (то, что видит посетитель).
+
+#### Ссылки
+- Спецификация: https://html.spec.whatwg.org/multipage/forms.html.
+
+#### Итого
+Свойства для навигации по формам:
+
+- **`document.forms`**
+
+Форма доступна через `document.forms[name/index]`.
+
+- **`form.elements`**
+
+    Элементы формы доступны через `form.elements[name/index]`, или можно просто использовать `form[name/index]`. Свойство `elements` также работает для `<fieldset>`.
+
+- **`element.form`**
+
+    Элементы хранят ссылку на свою форму в свойстве `form`.
+
+Значения элементов формы доступны через `input.value`, `textarea.value`, `select.value` и т.д. либо `input.checked` для чекбоксов и переключателей.
+
+Для элемента `<select>` мы также можем получить индекс выбранного пункта через `select.selectedIndex`, либо используя коллекцию пунктов `select.options`.
+
+Это были основы для начала работы с формами. Далее в учебнике мы встретим ещё много примеров.
+
+В следующей главе мы рассмотрим такие события, как `focus` и `blur`, которые могут происходить на любом элементе, но чаще всего обрабатываются в формах.[^form-elements]
+
+#### Задачи
+
+##### Добавьте пункт к выпадающему списку
+
+Имеется `<select>`:
+```html
+<select id="genres">
+  <option value="rock">Рок</option>
+  <option value="blues" selected>Блюз</option>
+</select>
+```
+
+Используя JavaScript:
+
+1. Выведите значение и текст выбранного пункта.
+2. Добавьте пункт: `<option value="classic">Классика</option>`.
+3. Сделайте его выбранным.
+
+<details>
+<summary>Решение</summary>
+
+Решение шаг за шагом:
+```html
+<select id="genres">
+  <option value="rock">Рок</option>
+  <option value="blues" selected>Блюз</option>
+</select>
+
+<script>
+  // 1)
+  let selectedOption = genres.options[genres.selectedIndex];
+  alert( selectedOption.value );
+  alert( selectedOption.text );
+
+  // 2)
+  let newOption = new Option("Классика", "classic");
+  genres.append(newOption);
+
+  // 3)
+  newOption.selected = true;
+</script>
+```
+
+</details>
 
 ### Кнопки
 Для отправки введенных данных на форме используются кнопки. Для создания кнопки используется либо элемент `button`:
