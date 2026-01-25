@@ -30,6 +30,7 @@
   - [Форматирование текста](#форматирование-текста)
   - [Элемент details](#элемент-details)
   - [Изображения](#изображения)
+    - [Элементы figure и figcaption](#элементы-figure-и-figcaption)
   - [Списки](#списки)
     - [Горизонтальный список](#горизонтальный-список)
     - [Список определений](#список-определений)
@@ -841,6 +842,33 @@
 
 ![Обтекание изображения текстом в HTML5](../img/696557da63e4ad8e0adf499e-1.23.png)
 
+#### Элементы figure и figcaption
+
+Элемент **`figure`** применяется для аннотации различных иллюстраций, диаграмм, фотографий и т.д. А элемент **`figcaption`** просто обертывает заголовок для содержимого внутри элемента `figure`.[^2.10]
+
+Для использования элемента `figure` нам надо поместить в него некоторое содержимое, например, изображение:
+```html
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Элемент Figure в HTML5</title>
+	</head>
+	<body>
+		<div>
+			<p>Lorem ipsum dolor … </p>
+			<figure>
+				<figcaption>Февраль 2013</figcaption>
+				<img src="dubi.png" alt="Зимний пейзаж">
+			</figure>
+			<p>Lorem ipsum dolor … </p>
+		</div>
+	</body>
+</html>
+```
+
+![Figure и figcaption в HTML5](../img/69762ef063e4ad8e0adf49bc-1.34.png)
+
 ### Списки
 
 Для создания списков в HTML5 применяются элементы `<ol>` (по умолчанию нумерованный список) и `<ul>` (по умолчанию ненумерованный список):
@@ -1333,3 +1361,4 @@ XML (*eXtensible Markup Language* — «расширяемый язык разм
 [^default]: [HTML Tutorial](https://www.w3schools.com/html/default.asp)
 [^html_intro]: [HTML Introduction](https://www.w3schools.com/html/html_intro.asp)
 [^2.9]: [Ссылки](https://metanit.com/web/html5/2.9.php)
+[^2.10]: [Элементы figure и figcaption](https://metanit.com/web/html5/2.10.php)
