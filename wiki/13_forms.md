@@ -21,6 +21,9 @@
     - [Динамическое управление списком](#динамическое-управление-списком)
     - [События элемента select. Обработка выбора в списке](#события-элемента-select-обработка-выбора-в-списке)
     - [Список со множественным выбором](#список-со-множественным-выбором)
+  - [Validation API. Валидация элементов формы](#validation-api-валидация-элементов-формы)
+    - [Валидация HTML5](#валидация-html5)
+    - [Получение информации о валидации в JavaScript](#получение-информации-о-валидации-в-javascript)
   - [Источники информации](#источники-информации)
 
 ### Формы и их элементы
@@ -888,6 +891,199 @@ languages.addEventListener("change", changeOption);
 
 ![обработка выбора элементов списка со множественным выбором в JavaScript](../img/multipleselect.png)
 
+### Validation API. Валидация элементов формы
+
+#### Валидация HTML5
+HTML5 поддерживает нативную валидацию форм и их элементов. Для этого у полей ввода применяются различные атрибуты, которые настраивают валидацию. В частности, мы можем применять следующие атрибуты:
+
+- **`required`** требует, чтобы поле ввода обязательно содержало какое-нибудь значение
+
+- **`max`** задает максимальное числовое значение (для ввода числовых данных)
+
+- **`min`** задает минимальное числовое значение (для ввода числовых данных)
+
+- **`maxlength`** задает максимальную длину строки
+
+- **`minlength`** задает минимальную длину строки
+
+Например, возьмем следующую страницу:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>METANIT.COM</title>
+    <style>
+    input {width: 150px;}
+    input:invalid {border-color: red; }
+    input:valid { border-color: green;}
+    </style>
+</head>
+<body>
+<form id="registerForm" name="registerForm" method="post" action="register">
+<p>
+    <label for="username">Username:</label><br>
+    <input id="username" name="username" maxlength="20" minlength="3" required>
+</p>
+<p>
+    <label for="email">Email:</label><br>
+    <input type="email" id="email" name="email" required>
+</p>
+<p>
+    <label for="age">Age:</label><br>
+    <input type="number" id="age" name="age" min="1" max="110" value="18">
+</p>
+<button type="submit" id="submit" name="submit">Register</button>
+</form>
+</body>
+</html>
+```
+
+Здесь на форме определено поле `username` для ввода условного имени пользователя. Причем это имя должно иметь не меньше 3 и не больше 20 символов. Поля для ввода имени и `email` обязательны для заполнения (имеют атрибут `required`). Также для поля `age`, которое предназначено для ввода условного возраста, установлено минимальное и максимальное допустимые значения — 1 и 110 соответственно.
+
+Также стоит отметить, что с помощью селектора `input:invalid` можно определить стиль для невалидных полей, тогда как селектор `input:valid` задает стиль для полей, которые прошли валидацию.
+
+И если мы введем в поле значение, которое не соответствует атрибутам валидации, или не введем никакого значения в поля, которые требуют наличия ввода, то при попытке отправить форму браузер нам отобразит для соответствующего поля ошибку валидации:
+
+![Нативная валидация в HTML5](../img/validation3.png)
+
+Конкретное сообщение валидации зависит от веб-браузера. Выше приведен пример для Google Chrome. Однако в данном случае нас будет интересовать, как мы можем взаимодействовать с нативной валидацией HTML5 в коде JavaScript. в других браузерах вид может отличаться.[^10.6]
+
+#### Получение информации о валидации в JavaScript
+*[API]: Application Programming Interface
+
+Современные веб-браузеры позволяют взаимодействовать в коде JavaScript с механизмом нативной валидации HTML5. Для этого предназначен специальный API — <dfn title="Constraint Validation API">Constraint Validation API</dfn>. Этот API определяет ряд свойств, которые можно применять к формам или элементам форм и которые позволяют получить состояние валидации элементов:
+
+- **`willValidate`**: возвращает булевое значение, которое указывает, доступна ли валидация для элемента формы. Если валидация доступна, то возвращается `true`, при недоступности возвращается `false`. Например, если для элемента формы установлен атрибут `disabled`, что делает этот элемент недоступным для взаимодействия, то валидация для него также недоступна. Для других элементов (не элементов формы) возвращается значение `undefined`
+
+- **`validity`**: возвращает объект типа **`ValidityState`**, который, в свою очередь, содержит информацию о валидации данного элемента формы. Свойства **`ValidityState`**:
+
+  - `valid`: возвращает булевое значение, которое указывает, проходит ли элемент формы валидацию (`true`) или нет (`false`)
+
+  - `valueMissing`: возвращает `true`, если в элементе формы, который требует обязательного ввода, отсутствует значение
+
+  - `typeMismatch`: возвращает `true`, если введенное значение не соответствует типу элемента формы (например, в элемент `<input type="email">` введен текст, которые не является адресом элементронной почты)
+
+  - `patternMismatch`: возвращает `true`, если введенное значение не соответствует указанному шаблону
+
+  - `tooLong`: возвращает `true`, если введенное значение превышает максимально допустимый лимит
+
+  - `tooShort`: возвращает `true`, если введенное значение меньше минимально допустимого значения
+
+  - `rangeUnderflow`: возвращает `true`, если введенное значение меньше диапазона допустимых значений
+
+  - `rangeOverflow`: возвращает `true`, если введенное значение превышает диапазон допустимых значений
+
+  - `stepMismatch`: возвращает `true`, если введенное значение не соответствует значению атрибута `step`
+
+  - `badInput`: возвращает `true`, если введенное значение некорректно
+
+  - `customError`: возвращает `true`, если при вводе была сгенерирована кастомная ошибка
+
+- **`validationMessage`**: содержит сообщение об ошибке валидации для текущего элемента формы. Конкретное сообщение зависит от используемого веб-браузера.
+
+Применим некоторые из этих свойств для проверки ввода в элемент формы:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>METANIT.COM</title>
+    <style>
+    input {width: 150px;}
+    input:invalid {border-color: red; }
+    input:valid { border-color: green;}
+    </style>
+</head>
+<body>
+<form id="registerForm" name="registerForm" method="post" action="register">
+<p>
+    <label for="email">E-mail:</label><br>
+    <input type="email" id="email" name="email" required>
+</p>
+<button type="submit" id="submit" name="submit">Register</button>
+</form>
+<script>
+const emailField = document.getElementById("email");
+emailField.addEventListener("change", validateEmail);
+
+function validateEmail() {
+    console.log("Может валидироваться:", emailField.willValidate);
+    console.log("Значение отсутствует:", emailField.validity.valueMissing);
+    console.log("Значение валидно:", emailField.validity.valid);
+    console.log("Значение соответствует типу", emailField.validity.typeMismatch);
+    console.log(emailField.validationMessage);
+}
+</script>
+</body>
+</html>
+```
+
+Пример работы:
+
+![Получение информации о валидации полей формы в JavaScript](../img/validation1.png)
+
+Благодаря этому мы можем производить дополнительную обработку информации о валидации, например, выводить ошибки валидации на страницу:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>METANIT.COM</title>
+    <style>
+    input {width: 150px;}
+    input:invalid {border-color: red; }
+    input:valid { border-color: green;}
+    #emailErrors {padding:5px;background-color: #ffcccc; color:#b33939; display:none;}
+    </style>
+</head>
+<body>
+<form id="registerForm" name="registerForm" method="post" action="register">
+<p>
+    <label for="email">E-mail:</label><br>
+    <input type="email" id="email" name="email" required>
+    <div id="emailErrors"></div>
+</p>
+<button type="submit" id="submit" name="submit">Register</button>
+</form>
+<script>
+const emailField = document.getElementById("email");
+const emailErrors = document.getElementById("emailErrors");
+emailField.addEventListener("change", validateEmail);
+
+function validateEmail() {
+    if(!emailField.validity.valid){
+        emailErrors.textContent = emailField.validationMessage;
+        emailErrors.style.display = "block";
+    }
+    else{
+        emailErrors.textContent = "";
+        emailErrors.style.display = "none";
+    }
+}
+</script>
+</body>
+</html>
+```
+
+Здесь при наличии ошибки валидации в блок `emailErrors` помещаем данное сообщение:
+
+![Вывод ошибок валидации полей формы в JavaScript](../img/validation2.png)
+
+Как видно, браузер сам определяет сообщение об ошибке. Однако мы можем проверять валидацию по конкретным параметрам и устанавливать свои сообщения об ошибке
+```js
+function validateEmail() {
+    if(!emailField.validity.valueMissing){
+        emailErrors.textContent = "Отстуствет email!";
+        emailErrors.style.display = "block";
+    }
+    else{
+        emailErrors.textContent = "";
+        emailErrors.style.display = "none";
+    }
+}
+```
+
 ### Источники информации
 [^10.1]: [Формы и их элементы](https://metanit.com/web/javascript/10.1.php)
 [^10.2]: [Кнопки](https://metanit.com/web/javascript/10.2.php)
@@ -895,3 +1091,4 @@ languages.addEventListener("change", changeOption);
 [^10.4]: [Флажки и радиокнопки](https://metanit.com/web/javascript/10.4.php)
 [^10.5]: [Список select](https://metanit.com/web/javascript/10.5.php)
 [^form-elements]: [Свойства и методы формы](https://learn.javascript.ru/form-elements)
+[^10.6]: [Validation API. Валидация элементов формы](https://metanit.com/web/javascript/10.6.php)
