@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Оценка качества</title>
+</head>
+<body>
+    <h1>Оценка качества</h1>
+    <table cellspacing="0" cellpadding="5" border="1">
+        <caption>Протокол аудита качества веб-ресурса</caption>
+        <thead>
+            <tr><th>Категория</th><th>Параметр</th><th>Метрика</th><th>Описание</th><th>Средство измерения</th><th>Целевое значение</th><th>Фактическое значение</th></tr>
+        </thead>
+        <tbody>
+            <tr><td rowspan="21"><strong>Производительность</strong></td><td rowspan="6">Загрузка</td><td><abbr title="First Paint">FP</abbr></td><td>Первая отрисовка</td><td>Pingdom</td><td>≤1.0 с</td><td>1.506 с</td></tr>
+            <tr><td><abbr title="First Contentful Paint">FCP</abbr></td><td>Первая значимая отрисовка</td><td>Lighthouse</td><td>≤1.8 с</td><td>0.8 с</td></tr>
+            <tr><td><abbr title="Largest Contentful Pain">LCP</abbr></td><td>Наибольшая значимая отрисовка</td><td>WebPageTest</td><td>≤2.5 с</td><td>2.279 с</td></tr>
+            <tr><td rowspan="3"><abbr title="Total Loading Time">TLT</abbr></td><td rowspan="3">Время полной загрузки</td><td>Loading.express</td><td rowspan="3">≤3.0 с</td><td>1.82 с</td></tr>
+            <tr><td>Pingdom</td><td>2.9 с</td></tr>
+            <tr><td>WebPageTest</td><td>2.3 с</td></tr>
+
+            <tr><td rowspan="4">Интерактивность</td><td><abbr title="First Input Delay">FID</abbr></td><td>Задержка первого ввода</td><td>Lighthouse</td><td>&lt;100 мс</td><td>230 мс</td></tr>
+            <tr><td><abbr title="Interaction to Next Paint">INP</abbr></td><td>Взаимодействие со следующей отрисовкой</td><td>WebPageTest</td><td>≤200 мс</td><td>16 мс</td></tr>
+            <tr><td><abbr title="Time to Interactive">TTI</abbr></td><td>Время до интерактивности</td><td>Lighthouse</td><td>≤3.5 с</td><td>0.5 с</td></tr>
+            <tr><td><abbr title="Total Blocking Time">TBT</abbr></td><td>Общее время блокировки</td><td>Lighthouse</td><td>≤200 мс</td><td>180 мс</td></tr>
+
+            <tr><td>Визуальная стабильность</td><td><abbr title="Cumulative Layout Shift">CLS</abbr></td><td>Совокупный сдвиг макета</td><td>Lighthouse</td><td>≤0.1</td><td>0</td></tr>
+
+            <tr><td rowspan="2">Пользовательское восприятие</td><td rowspan="2"><abbr title="Speed Index">SI</abbr></td><td rowspan="2">Индекс скорости</td><td>Lighthouse</td><td rowspan="2">≤3.4 с</td><td>1.4 с</td></tr>
+            <tr><td>WebPageTest</td><td>2.323 с</td></tr>
+
+            <tr><td rowspan="8">Технические показатели</td><td><abbr title="Time To First Byte">TTFB</abbr></td><td>Время ответа сервера</td><td>Pingdom</td><td>≤200 мс</td><td>84 мс</td></tr>
+            <tr><td rowspan="3">Page Size</td><td rowspan="3">Общий размер страницы</td><td>Pingdom</td><td rowspan="3">≤1.5 МБ</td><td>1.43 МБ</td></tr>
+            <tr><td>Loading.express</td><td>2.5 МБ</td></tr>
+            <tr><td>WebPageTest</td><td>2.0 МБ</td></tr>
+            <tr><td rowspan="3">Requests</td><td rowspan="3">Количество запросов</td><td>Pingdom</td><td rowspan="3">≤30</td><td>19</td></tr>
+            <tr><td>Loading.express</td><td>20</td></tr>
+            <tr><td>WebPageTest</td><td>20</td></tr>
+            <tr><td>Connections</td><td>Число соединений</td><td>Pingdom</td><td>≤15</td><td>2</td></tr>
+
+            <tr><td colspan="2"><strong>Пользовательский опыт</strong></td><td>Accessibility</td><td>Доступность</td><td>Lighthouse</td><td>90&ndash;100</td><td>84</td></tr>
+
+            <tr><td colspan="2"><strong>Безопасность и стабильность</strong></td><td>Best practices</td><td>Лучшие практики</td><td>Lighthouse</td><td>80&ndash;100</td><td>77</td></tr>
+
+            <tr><td colspan="2"><strong>Эффективность</strong></td><td><abbr title="Search Engine Optimization">SEO</abbr></td><td>Поисковая оптимизация</td><td>Lighthouse</td><td>90&ndash;100</td><td>92</td></tr>
+        </tbody>
+        <tfoot>
+            <tr><td colspan="5"><strong><ins>Общая оценка</ins></strong></td><td><strong>85&ndash;100</strong></td><td><strong>84</strong></td></tr>
+        </tfoot>
+    </table>
+
+    <h2>Выводы</h2>
+
+    <p>
+        Исследуемый ресурс демонстрирует неплохую базовую производительность, но имеет серьезные проблемы с архитектурой и SEO.
+
+    </p>
+
+    <h3>Преимущества</h3>
+
+    <ul>
+        <li>Быстрый сервер</li>
+        <li>Отличная стабильность макета</li>
+        <li>Хорошая безопасность и доступность</li>
+    </ul>
+
+    <h3>Недостатки</h3>
+
+    <ul>
+        <li>Перенаправление искажает результаты</li>
+        <li>Большой размер страницы и количество запросов</li>
+        <li>Отсутствие метатегов делает сайт невидимым для поисковиков</li>
+    </ul>
+
+    <h2>Рекомендации</h2>
+
+    <p>
+        Сайт технически работоспособен, но требует доработки для соответствия современным стандартам веб-производительности и SEO. Необходимо сосредоточиться на оптимизации ресурсов (сжатие, очистка, кэширование) и добавлении метаданных. Это позволит повысить производительность работы, и сайт станет полностью доступным для пользователей и поисковых систем.
+    </p>
+</body>
+</html>
