@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Статический слайдер с полем ввода</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 25px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            color: #1a1a1a;
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+
+        .description {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .note {
+            background-color: #f0f7ff;
+            border-left: 4px solid #1E73F2;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+
+        /* Контейнеры для вариантов слайдера */
+        .slider-variant-container {
+            background-color: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+
+        .variant-title {
+            margin-bottom: 25px;
+            color: #1a1a1a;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .variant-title::before {
+            content: '';
+            display: block;
+            width: 8px;
+            height: 25px;
+            background-color: #1E73F2;
+            border-radius: 2px;
+        }
+
+        /* Стили слайдера с отметками */
+        .slider-with-input {
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            width: 100%;
+        }
+
+        .slider-container {
+            position: relative;
+            width: 310px;
+            padding-top: 10px;
+            padding-bottom: 25px;
+        }
+
+        .slider-track {
+            border-radius: 5px;
+            background: #E0E0E0;
+            background: linear-gradient(to right bottom, #E0E0E0, #EEEEEE);
+            width: 100%;
+            height: 15px;
+            position: relative;
+        }
+
+        /* Отметки шкалы */
+        .slider-ticks {
+            position: absolute;
+            top: 25px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 5px;
+        }
+
+        .tick {
+            position: relative;
+            width: 1px;
+        }
+
+        .tick::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 0;
+            width: 1px;
+            height: 6px;
+            background-color: #888;
+        }
+
+        .tick.major::before {
+            height: 10px;
+            width: 2px;
+            background-color: #555;
+        }
+
+        .tick-label {
+            position: absolute;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            color: #666;
+            white-space: nowrap;
+        }
+
+        /* Бегунок слайдера */
+        .slider-thumb {
+            width: 10px;
+            height: 25px;
+            border-radius: 3px;
+            position: absolute;
+            left: 10px;
+            top: -5px;
+            background: blue;
+            cursor: default;
+            user-select: none;
+            transition: left 0.3s ease;
+            outline: none;
+            z-index: 2;
+        }
+
+        .slider-thumb.focused {
+            outline: 2px solid #e24a4a;
+            outline-offset: 0px;
+            background: #1E73F2;
+        }
+
+        /* Поле ввода */
+        .value-input-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .value-input-label {
+            font-size: 14px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .value-input {
+            width: 90px;
+            height: 35px;
+            padding: 0 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 15px;
+            text-align: center;
+            background: white;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            font-weight: 500;
+        }
+
+        .value-input:focus {
+            outline: none;
+            border-color: #1E73F2;
+            box-shadow: 0 0 0 2px rgba(30, 115, 242, 0.2);
+        }
+
+        .value-input.invalid {
+            border-color: #e24a4a;
+            background: #fff5f5;
+        }
+
+        /* Варианты положений слайдера */
+        .slider-options {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .slider-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .slider-option:hover {
+            transform: translateY(-3px);
+        }
+
+        .option-thumb {
+            width: 20px;
+            height: 35px;
+            border-radius: 4px;
+            background-color: #1E73F2;
+            position: relative;
+        }
+
+        .option-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #444;
+        }
+
+        /* Индикатор положения */
+        .position-indicator {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 10px;
+            padding: 0 5px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .position-value {
+            text-align: center;
+            width: 20px;
+        }
+
+        /* Кнопки управления состоянием */
+        .state-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .state-btn {
+            padding: 8px 16px;
+            background-color: #f0f2f5;
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .state-btn:hover {
+            background-color: #e4e7eb;
+        }
+
+        .state-btn.active {
+            background-color: #1E73F2;
+            color: white;
+            border-color: #1E73F2;
+        }
+
+        /* Скрытые радиокнопки для управления */
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+
+        /* Демо-варианты слайдеров */
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .demo-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
+            border: 1px solid #eee;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .demo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .demo-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .demo-title::before {
+            content: '✓';
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            background-color: #1E73F2;
+            color: white;
+            border-radius: 50%;
+            font-size: 12px;
+        }
+
+        .demo-description {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+
+        /* Статус поля ввода */
+        .input-status {
+            margin-top: 10px;
+            font-size: 13px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .input-status.valid {
+            background-color: #e8f7ef;
+            color: #0c8f5c;
+        }
+
+        .input-status.invalid {
+            background-color: #fef0f0;
+            color: #e24a4a;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+            font-size: 0.9rem;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .slider-with-input {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .slider-container {
+                width: 100%;
+                max-width: 310px;
+            }
+
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .slider-options {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Статический слайдер с полем ввода</h1>
+            <p class="description">Демонстрация слайдера с отметками шкалы и связанным полем ввода</p>
+            <div class="note">
+                <p>Это статическая версия компонента с отметками шкалы и полем ввода. Все состояния предустановлены и управляются с помощью CSS. Выберите вариант положения бегунка, чтобы увидеть синхронизацию с полем ввода.</p>
+            </div>
+        </header>
+
+        <!-- Управление состояниями через скрытые радиокнопки -->
+        <input type="radio" id="state-0" name="slider-state" class="visually-hidden" checked>
+        <input type="radio" id="state-25" name="slider-state" class="visually-hidden">
+        <input type="radio" id="state-50" name="slider-state" class="visually-hidden">
+        <input type="radio" id="state-75" name="slider-state" class="visually-hidden">
+        <input type="radio" id="state-100" name="slider-state" class="visually-hidden">
+
+        <div class="slider-variant-container">
+            <h2 class="variant-title">Слайдер с отметками и полем ввода</h2>
+
+            <!-- Управление состояниями -->
+            <div class="slider-options">
+                <label for="state-0" class="slider-option">
+                    <div class="option-thumb" style="margin-left: 0;"></div>
+                    <span class="option-label">0 (0%)</span>
+                </label>
+                <label for="state-25" class="slider-option">
+                    <div class="option-thumb" style="margin-left: 75px;"></div>
+                    <span class="option-label">2.5 (25%)</span>
+                </label>
+                <label for="state-50" class="slider-option">
+                    <div class="option-thumb" style="margin-left: 150px;"></div>
+                    <span class="option-label">5.0 (50%)</span>
+                </label>
+                <label for="state-75" class="slider-option">
+                    <div class="option-thumb" style="margin-left: 225px;"></div>
+                    <span class="option-label">7.5 (75%)</span>
+                </label>
+                <label for="state-100" class="slider-option">
+                    <div class="option-thumb" style="margin-left: 300px;"></div>
+                    <span class="option-label">10.0 (100%)</span>
+                </label>
+            </div>
+
+            <!-- Демонстрация слайдера -->
+            <div class="slider-with-input" style="display: flex">
+                <input type="text" class="value-input" value="2.5" style="width: 50px;">
+                <div class="slider-container" style="margin-top: 10px">
+                    <div class="slider-track">
+                        <div class="slider-thumb" id="main-slider-thumb" style="left: 75px"></div>
+                        <div class="slider-thumb" style="left: 225px"></div>
+                    </div>
+                    <div class="slider-track" style="position: absolute; left: 75px; top: 10px; width: 155px; background: hsla(216, 75%, 75%, 75%);"></div>
+
+                    <!-- Отметки шкалы -->
+                    <div class="slider-ticks" style="position: absolute; top: 35px">
+                        <div class="tick major">
+                            <span class="tick-label">0</span>
+                        </div>
+                        <div class="tick"></div>
+                        <div class="tick"></div>
+                        <div class="tick major">
+                            <span class="tick-label">2.5</span>
+                        </div>
+                        <div class="tick"></div>
+                        <div class="tick"></div>
+                        <div class="tick major">
+                            <span class="tick-label">5.0</span>
+                        </div>
+                        <div class="tick"></div>
+                        <div class="tick"></div>
+                        <div class="tick major">
+                            <span class="tick-label">7.5</span>
+                        </div>
+                        <div class="tick"></div>
+                        <div class="tick"></div>
+                        <div class="tick major">
+                            <span class="tick-label">10</span>
+                        </div>
+                    </div>
+                </div>
+                <input type="text" class="value-input" value="7.5" style="width: 50px;">
+
+                <!-- <div class="value-input-container">
+                    <div class="value-input-label">Значение:</div>
+                    <input type="text" class="value-input" id="main-value-input" value="0.0">
+                    <div class="state-controls">
+                        <button type="button" class="state-btn active" id="focus-btn">Фокус на слайдере</button>
+                        <button type="button" class="state-btn" id="valid-btn">Корректное значение</button>
+                    </div>
+                </div> -->
+            </div>
+
+            <div class="position-indicator">
+                <div class="position-value">0.0</div>
+                <div class="position-value">2.5</div>
+                <div class="position-value">5.0</div>
+                <div class="position-value">7.5</div>
+                <div class="position-value">10.0</div>
+            </div>
+        </div>
+
+        <!-- Примеры разных состояний -->
+        <div class="demo-grid">
+            <div class="demo-card">
+                <h3 class="demo-title">Слайдер в начальном положении</h3>
+                <p class="demo-description">Бегунок находится в позиции 0, поле ввода показывает 0.0</p>
+                <div class="slider-with-input">
+                    <div class="slider-container">
+                        <div class="slider-track">
+                            <div class="slider-thumb" style="left: 0;"></div>
+                        </div>
+                        <div class="slider-ticks">
+                            <div class="tick major"><span class="tick-label">0</span></div>
+                            <div class="tick"></div><div class="tick"></div><div class="tick major"><span class="tick-label">5</span></div>
+                            <div class="tick"></div><div class="tick"></div><div class="tick major"><span class="tick-label">10</span></div>
+                        </div>
+                    </div>
+                    <div class="value-input-container">
+                        <div class="value-input-label">Значение:</div>
+                        <input type="text" class="value-input" value="0.0" readonly>
+                        <div class="input-status valid">Корректное значение</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="demo-card">
+                <h3 class="demo-title">Слайдер с фокусом на бегунке</h3>
+                <p class="demo-description">Бегунок в позиции 5.0 с выделением фокуса</p>
+                <div class="slider-with-input">
+                    <div class="slider-container">
+                        <div class="slider-track">
+                            <div class="slider-thumb focused" style="left: 150px;"></div>
+                        </div>
+                        <div class="slider-ticks">
+                            <div class="tick major"><span class="tick-label">0</span></div>
+                            <div class="tick"></div><div class="tick"></div><div class="tick major"><span class="tick-label">5</span></div>
+                            <div class="tick"></div><div class="tick"></div><div class="tick major"><span class="tick-label">10</span></div>
+                        </div>
+                    </div>
+                    <div class="value-input-container">
+                        <div class="value-input-label">Значение:</div>
+                        <input type="text" class="value-input" value="5.0" readonly style="border-color: #1E73F2;">
+                        <div class="input-status valid">Корректное значение</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="demo-card">
+                <h3 class="demo-title">Слайдер с некорректным значением</h3>
+                <p class="demo-description">Поле ввода содержит значение вне диапазона</p>
+                <div class="slider-with-input">
+                    <div class="slider-container">
+                        <div class="slider-track">
+                            <div class="slider-thumb" style="left: 225px;"></div>
+                        </div>
+                        <div class="slider-ticks">
+                            <div class="tick major"><span class="tick-label">0</span></div>
+                            <div class="tick"></div><div class="tick"></div><div class="tick major"><span class="tick-label">5</span></div>
+                            <div class="tick"></div><div class="tick"></div><div class="tick major"><span class="tick-label">10</span></div>
+                        </div>
+                    </div>
+                    <div class="value-input-container">
+                        <div class="value-input-label">Значение:</div>
+                        <input type="text" class="value-input invalid" value="15.0" readonly>
+                        <div class="input-status invalid">Значение вне диапазона (0-10)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Статическая реализация слайдера с отметками шкалы и полем ввода</p>
+            <p>Диапазон: 0 - 10, шаг: 0.5, соответствует оригинальному компоненту SliderInput</p>
+        </footer>
+    </div>
+
+    <script>
+        // Минимальный скрипт только для интерактивности управления состояниями
+        // В чисто статической версии его можно удалить
+        document.addEventListener('DOMContentLoaded', function() {
+            // Элементы управления
+            const stateRadios = document.querySelectorAll('input[name="slider-state"]');
+            const mainSliderThumb = document.getElementById('main-slider-thumb');
+            const mainValueInput = document.getElementById('main-value-input');
+            const focusBtn = document.getElementById('focus-btn');
+            const validBtn = document.getElementById('valid-btn');
+
+            // Состояния для радиокнопок
+            const statePositions = {
+                'state-0': { left: 0, value: '0.0' },
+                'state-25': { left: 75, value: '2.5' },
+                'state-50': { left: 150, value: '5.0' },
+                'state-75': { left: 225, value: '7.5' },
+                'state-100': { left: 300, value: '10.0' }
+            };
+
+            // Обработка выбора состояния
+            stateRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.checked) {
+                        const state = statePositions[this.id];
+                        mainSliderThumb.style.left = state.left + 'px';
+                        mainValueInput.value = state.value;
+                    }
+                });
+            });
+
+            // Кнопка фокуса
+            focusBtn.addEventListener('click', function() {
+                mainSliderThumb.classList.toggle('focused');
+                this.classList.toggle('active');
+
+                if (mainSliderThumb.classList.contains('focused')) {
+                    mainValueInput.style.borderColor = '#1E73F2';
+                } else {
+                    mainValueInput.style.borderColor = '#ddd';
+                }
+            });
+
+            // Кнопка валидности значения
+            validBtn.addEventListener('click', function() {
+                mainValueInput.classList.toggle('invalid');
+                this.classList.toggle('active');
+            });
+
+            // Инициализация начального состояния
+            mainSliderThumb.style.left = '0px';
+            mainValueInput.value = '0.0';
+        });
+    </script>
+</body>
+</html>
