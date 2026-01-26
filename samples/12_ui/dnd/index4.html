@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DevPM с эффектами</title>
+    <style>
+    #source { width:50px; height:50px; background-color: red; display: inline-block;}
+    #target1 {width: 200px; height: 150px; overflow: hidden; border: #0f0 3px solid; margin: 10px 0; padding: 10px; background: #f0f8ff;}
+    #target2 {width: 200px; height: 150px; overflow: hidden; border: #00f 3px solid; margin: 10px 0; padding: 10px; background: #fff0f5;}
+    div{margin:5px;}
+    .label {font-weight: bold; color: #333;}
+    .targetArea { display: flex }
+    </style>
+</head>
+<body>
+  <div class="label">Перетаскивайте красный квадрат:</div>
+  <div id="source" draggable="true">Drag Me!</div>
+
+  <div class="targetArea">
+    <div>
+      <div class="label">🎯 COPY (Ctrl не нужен):</div>
+      <div id="target1">Зона КОПИРОВАНИЯ</div>
+    </div>
+
+    <div>
+      <div class="label">➡️ MOVE (только перемещение):</div>
+      <div id="target2">Зона ПЕРЕМЕЩЕНИЯ</div>
+    </div>
+  </div>
+
+  <script>
+    let dragged = null;
+    const source = document.getElementById("source");
+
+    // ✅ effectAllowed: Разрешаем ВСЕ операции
+    source.addEventListener("dragstart", (e) => {
+      dragged = e.target;
+      e.dataTransfer.effectAllowed = 'all';  // copy, move, link — все можно!
+      e.dataTransfer.setData('text/plain', source.id);
+      console.log('effectAllowed = "all"');
+      console.log(`%cdragstart:%c ${source.id}`, 'font-weight: bold; color: #2196F3;', 'font-weight: bold; color: #666;');
+    });
+
+    // 🎯 ЗОНА 1: КОПИРОВАНИЕ
+    const target1 = document.getElementById("target1");
+    target1.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'copy';    // 📋 Курсор копирования!
+      console.log('COPY OK (dropEffect=copy)');
+    });
+    target1.addEventListener("drop", (e) => {
+      e.preventDefault();
+      e.target.appendChild(dragged.cloneNode(true));  // ✅ КОПИЯ
+      console.log('COPY выполнен');
+      const data = e.dataTransfer.getData('text/plain');
+      console.log(`%cdrop:%c ${data}`, 'font-weight: bold; color: #2196F3;', 'font-weight: bold; color: #666;');
+    });
+
+    // ➡️ ЗОНА 2: ПЕРЕМЕЩЕНИЕ
+    const target2 = document.getElementById("target2");
+    target2.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';    // ➡️ Курсор перемещения!
+      console.log('MOVE OK (dropEffect=move)');
+    });
+    target2.addEventListener("drop", (e) => {
+      e.preventDefault();
+      e.target.appendChild(dragged);         // ✅ ПЕРЕМЕЩЕНИЕ (без clone)
+      console.log('MOVE выполнен');
+      const data = e.dataTransfer.getData('text/plain');
+      console.log(`%cdrop:%c ${data}`, 'font-weight: bold; color: #2196F3;', 'font-weight: bold; color: #666;');
+    });
+  </script>
+</body>
+</html>

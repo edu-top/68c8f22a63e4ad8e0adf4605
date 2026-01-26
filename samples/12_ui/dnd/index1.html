@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DevPM</title>
+    <style>
+    #source { width:50px; height:50px; background-color: red; display: inline-block;}
+    #target {width: 200px; height: 150px; overflow: hidden; border: #ccc 1px dashed;}
+    div{margin:5px;}
+    </style>
+</head>
+<body>
+  <div id="source" draggable="true"></div>
+  <div id="target"></div>
+  <script>
+    const source = document.getElementById("source");
+    source.addEventListener("dragstart", () => console.log("Drag operation started"));
+
+    const target = document.getElementById("target");
+    target.addEventListener("dragover", (event) => {
+        event.preventDefault();
+        console.log("Dragover operation");
+    });
+    target.addEventListener("drop", () => console.log("Drag operation finished"));
+  </script>
+</body>
+</html>

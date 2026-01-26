@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DevPM</title>
+    <style>
+    #source { width:50px; height:50px; background-color: red; display: inline-block;}
+    #target {width: 200px; height: 150px; overflow: hidden; border: #ccc 1px dashed;}
+    div{margin:5px;}
+    </style>
+</head>
+<body>
+  <div id="source" draggable="true"></div>
+  <div id="target"></div>
+  <script>
+    let dragged = null; // перемещенные данные
+    // источник перемещения
+    const source = document.getElementById("source")
+    // в обработчике устанавливаем ссылку на перетаскиваемый элемент
+    source.addEventListener("dragstart", (e) => dragged = e.target);
+
+    // целевая область перемещения
+    const target = document.getElementById("target");
+    // предупреждаем запрет сброса по умолчанию
+    target.addEventListener("dragover", (e) => e.preventDefault());
+    // копируем перетаскиваемый элемент и помещаем его копию на целевую область
+    target.addEventListener("drop", (e) => e.target.appendChild(dragged.cloneNode()));
+  </script>
+</body>
+</html>
