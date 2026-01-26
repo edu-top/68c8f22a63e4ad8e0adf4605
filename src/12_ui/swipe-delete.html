@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Swipe to Delete - Карточки пользователей</title>
+  <style>
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh; padding: 20px;
+    }
+
+    .container {
+      max-width: 400px; margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center; color: white; margin-bottom: 30px;
+      font-size: 28px; font-weight: 300;
+    }
+
+    .user-card {
+      background: white; margin-bottom: 16px; border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      overflow: hidden; position: relative; cursor: grab;
+      transform: translateX(0) scale(1);
+      user-select: none;
+    }
+
+    .user-card.dragging {
+      cursor: grabbing; box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    }
+
+    /* ✨ Исправленная анимация удаления */
+    .user-card.deleting {
+      transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+      transform: translateX(-120%) scale(0.8) !important;
+      opacity: 0 !important;
+    }
+
+    .user-avatar {
+      width: 60px; height: 60px; border-radius: 50%;
+      background: #e5e7eb; margin: 20px; float: left;
+    }
+
+    .user-info {
+      padding: 20px; margin-left: 80px; min-height: 60px;
+    }
+
+    .user-name {
+      font-size: 18px; font-weight: 600; color: #1f2937; margin-bottom: 4px;
+    }
+
+    .user-email {
+      color: #6b7280; font-size: 14px;
+    }
+
+    .delete-zone {
+      position: absolute; top: 0; right: -80px; height: 100%; width: 80px;
+      background: linear-gradient(90deg, #ef4444, #dc2626);
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-size: 16px; font-weight: 600;
+      border-radius: 0 12px 12px 0; opacity: 0; transition: opacity 0.2s;
+      box-shadow: -2px 0 10px rgba(239, 68, 68, 0.4);
+    }
+
+    .add-button {
+      background: rgba(255,255,255,0.2); color: white; border: none;
+      padding: 12px 24px; border-radius: 25px; cursor: pointer;
+      font-size: 16px; margin: 20px auto; display: block;
+      backdrop-filter: blur(10px); transition: all 0.3s;
+    }
+
+    .add-button:hover {
+      background: rgba(255,255,255,0.3); transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>👥 Пользователи</h1>
+    <div id="userList"></div>
+    <button class="add-button" onclick="addUser()">➕ Добавить пользователя</button>
+  </div>
+
+  <script>
+    const users = [
+      { id: 1, name: 'Анна Иванова', email: 'anna@example.com' },
+      { id: 2, name: 'Борис Петров', email: 'boris@example.com' },
+      { id: 3, name: 'Виктор Сидоров', email: 'viktor@example.com' },
+      { id: 4, name: 'Даша Козлова', email: 'dasha@example.com' }
+    ];
+
+    const THRESHOLD = 0.50;
+    const ANIMATION_DURATION = 600;
+
+    let draggedElement = null;
+    let startX = 0;
+    let currentX = 0;
+    let isDragging = false;
+    let startY = 0;
+
+    function renderUsers() {
+      const container = document.getElementById('userList');
+      container.innerHTML = users.map(user => `
+        <div class="user-card" data-id="${user.id}">
+          <div class="delete-zone">🗑️ Удалить</div>
+          <div class="user-avatar" style="background: hsl(${Math.random()*360}, 70%, 80%)">
+            ${user.name.charAt(0)}
+          </div>
+          <div class="user-info">
+            <div class="user-name">${user.name}</div>
+            <div class="user-email">${user.email}</div>
+          </div>
+        </div>
+      `).join('');
+
+      document.querySelectorAll('.user-card').forEach(card => {
+        addSwipeHandlers(card);
+      });
+    }
+
+    function addSwipeHandlers(card) {
+      card.addEventListener('touchstart', handleStart, { passive: true });
+      card.addEventListener('touchmove', handleMove, { passive: false });
+      card.addEventListener('touchend', handleEnd, { passive: true });
+
+      card.addEventListener('mousedown', handleStart);
+    }
+
+    document.addEventListener('mousemove', handleMove);
+    document.addEventListener('mouseup', handleEnd);
+
+    function handleStart(e) {
+      const card = e.currentTarget;
+      if (!card.classList.contains('user-card')) return;
+
+      draggedElement = card;
+      isDragging = true;
+
+      startX = getClientX(e);
+      startY = getClientY(e);
+      currentX = 0;
+
+      card.classList.add('dragging');
+      card.style.transition = 'none';
+    }
+
+    function handleMove(e) {
+      if (!isDragging || !draggedElement) return;
+
+      e.preventDefault();
+
+      currentX = getClientX(e) - startX;
+
+      const currentY = getClientY(e);
+      const deltaY = Math.abs(currentY - startY);
+      if (deltaY > 10) {
+        endDrag();
+        return;
+      }
+
+      if (currentX < 0) {
+        draggedElement.style.transform = `translateX(${currentX}px)`;
+
+        const rect = draggedElement.getBoundingClientRect();
+        const thresholdPx = rect.width * THRESHOLD;
+        const deleteZone = draggedElement.querySelector('.delete-zone');
+
+        if (Math.abs(currentX) > thresholdPx) {
+          deleteZone.style.opacity = '1';
+        } else {
+          deleteZone.style.opacity = '0';
+        }
+      } else {
+        currentX = 0;
+      }
+    }
+
+    function handleEnd(e) {
+      if (!draggedElement) return;
+
+      const rect = draggedElement.getBoundingClientRect();
+      const thresholdPx = rect.width * THRESHOLD;
+
+      draggedElement.classList.remove('dragging');
+
+      if (currentX < -thresholdPx) {
+        // ✅ БЕЗ ПРЫЖКА НАЗАД - сразу анимация удаления
+        deleteUser(draggedElement.dataset.id);
+      } else {
+        draggedElement.style.transform = 'translateX(0)';
+        draggedElement.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+        setTimeout(() => {
+          draggedElement.style.transition = '';
+        }, 300);
+      }
+
+      resetDragState();
+    }
+
+    function deleteUser(userId) {
+      const index = users.findIndex(u => u.id == userId);
+      if (index > -1) {
+        const card = document.querySelector(`[data-id="${userId}"]`);
+
+        // ✅ Сразу запускаем анимацию удаления из текущей позиции
+        card.classList.add('deleting');
+
+        setTimeout(() => {
+          users.splice(index, 1);
+          renderUsers();
+        }, ANIMATION_DURATION);
+      }
+    }
+
+    function resetDragState() {
+      draggedElement = null;
+      isDragging = false;
+      startX = 0;
+      currentX = 0;
+    }
+
+    function getClientX(e) {
+      return e.touches && e.touches[0] ? e.touches[0].clientX : e.clientX;
+    }
+
+    function getClientY(e) {
+      return e.touches && e.touches[0] ? e.touches[0].clientY : e.clientY;
+    }
+
+    function endDrag() {
+      if (draggedElement) {
+        draggedElement.style.transform = 'translateX(0)';
+        draggedElement.style.transition = 'transform 0.2s ease-out';
+        setTimeout(() => {
+          draggedElement.style.transition = '';
+        }, 200);
+      }
+      resetDragState();
+    }
+
+    function addUser() {
+      const newId = Math.max(...users.map(u => u.id)) + 1;
+      users.push({
+        id: newId,
+        name: `Пользователь ${newId}`,
+        email: `user${newId}@example.com`
+      });
+      renderUsers();
+    }
+
+    renderUsers();
+  </script>
+</body>
+</html>

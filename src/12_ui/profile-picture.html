@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Настройки профиля - Аватар</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 600px; margin: 50px auto; padding: 20px;
+      background: #f5f5f5;
+    }
+
+    .profile-settings {
+      background: white; padding: 30px; border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+
+    h3 { margin-top: 0; color: #333; }
+
+    .drop-zone {
+      width: 200px; height: 200px; margin: 20px auto;
+      border: 3px dashed #d1d5db; border-radius: 50%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      cursor: pointer; transition: all 0.3s;
+      background: #f9fafb; position: relative; overflow: hidden;
+    }
+
+    .drop-zone:hover, .drop-zone.dragover {
+      border-color: #3b82f6; background: #eff6ff;
+      transform: scale(1.02);
+    }
+
+    #profileImg {
+      width: 100%; height: 100%;
+      object-fit: cover; border-radius: 50%;
+      display: block;
+    }
+
+    .drop-text {
+      margin: 0; color: #6b7280; font-size: 14px;
+      text-align: center; opacity: 0.7;
+    }
+
+    .drop-zone.dragover .drop-text {
+      opacity: 0;
+    }
+
+    button {
+      background: #3b82f6; color: white;
+      border: none; padding: 12px 24px;
+      border-radius: 8px; cursor: pointer;
+      font-size: 16px; font-weight: 500;
+      transition: background 0.2s;
+      margin-top: 20px;
+    }
+
+    button:hover { background: #2563eb; }
+    button:disabled { background: #9ca3af; cursor: not-allowed; }
+
+    .status {
+      margin-top: 15px; font-size: 14px;
+      min-height: 20px;
+    }
+
+    .success { color: #10b981; }
+    .error { color: #ef4444; }
+  </style>
+</head>
+<body>
+  <div class="profile-settings">
+    <h3>Аватар профиля</h3>
+    <div id="dropZone" class="drop-zone">
+      <img id="profileImg" src="https://via.placeholder.com/200/6b7280/ffffff?text=👤" alt="Аватар">
+      <p class="drop-text">Перетащите изображение сюда или кликните</p>
+    </div>
+    <button id="saveBtn" disabled>Сохранить изменения</button>
+    <div id="status" class="status"></div>
+  </div>
+
+  <script>
+    const dropZone = document.getElementById('dropZone');
+    const profileImg = document.getElementById('profileImg');
+    const saveBtn = document.getElementById('saveBtn');
+    const status = document.getElementById('status');
+
+    let currentFile = null;
+    let originalSrc = profileImg.src;
+
+    // Обработчики drag & drop
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, () => dropZone.classList.add('dragover'), false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, () => dropZone.classList.remove('dragover'), false);
+    });
+
+    // Обработка drop
+    dropZone.addEventListener('drop', handleDrop, false);
+    dropZone.addEventListener('click', handleClick);
+
+    function handleDrop(e) {
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        handleFile(files[0]);
+      }
+    }
+
+    // Клик для выбора файла
+    function handleClick() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.onchange = (e) => {
+        if (e.target.files.length > 0) {
+          handleFile(e.target.files[0]);
+        }
+      };
+      input.click();
+    }
+
+    function handleFile(file) {
+      // Валидация
+      if (!file.type.startsWith('image/')) {
+        showStatus('Выберите изображение!', 'error');
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) { // 5MB
+        showStatus('Изображение слишком большое (макс. 5MB)', 'error');
+        return;
+      }
+
+      currentFile = file;
+      previewImage(file);
+      saveBtn.disabled = false;
+      showStatus('Готово к сохранению', 'success');
+    }
+
+    function previewImage(file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        profileImg.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Сохранение (имитация сервера)
+    saveBtn.addEventListener('click', () => {
+      if (!currentFile) return;
+
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Сохраняется...';
+      showStatus('Сохранение...', '');
+
+      // Имитация AJAX-запроса
+      setTimeout(() => {
+        // Сохраняем в localStorage для демонстрации
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          localStorage.setItem('userAvatar', e.target.result);
+          showStatus('✅ Аватар успешно обновлён!', 'success');
+          saveBtn.textContent = 'Сохранено';
+          originalSrc = profileImg.src;
+
+          setTimeout(() => {
+            saveBtn.textContent = 'Сохранить изменения';
+            saveBtn.disabled = false;
+          }, 2000);
+        };
+        reader.readAsDataURL(currentFile);
+      }, 1500);
+    });
+
+    function showStatus(message, type) {
+      status.textContent = message;
+      status.className = `status ${type}`;
+    }
+
+    // Загрузка сохранённого аватара при старте
+    const savedAvatar = localStorage.getItem('userAvatar');
+    if (savedAvatar) {
+      profileImg.src = savedAvatar;
+    }
+  </script>
+</body>
+</html>
