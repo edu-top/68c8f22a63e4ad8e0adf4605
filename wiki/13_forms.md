@@ -31,6 +31,10 @@
   - [Validation API. Валидация элементов формы](#validation-api-валидация-элементов-формы)
     - [Валидация HTML5](#валидация-html5)
     - [Получение информации о валидации в JavaScript](#получение-информации-о-валидации-в-javascript)
+  - [Управление валидацией форм](#управление-валидацией-форм)
+    - [Методы валидации](#методы-валидации)
+    - [Настройка собственных сообщений валидации](#настройка-собственных-сообщений-валидации)
+    - [Определение своих правил валидации](#определение-своих-правил-валидации)
   - [Источники информации](#источники-информации)
 
 ### Формы и их элементы
@@ -1277,6 +1281,175 @@ function validateEmail() {
 }
 ```
 
+### Управление валидацией форм
+
+#### Методы валидации
+В прошлой теме было рассмотрено, как получить состояние с помощью свойств **Constraint Validation API**. Но в дополнение к свойствам **Constraint Validation API** предоставляет ряд методов, которые позволяют управлять валидацией:
+
+- **`checkValidity()`**: проверяет, проходит ли элемент формы или вся форма валидацию. Этот метод можно вызвать как для формы, так и для отдельных ее элементов. Элемент формы является валидным, если он удовлетворяет всем атрибутам валидации. Форма является валидной, если все ее элементы проходят валидацию. Если форма или ее элементы проходят валидацию, то возвращается `true`, иначе возвращается `false`
+
+- **`reportValidity()`**: также проверяет, проходит ли элемент формы или вся форма валидацию. Однако в отличие от `checkValidity()` этот метод также отображает ошибки валидации. Этот метод также можно вызвать как для формы, так и для отдельных ее элементов.
+
+- **`setCustomValidity()`**: этот метод позволяет настроить сообщения валидации
+
+Например, проверка валидности формы и ее элементов с помощью `checkValidity()`:
+```html
+<form id="registerForm" name="registerForm" method="post" action="register">
+<p>
+    <label for="username">Username:</label><br>
+    <input id="username" name="username" maxlength="20" minlength="3" required>
+</p>
+<p>
+    <label for="age">Age:</label><br>
+    <input type="number" id="age" name="age" min="1" max="110" required>
+</p>
+<button type="submit" id="submit" name="submit">Register</button>
+</form>
+<script>
+const registerForm = document.registerForm;
+const submit = registerForm.submit;
+submit.addEventListener("click", validate);
+
+function validate(){
+    if(!registerForm.username.checkValidity()){
+        console.log("Username is not valid");
+    }
+    if(!registerForm.age.checkValidity()){
+        console.log("Age is not valid");
+    }
+    if(!registerForm.checkValidity()){
+        console.log("Form data is not valid");
+    }
+}
+</script>
+```
+
+Для элементов вызов этого метода аналогичен проверке валидности с помощью свойства `validity.valid`:
+```js
+function validate(){
+    if(!registerForm.username.validity.valid){
+        console.log("Username is not valid");
+    }
+    if(!registerForm.age.validity.valid){
+        console.log("Age is not valid");
+    }
+    if(!registerForm.checkValidity()){
+        console.log("Form data is not valid");
+    }
+}
+```
+
+#### Настройка собственных сообщений валидации
+Для настройки своих сообщений валидации в метод **`setCustomValidity()`** передается необходимое сообщение:
+```html
+<form id="registerForm" name="registerForm">
+<p>
+    <label for="username">Username:</label><br>
+    <input id="username" name="username" maxlength="20" minlength="3" required>
+</p>
+<button type="submit" id="submit" name="submit">Register</button>
+</form>
+<script>
+const registerForm = document.registerForm;
+const submit = registerForm.submit;
+submit.addEventListener("click", validate);
+ 
+function validate(){
+    if(registerForm.username.validity.valueMissing){
+        registerForm.username.setCustomValidity("Необходимо ввести имя пользователя");
+    }
+    if(registerForm.username.validity.tooLong){
+        registerForm.username.setCustomValidity("Имя пользователя не должно превышать 20 символов");
+    }
+    if(registerForm.username.validity.tooShort){
+        registerForm.username.setCustomValidity("Имя пользователя не должно быть меньше 3 символов");
+    }
+}
+</script>
+```
+
+Здесь при отправке формы проверяем значение поля `username`. В зависимости от того, какое правило валидации не соблюдается, устанавливаем соответствующее сообщение об ошибке. И браузер также будет использовать эти сообщения:
+
+![Установка ошибок валидации в JavaScript](../img/validation4.png)
+
+#### Определение своих правил валидации
+При валидации мы не ограничены встроенными правилами валидации, которые применяются к элементу формы с помощью атрибутов `required`, `minlength`, `maxlength`, `min`, `max`, либо в зависимости от типа поля ввода. При необходимости мы можем задавать свою логику валидации для кастомных сценарией. Например, возьмем простейший пример: имя пользователя у нас не должно быть равно "admin". Для этого определим следующую программу:
+```html
+<form id="registerForm" name="registerForm">
+<p>
+    <label for="username">Username:</label><br>
+    <input id="username" name="username" maxlength="20" minlength="3" required>
+</p>
+<button type="submit" id="submit" name="submit">Register</button>
+</form>
+<script>
+const usernameField = document.registerForm.username;
+const submit = registerForm.submit;
+submit.addEventListener("click", validate);
+
+function validate(){
+    if(usernameField.value === "admin"){
+        usernameField.setCustomValidity("Недопустимое имя пользователя");
+    }
+}
+</script>
+```
+
+В функции `validate` проверяем значение поля `usernameField`. Если оно равно "admin", то устанавливаем сообщение об ошибке.[^10.7]
+
+![Кастомная логика валидации в JavaScript](../img/validation5.png)
+
+Поскольку мы установили сообщение об ошибке, то поле `username` уже не проходит валидацию, даже если оно соответствует атрибутам `required`, `maxlength` и `minlength`. Соотвественно далее мы можем получить это сообщение через свойство `validationMessage`:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DevPM</title>
+    <style>
+    input {width: 150px;}
+    input:invalid {border-color: red; }
+    input:valid { border-color: green;}
+    #usernameErrors {padding:5px;background-color: #ffcccc; color:#b33939; display:none;}
+    </style>
+</head>
+<body>
+<form id="registerForm" name="registerForm">
+<p>
+    <label for="username">Username:</label><br>
+    <input id="username" name="username" maxlength="20" minlength="3" required>
+    <div id="usernameErrors"></div>
+</p>
+<button type="submit" id="submit" name="submit">Register</button>
+</form>
+<script>
+const usernameErrors = document.getElementById("usernameErrors");
+const usernameField = document.registerForm.username;
+const submit = registerForm.submit;
+submit.addEventListener("click", validate);
+
+function validate(e){
+    if(usernameField.value === "admin"){
+        usernameField.setCustomValidity("Недопустимое имя пользователя");
+    }
+    // проверяем на валидацию
+    if(!usernameField.validity.valid){
+        usernameErrors.textContent = usernameField.validationMessage;
+        usernameErrors.style.display = "block";
+    }
+    else{
+        usernameErrors.textContent = "";
+        usernameErrors.style.display = "none";
+        e.preventDefault(); // предупреждаем отправку форму и перезагрузку страницы
+    }
+}
+</script>
+</body>
+</html>
+```
+
+![Кастомная логика валидации HTML5 в JavaScript](../img/validation6.png)
+
 ### Источники информации
 [^10.1]: [Формы и их элементы](https://metanit.com/web/javascript/10.1.php)
 [^10.2]: [Кнопки](https://metanit.com/web/javascript/10.2.php)
@@ -1285,3 +1458,4 @@ function validateEmail() {
 [^10.5]: [Список select](https://metanit.com/web/javascript/10.5.php)
 [^form-elements]: [Свойства и методы формы](https://learn.javascript.ru/form-elements)
 [^10.6]: [Validation API. Валидация элементов формы](https://metanit.com/web/javascript/10.6.php)
+[^10.7]: [Управление валидацией форм](https://metanit.com/web/javascript/10.7.php)
