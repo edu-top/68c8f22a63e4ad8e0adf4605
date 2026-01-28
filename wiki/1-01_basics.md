@@ -1187,7 +1187,238 @@
 
 ![Растяжение ячеек таблицы в html](../img/696b923663e4ad8e0adf49a6-1.31.png)
 
-[Исходный код примеров](../samples/html/03_tables.html)
+![Tables example](../img/tables_03-1.png)
+
+<details>
+<summary>Исходный код примера</summary>
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Таблицы</title>
+    <style>
+        thead {
+            background-color: bisque;
+        }
+        tfoot {
+            background-color: lightgrey;
+            font-weight: bold;
+        }
+        table > tbody:nth-of-type(even) {
+            background-color: lightblue;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Остатки</h2>
+
+    <table border="1" cellspacing="0" cellpadding="5">
+        <caption>Смартфоны на складе</caption>
+        <thead>
+            <tr>
+                <th>Модель</th>
+                <th>Производитель</th>
+                <th>Цена</th>
+                <th>Количество</th>
+            </tr>
+        </thead>
+        <tr>
+            <td>iPhone 17</td>
+            <td>Apple</td>
+            <td>96 790 ₽</td>
+            <td style="text-align: right;">5</td>
+        </tr>
+        <tr>
+            <td>Galaxy S25</td>
+            <td>Samsung</td>
+            <td>90 299 ₽</td>
+            <td style="text-align: right;">7</td>
+        </tr>
+        <tr>
+            <td>Galaxy S24</td>
+            <td>Samsung</td>
+            <td colspan="2" rowspan="2" style="text-align: right;">18</td>
+        </tr>
+        <tr>
+            <td>Galaxy S24 Ultra</td>
+            <td>Samsung</td>
+        </tr>
+        <tfoot>
+            <tr>
+                <td colspan="3">ИТОГО</td>
+                <td style="text-align: right;">24</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <h2>Маркетинг</h2>
+
+    <table border="1" cellspacing="0" cellpadding="5">
+        <caption>Аналитика рекламной кампании за Сентябрь 2025</caption>
+        <thead>
+            <tr>
+                <th rowspan="2">Рекламная площадка</th>
+                <th rowspan="2">Кампания</th>
+                <th colspan="3">Показатели эффективности</th>
+                <th colspan="2">Финансовые показатели</th>
+                <th rowspan="2">CTR (%)</th>
+            </tr>
+            <tr>
+                <th>Показы</th>
+                <th>Клики</th>
+                <th>Конверсии</th>
+                <th>Расход (₽)</th>
+                <th>CPC (₽)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td rowspan="3">Google Ads</td>
+                <td>Поисковая кампания #1</td>
+                <td>125,000</td>
+                <td>2,540</td>
+                <td>187</td>
+                <td>75,800</td>
+                <td>29.84</td>
+                <td>2.03</td>
+            </tr>
+            <tr>
+                <td>КМС "Товары"</td>
+                <td>89,50</td>
+                <td>1,230</td>
+                <td>94</td>
+                <td>42,150</td>
+                <td>34,27</td>
+                <td>1,37</td>
+            </tr>
+            <tr>
+                <td>Видео кампания</td>
+                <td>256,000</td>
+                <td>890</td>
+                <td>45</td>
+                <td>28,900</td>
+                <td>32.47</td>
+                <td>0.35</td>
+            </tr>
+        </tbody>
+        <tbody>
+            <tr>
+                <td rowspan="2">Yandex Direct</td>
+                <td>Поиск + РСЯ</td>
+                <td>98,300</td>
+                <td>1,870</td>
+                <td>156</td>
+                <td>51.240</td>
+                <td>27.40</td>
+                <td>1.90</td>
+            </tr>
+            <tr>
+                <td>Спецразмещение</td>
+                <td>67,800</td>
+                <td>1,450</td>
+                <td>123</td>
+                <td>43,560</td>
+                <td>30.04</td>
+                <td>2.14</td>
+            </tr>
+        </tbody>
+        <tbody>
+            <tr>
+                <td rowspan="3">Осциальные сети</td>
+                <td>VK Таргетинг</td>
+                <td>145,000</td>
+                <td>2,100</td>
+                <td>89</td>
+                <td>38,700</td>
+                <td>18.43</td>
+                <td>1.45</td>
+            </tr>
+            <tr>
+                <td>Instagram Stories</td>
+                <td>89,600</td>
+                <td>1,560</td>
+                <td>67</td>
+                <td>29.850</td>
+                <td>19/13</td>
+                <td>1/74</td>
+            </tr>
+            <tr>
+                <td>Telgram каналы</td>
+                <td>56,300</td>
+                <td>980</td>
+                <td>34</td>
+                <td>15,200</td>
+                <td>15.51</td>
+                <td>1.74</td>
+            </tr>
+        </tbody>
+
+        <tbody>
+            <tr>
+                <td rowspan="3">Google Ads</td>
+                <td>Поисковая кампания #1</td>
+                <td>125,000</td>
+                <td>2,540</td>
+                <td>187</td>
+                <td>75,800</td>
+                <td>29.84</td>
+                <td>2.03</td>
+            </tr>
+            <tr>
+                <td>КМС "Товары"</td>
+                <td>89,50</td>
+                <td>1,230</td>
+                <td>94</td>
+                <td>42,150</td>
+                <td>34,27</td>
+                <td>1,37</td>
+            </tr>
+            <tr>
+                <td>Видео кампания</td>
+                <td>256,000</td>
+                <td>890</td>
+                <td>45</td>
+                <td>28,900</td>
+                <td>32.47</td>
+                <td>0.35</td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2">ВСЕГО</td>
+                <td>927,500</td>
+                <td>12,620</td>
+                <td>795</td>
+                <td>325,400</td>
+                <td>25.78</td>
+                <td>1.36</td>
+            </tr>
+            <tr>
+                <td colspan="8" style="text-align: center">* Данные обновлены: 17.09.2025 | CPC &mdash; Cost Per Click | CTR &mdash; Click-Through Rate</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <h2>Ключевые метрики</h2>
+
+    <ul>
+        <li><strong>Общий бюджет:</strong> 325,400 ₽</li>
+        <li><strong>Средний СРС:</strong> 25,78 ₽</li>
+        <li><strong>Общая конверсия:</strong> 6.3%</li>
+        <li><strong><abbr title="Return on Investment">ROI</abbr>:</strong> 3.2x</li>
+    </ul>
+
+</body>
+</html>
+```
+
+[Исходный код примера](../samples/html/03_tables.html)
+
+</details>
 
 ### Ссылки
 
