@@ -833,9 +833,9 @@ JavaScript создавался под влиянием языков с дина
     const buttons = document.querySelectorAll('button');
 
     buttons.forEach(btn => {
-    btn.addEventListener('click', function() {
-        // this ссылается на конкретную кнопку
-        console.log(this.textContent);
+        btn.addEventListener('click', function() {
+            // this ссылается на конкретную кнопку
+            console.log(this.textContent);
         });
     });
     ```
@@ -846,12 +846,12 @@ JavaScript создавался под влиянием языков с дина
 
     ```js
     function createUser(name) {
-    return {
-        name,
-        introduce() {
-        console.log(`I'm ${this.name}`);
-        }
-    };
+        return {
+            name,
+            introduce() {
+                console.log(`I'm ${this.name}`);
+            }
+        };
     }
 
     const users = ['Anna', 'John'].map(createUser);
@@ -862,16 +862,17 @@ JavaScript создавался под влиянием языков с дина
 
     ```js
     const processor = {
-    factor: 2,
-    process(items) {
-        return items.map(function(item) {
-        return item * this.factor;
-        }, this); // передаем контекст вторым аргументом
-    }
+        factor: 2,
+        process(items) {
+            return items.map(function(item) {
+                return item * this.factor;
+            }, this); // передаем контекст вторым аргументом
+        }
     };
     ```
 
-7. **Каррирование и частичное применение**
+7. **Каррирование и частичное применение**. Функция `bind` даёт частичное применение "одним ударом" — удобно для утилит и обработчиков событий.
+
 
     ```js
     const button = {
@@ -885,6 +886,25 @@ JavaScript создавался под влиянием языков с дина
     // Функция может быть вызвана в любом контексте
     setTimeout(button.click.bind(button), 1000);
     ```
+
+    Функция ниже фиксирует первые аргументы:
+
+    *Частичное применение*
+    ```js
+    function sum(a, b, c) {
+        return a + b + c;  // Ожидает 3 аргумента
+    }
+    const addFive = sum.bind(null, 5);  // Фиксируем первый аргумент a=5
+    console.log(addFive(10, 15));       // Передаём b=10, c=15 → 5+10+15 = 30
+    ```
+
+    Здесь `bind(null, 5)` создаёт новую функцию `addFive`, где:
+
+      - первый аргумент (5) зафиксирован навсегда как `a`.
+
+      - при вызове `addFive(10, 15)` аргументы передаются справа: `sum(5, 10, 15)`.
+
+
 
 #### Эволюция и современные альтернативы
 С ES6+ появились альтернативы:
