@@ -4521,13 +4521,13 @@ Element.prototype.sayHi = function() {
 };
 
 document.documentElement.sayHi(); // Hello, I'm HTML
-document.body.sayHi(); // Hello, I'm BODY
+document.body.sayHi();            // Hello, I'm BODY
 ```
 
 Итак, DOM-свойства и методы ведут себя так же, как и обычные объекты JavaScript:
 
-- Им можно присвоить любое значение.
-- Они регистрозависимы (нужно писать `elem.nodeType`, не `elem.NoDeTyPe`).
+- им можно присвоить любое значение;
+- они регистрозависимы (нужно писать `elem.nodeType`, не `elem.NoDeTyPe`).
 
 #### HTML-атрибуты
 В HTML у тегов могут быть атрибуты. Когда браузер парсит HTML, чтобы создать DOM-объекты для тегов, он распознаёт *стандартные* атрибуты и создаёт DOM-свойства для них.
