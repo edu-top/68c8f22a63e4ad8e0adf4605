@@ -4721,11 +4721,11 @@ element.removeAttribute("style");
 
   // атрибут => свойство
   input.setAttribute('id', 'id');
-  alert(input.id); // id (обновлено)
+  alert(input.id);                  // id (обновлено)
 
   // свойство => атрибут
   input.id = 'newId';
-  alert(input.getAttribute('id')); // newId (обновлено)
+  alert(input.getAttribute('id'));  // newId (обновлено)
 </script>
 ```
 
