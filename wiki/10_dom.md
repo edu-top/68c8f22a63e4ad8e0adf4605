@@ -4538,22 +4538,22 @@ document.body.sayHi();            // Hello, I'm BODY
 ```html
 <body id="test" something="non-standard">
   <script>
-    alert(document.body.id); // test
+    alert(document.body.id);        // test
     // нестандартный атрибут не преобразуется в свойство
     alert(document.body.something); // undefined
   </script>
 </body>
 ```
 
-Пожалуйста, учтите, что стандартный атрибут для одного тега может быть нестандартным для другого. Например, атрибут "`type`" является стандартным для элемента `<input>` ([`HTMLInputElement`](https://html.spec.whatwg.org/#htmlinputelement)), но не является стандартным для `<body>` ([`HTMLBodyElement`](https://html.spec.whatwg.org/#htmlbodyelement)). Стандартные атрибуты описаны в спецификации для соответствующего класса элемента.
+Необходимо учитывать, что стандартный атрибут для одного тега может быть нестандартным для другого. Например, атрибут "`type`" является стандартным для элемента `<input>` ([`HTMLInputElement`](https://html.spec.whatwg.org/#htmlinputelement)), но не является стандартным для `<body>` ([`HTMLBodyElement`](https://html.spec.whatwg.org/#htmlbodyelement)). Стандартные атрибуты описаны в спецификации для соответствующего класса элемента.
 
 Мы можем увидеть это на примере ниже:
 ```html
 <body id="body" type="...">
   <input id="input" type="text">
   <script>
-    alert(input.type); // text
-    alert(body.type); // undefined: DOM-свойство не создалось, потому что оно нестандартное
+    alert(input.type);  // text
+    alert(body.type);   // undefined: DOM-свойство не создалось, потому что оно нестандартное
   </script>
 </body>
 ```
@@ -4591,20 +4591,20 @@ document.body.sayHi();            // Hello, I'm BODY
   <div id="elem" about="Elephant"></div>
 
   <script>
-    alert( elem.getAttribute('About') ); // (1) 'Elephant', чтение
+    alert( elem.getAttribute('About') );  // (1) 'Elephant', чтение
 
-    elem.setAttribute('Test', 123); // (2), запись
+    elem.setAttribute('Test', 123);       // (2), запись
 
-    alert( elem.outerHTML ); // (3), посмотрим, есть ли атрибут в HTML (да)
+    alert( elem.outerHTML );              // (3), посмотрим, есть ли атрибут в HTML (да)
 
-    for (let attr of elem.attributes) { // (4) весь список
+    for (let attr of elem.attributes) {   // (4) весь список
       alert( `${attr.name} = ${attr.value}` );
     }
   </script>
 </body>
 ```
 
-Пожалуйста, обратите внимание:
+Стоит обратить внимание на следующие моменты:
 
 1. `getAttribute('About')` – здесь первая буква заглавная, а в HTML – строчная. Но это не важно: имена атрибутов регистронезависимы.
 2. Мы можем присвоить что угодно атрибуту, но это станет строкой. Поэтому в этой строчке мы получаем значение "`123`".
@@ -4698,7 +4698,7 @@ element.setAttributeNode(attribute);
 ##### Удаление атрибута
 Для удаления атрибута применяется метод **`removeAttribute()`**, в который передается удаляемый атрибут:
 ```html
-<a id="home" href="https://metanit.com" style="color:navy;">Home</a>
+<a id="home" href="https://example.com" style="color:navy;">Home</a>
 <script>
 // получаем элемент
 const element = document.getElementById("home");
@@ -4727,7 +4727,7 @@ element.removeAttribute("style");
 </script>
 ```
 
-Но есть и исключения, например, `input.value` синхронизируется только в одну сторону – атрибут → значение, но не в обратную:
+Но есть и исключения, например, `input.value` синхронизируется только в одну сторону – *атрибут* → *значение*, но не в обратную:
 ```html
 <input>
 
@@ -4746,8 +4746,8 @@ element.removeAttribute("style");
 
 В примере выше:
 
-- Изменение атрибута `value` обновило свойство.
-- Но изменение свойства не повлияло на атрибут.
+- изменение атрибута `value` обновило свойство,
+- но изменение свойства не повлияло на атрибут.
 
 Иногда эта «особенность» может пригодиться, потому что действия пользователя могут приводить к изменениям `value`, и если после этого мы захотим восстановить «оригинальное» значение из HTML, оно будет в атрибуте.
 
@@ -4758,7 +4758,7 @@ DOM-свойства не всегда являются строками. Нап
 
 <script>
   alert(input.getAttribute('checked')); // значение атрибута: пустая строка
-  alert(input.checked); // значение свойства: true
+  alert(input.checked);                 // значение свойства: true
 </script>
 ```
 
@@ -4776,7 +4776,7 @@ DOM-свойства не всегда являются строками. Нап
 </script>
 ```
 
-Хотя большинство свойств, всё же, строки.
+Хотя большинство свойств всё же строки.
 
 При этом некоторые из них, хоть и строки, могут отличаться от атрибутов. Например, DOM-свойство `href` всегда содержит *полный* URL, даже если атрибут содержит относительный URL или просто `#hash`.
 
