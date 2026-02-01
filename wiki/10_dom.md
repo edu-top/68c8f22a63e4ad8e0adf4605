@@ -6721,6 +6721,7 @@ inputs[inputs.length-1] // взять последний
 ### Практическая работа. Модификация веб-страницы
 
 #### Задание
+Выполнить набор задач, представленных ниже.
 
 1. **Список**
 
@@ -6778,7 +6779,7 @@ inputs[inputs.length-1] // взять последний
 
     Результат (дерево):
 
-    ![Tree example](../img/tree-example.png)
+    ![Tree example](../img/obj-tree.png)
 
     1. Для решения этой задачи использовать следующие способы (постараться реализовать оба):
 
@@ -6807,7 +6808,7 @@ inputs[inputs.length-1] // взять последний
 
     Результат:
 
-    ![Tree descendants](../img/tree-descendants.png)
+    ![Tree descendants](../img/tree-obj.png)
 
     <details>
     <summary>Решение</summary>
@@ -6830,7 +6831,7 @@ inputs[inputs.length-1] // взять последний
 
     Например, `createCalendar(cal, 2012, 9)` сгенерирует в `cal` следующий календарь:
 
-    ![Calendar example](../img/calendar-example.png)
+    ![Calendar example](../img/calendar-dom.png)
 
     <details>
     <summary>Решение</summary>
@@ -6848,6 +6849,8 @@ inputs[inputs.length-1] // взять последний
     [Исходный код](../src/10_dom/calendar.html)
 
     </details>
+
+Решение приложить в виде отдельных файлов-сценариев.
 
 ### Практическая работа. Управление атрибутами элементов
 
