@@ -168,8 +168,10 @@
   - [Практическая работа. Поиск элементов на веб-странице](#практическая-работа-поиск-элементов-на-веб-странице)
   - [Практическая работа. Модификация веб-страницы](#практическая-работа-модификация-веб-страницы)
     - [Задание](#задание-2)
-  - [Практическая работа. Реализация поведения "подсказка"](#практическая-работа-реализация-поведения-подсказка)
+  - [Практическая работа. Управление атрибутами элементов](#практическая-работа-управление-атрибутами-элементов)
     - [Задание](#задание-3)
+  - [Практическая работа. Реализация поведения "подсказка"](#практическая-работа-реализация-поведения-подсказка)
+    - [Задание](#задание-4)
   - [Источники информации](#источники-информации)
 
 ### Введение в DOM
@@ -6844,6 +6846,124 @@ inputs[inputs.length-1] // взять последний
     5. Если месяц закончился, но строка таблицы ещё не заполнена, добавим в неё пустые `<td>`, чтобы сделать в календаре красивые пустые квадратики.
 
     [Исходный код](../src/10_dom/calendar.html)
+
+    </details>
+
+### Практическая работа. Управление атрибутами элементов
+
+#### Задание
+
+1. **Получение атрибута**
+
+    Написать код для выбора элемента с атрибутом `data-widget-name` из документа и прочитать его значение.
+
+    ```html
+    <!DOCTYPE html>
+    <html>
+    <body>
+
+      <div data-widget-name="menu">Choose the genre</div>
+
+      <script>
+        /* your code */
+      </script>
+    </body>
+    </html>
+    ```
+
+    <details>
+    <summary>Решение</summary>
+
+    ```html
+    <!DOCTYPE html>
+    <html>
+    <body>
+
+      <div data-widget-name="menu">Choose the genre</div>
+
+      <script>
+        // получаем элемент
+        let elem = document.querySelector('[data-widget-name]');
+
+        // читаем значение
+        alert(elem.dataset.widgetName);
+        // или так
+        alert(elem.getAttribute('data-widget-name'));
+      </script>
+    </body>
+    </html>
+    ```
+
+    </details>
+
+2. **Оранжевые внешние ссылки**
+
+    Сделать все внешние ссылки оранжевыми, изменяя их свойство `style`.
+
+    Ссылка является внешней, если:
+
+    - её `href` содержит `://`;
+    - но не начинается с `http://internal.com`.
+
+    Пример:
+    ```html
+    <a name="list">Источники информации</a>
+    <ul>
+      <li><a href="http://google.com">http://google.com</a></li>
+      <li><a href="/tutorial">/tutorial.html</a></li>
+      <li><a href="local/path">local/path</a></li>
+      <li><a href="ftp://ftp.com/my.zip">ftp://ftp.com/my.zip</a></li>
+      <li><a href="http://nodejs.org">http://nodejs.org</a></li>
+      <li><a href="http://internal.com/test">http://internal.com/test</a></li>
+    </ul>
+
+    <script>
+      // добавление стиля для одной ссылки
+      let link = document.querySelector('a');
+      link.style.color = 'orange';
+    </script>
+    ```
+
+    Результат должен быть таким:
+
+    ![Task orange external links](../img/orange-links_0.png)
+
+    <details>
+    <summary>Решение</summary>
+
+    Во-первых, мы должны найти все внешние ссылки.
+
+    Это можно сделать двумя способами.
+
+    Первый – это найти все ссылки, используя `document.querySelectorAll('a')`, а затем отфильтровать ненужное:
+    ```js
+    let links = document.querySelectorAll('a');
+
+    for (let link of links) {
+      let href = link.getAttribute('href');
+      if (!href) continue; // нет атрибута
+
+      if (!href.includes('://')) continue; // нет протокола
+
+      if (href.startsWith('http://internal.com')) continue; // внутренняя
+
+      link.style.color = 'orange';
+    }
+    ```
+
+    Пожалуйста, обратите внимание: мы используем `link.getAttribute('href')`. Не `link.href`, потому что нам нужно значение из HTML.
+
+    …Другой, более простой путь – добавить проверку в CSS-селектор:
+    ```js
+    // найти все ссылки, атрибут href у которых содержит ://
+    // и при этом href не начинается с http://internal.com
+    let selector = 'a[href*="://"]:not([href^="http://internal.com"])';
+    let links = document.querySelectorAll(selector);
+
+    links.forEach(link => link.style.color = 'orange');
+    ```
+
+    [Исходный код](../src/10_dom/orange-links.html)
 
     </details>
 
