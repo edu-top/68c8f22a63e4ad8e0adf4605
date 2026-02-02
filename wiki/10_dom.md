@@ -5053,7 +5053,7 @@ links.forEach(link => link.style.color = 'orange');
 </details>
 
 ### Управление стилем и классами элементов
-До того, как изучать способы работы со стилями и классами в JavaScript, необходимо вспомить о том, что существует два способа задания стилей для элемента:
+До того, как изучать способы работы со стилями и классами в JavaScript, необходимо вспомнить о том, что существует два способа задания стилей для элемента:
 
 1. Создать класс в CSS и использовать его: `<div class="...">`
 2. Писать стили непосредственно в атрибуте style: `<div style="...">`.
@@ -5068,16 +5068,16 @@ JavaScript может менять и классы, и свойство `style`.
 
 Например, использование `style` является приемлемым, если мы вычисляем координаты элемента динамически и хотим установить их из JavaScript:
 ```js
-let top = /* сложные расчёты */;
+let top =  /* сложные расчёты */;
 let left = /* сложные расчёты */;
 
 elem.style.left = left; // например, '123px', значение вычисляется во время работы скрипта
-elem.style.top = top; // например, '456px'
+elem.style.top = top;   // например, '456px'
 ```
 
 Мы также можем установить сразу несколько стилей для элемента, используя свойство `cssText`. Но с ним нужно быть осторожнее, т.к оно может как добавить стили к существующим, так и полностью перезаписать их на новые:
 ```js
-let top = /* сложные расчёты */;
+let top =  /* сложные расчёты */;
 let left = /* сложные расчёты */;
 
 // полная перезапись стилей elem, используем =
@@ -5129,13 +5129,13 @@ elem.style.cssText += `
 <body>
     <h1 id="header" class="header-font">Home Page</h1>
     <script>
-    const header = document.getElementById("header");
-    // получаем текущий класс
-    console.log(header.className);  // header-font
-    // устанавливаем класс элемента
-    header.className = "header-color";
-    // получаем текущий класс
-    console.log(header.className);  // header-color
+      const header = document.getElementById("header");
+      // получаем текущий класс
+      console.log(header.className);  // header-font
+      // устанавливаем класс элемента
+      header.className = "header-color";
+      // получаем текущий класс
+      console.log(header.className);  // header-color
     </script>
 </body>
 </html>
