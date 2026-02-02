@@ -5280,14 +5280,14 @@ header.style.fontFamily = "Verdana";
 Таким образом, свойство `elem.style` – это объект, который соответствует тому, что написано в атрибуте "style".
 
 Свойства из одного слова записываются так же, с маленькой буквы:
-```
+```css
 background  => elem.style.background
 top         => elem.style.top
 opacity     => elem.style.opacity
 ```
 
 Для свойств из нескольких слов используется [camelCase](https://ru.wikipedia.org/wiki/CamelCase):
-```
+```css
 background-color  => elem.style.backgroundColor
 z-index           => elem.style.zIndex
 border-left-width => elem.style.borderLeftWidth
