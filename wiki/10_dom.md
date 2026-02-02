@@ -5337,10 +5337,10 @@ setTimeout(() => document.body.style.display = "", 1000); // возврат к �
 
     // сейчас добавим единицу измерения (px) - и заработает
     document.body.style.margin = '20px';
-    alert(document.body.style.margin); // 20px
+    alert(document.body.style.margin);      // 20px
 
-    alert(document.body.style.marginTop); // 20px
-    alert(document.body.style.marginLeft); // 20px
+    alert(document.body.style.marginTop);   // 20px
+    alert(document.body.style.marginLeft);  // 20px
   </script>
 </body>
 ```
