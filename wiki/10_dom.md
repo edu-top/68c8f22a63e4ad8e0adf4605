@@ -5984,7 +5984,7 @@ window.scrollTo({
 
 Как и `scrollTo`/`scrollBy`, `scrollIntoView` также принимает объект `options` как аргумент (он немного отличается):
 ```js
-this.scrollIntoView(options).
+this.scrollIntoView(options);
 ```
 
 `options` поддерживает три свойства:
