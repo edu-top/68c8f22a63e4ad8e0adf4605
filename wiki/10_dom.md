@@ -129,6 +129,7 @@
       - [Создать уведомление](#создать-уведомление)
   - [Размеры и прокрутка элементов](#размеры-и-прокрутка-элементов)
     - [Простой пример](#простой-пример)
+    - [Метрики](#метрики)
     - [offsetParent, offsetLeft/Top](#offsetparent-offsetlefttop)
     - [offsetWidth/Height](#offsetwidthheight)
     - [clientTop/Left](#clienttopleft)
@@ -5516,7 +5517,7 @@ showNotification({
 !!! info "Область padding-bottom (нижний внутренний отступ) может быть заполнена текстом"
     Нижние внутренние отступы `padding-bottom` изображены пустыми на наших иллюстрациях, но если элемент содержит много текста, то он будет перекрывать `padding-bottom`, это нормально.
 
-Метрики
+#### Метрики
 Вот общая картина с геометрическими свойствами:
 
 ![Metics all](../svg/metric-all.svg)
@@ -5634,7 +5635,7 @@ showNotification({
 #### scrollWidth/Height
 Эти свойства – как `clientWidth`/`clientHeight`, но также включают в себя прокрученную (которую не видно) часть элемента.
 
-![Metric scollWidth/Height](../svg/metric-offset-width-height.svg)
+![Metric scollWidth/Height](../svg/metric-scroll-width-height.svg)
 
 На рисунке выше:
 
@@ -5668,7 +5669,7 @@ element.style.height = `${element.scrollHeight}px`;
 #### Не стоит брать width/height из CSS
 Мы рассмотрели метрики, которые есть у DOM-элементов, и которые можно использовать для получения различных высот, ширин и прочих расстояний.
 
-Но как мы знаем из главы Стили и классы, CSS-высоту и ширину можно извлечь, используя `getComputedStyle`.
+Но как мы уже знаем, CSS-высоту и ширину можно извлечь, используя `getComputedStyle`.
 
 Так почему бы не получать, к примеру, ширину элемента при помощи `getComputedStyle`, вот так?
 
