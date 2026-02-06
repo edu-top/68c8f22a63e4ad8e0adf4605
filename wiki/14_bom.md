@@ -18,6 +18,8 @@
   - [История браузера. History API](#история-браузера-history-api)
     - [Событие popstate](#событие-popstate)
     - [Перемещение по одностраничному сайту](#перемещение-по-одностраничному-сайту)
+  - [Объект location](#объект-location)
+    - [Управление адресом](#управление-адресом)
   - [Источники информации](#источники-информации)
 
 ### Browser Object Model и объект window
@@ -781,8 +783,133 @@ history.pushState(pages.home, "Home", pages.home.url);
 
 ![History API в JavaScript](../img/history2.png)
 
+### Объект location
+Объект **`location`** содержит информацию о расположении текущей веб-страницы: URL, информацию о сервере, номер порта, протокол. С помощью свойств объекта мы можем получить эту информацию:[^7.4]
+
+- **`href`**: полный адрес URL веб-страницы
+
+- **`origin`**: общая схема запроса
+
+- **`protocol`**: протокол (включая двоеточие), например, `http:` или `https:`
+
+- **`host`**: хост, например, `localhost.com`. Если адрес URL содержит номер порта, то порт также входит в хост, например, `localhost.com:8080`
+
+- **`hostname`**: домен, аналогичен хосту, только не включает порт, например, `localhost.com`
+
+- **`port`**: порт, используемый ресурсом
+
+- **`pathname`**: путь к ресурсу — та часть адреса, которая идет после хоста после слеша /
+
+- **`hash`**: идентификатор фрагмента — та часть адреса, которая идет после символа решетки `#` (при его наличии)
+
+- **`search`**: строка запроса — та часть адреса, которая идет после знака вопроса `?` (при его налии)
+
+- **`username`**: имя пользователя, которое указано в адресе. Например, в адресе https://tom:qwerty5@localhost.com это подстрока "tom"
+
+- **`password`**: пароль, который указан в адресе. Например, в адресе «https://tom:qwerty5@localhost.com это подстрока "qwerty5"
+
+В общем случае формат адреса URL выглядит следующим образом:
+```js
+protocol//username:password@hostname:port/path?search#hash
+```
+
+Например, пусть есть следующая веб-страница *index.html*:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+  <title>DevPM</title>
+</head>
+<body>
+<script>
+    console.log("href:", location.href);
+    console.log("path:", location.pathname);
+    console.log("origin:", location.origin);
+    console.log("protocol:", location.protocol);
+    console.log("port:", location.port);
+    console.log("host:", location.host);
+    console.log("hostname", location.hostname);
+    console.log("hash:", location.hash);
+    console.log("search:", location.search);
+</script>
+</body>
+</html>
+```
+
+Пусть она лежит на локальном веб-сервере, и к ней мы обращаемся с помощью адреса http://localhost:8080/index.html?name=tom&age=39#userinfo:
+
+![Объект location в JavaScript](../img/location.png)
+
+#### Управление адресом
+Также объект `location` предоставляет ряд методов, которые можно использовать для управления адресом веб-страницы:
+
+- **`assign(url)`**: загружает ресурс, который находится по пути `url`
+
+- **`reload(forcedReload)`**: перезагружает текущую веб-страницу. Параметр `forcedReload` указывает, надо ли использовать кэш браузера. Если параметр равен `true`, то кэш не используется
+
+- **`replace(url)`**: заменяет текущую веб-станицу другим ресурсом, который находится по пути `url`. В отличие от метода `assign`, который также загружает веб-станицу с другого ресурса, метод `replace` не сохраняет предыдущую веб-страницу в стеке истории переходов `history`, поэтому мы не сможем вызвать метод `history.back()` для перехода к ней.
+
+Для перенаправления на другой ресурс мы можем использовать как свойства, так и методы `location`:
+```js
+location = "http://google.com";
+// аналогично
+// location.href = "http://google.com";
+// location.assign("http://google.com");
+```
+
+Переход на другой локальный ресурс:
+```js
+location.replace("index.html");
+```
+
+Например, выполним переход на странице по нажатию на кнопку:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DevPM</title>
+</head>
+<body>
+    <input type="url" id="url" />
+    <button id="btn">Click</button>
+    <script>
+        const btn = document.getElementById("btn");
+        btn.addEventListener("click", () => {
+            const url = document.getElementById("url").value;
+            location.assign(url);
+        });
+    </script>
+</body>
+</html>
+```
+
+Здесь по нажатию на кнопку выполняется переход по адресу, который введен в текстовое поле `url`.
+
+Переход с помощью метода **`replace()`** производится аналогично:
+```js
+const btn = document.getElementById("btn");
+btn.addEventListener("click", () => {
+    const url = document.getElementById("url").value;
+    location.replace(url);
+});
+```
+
+Перезагрузка страницы:
+
+Переход с помощью метода **`replace()`** производится аналогично:
+```js
+const btn = document.getElementById("btn");
+btn.addEventListener("click", () => {
+    const url = document.getElementById("url").value;
+    location.reload(true);
+});
+```
+
 ### Источники информации
 [^7.1]: [Browser Object Model и объект window](https://metanit.com/web/javascript/7.1.php)
 [^7.2]: [Диалоговые окна и поиск на странице](https://metanit.com/web/javascript/7.2.php)
 [^7.7]: [Открытие, закрытие и позиционирование окон](https://metanit.com/web/javascript/7.7.php)
 [^7.3]: [История браузера. History API](https://metanit.com/web/javascript/7.3.php)
+[^7.4]: [Объект location](https://metanit.com/web/javascript/7.4.php)
