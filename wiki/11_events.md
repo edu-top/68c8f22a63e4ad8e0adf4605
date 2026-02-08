@@ -275,7 +275,7 @@ console.log('Clicked!')
 Теперь по нажатию кнопки будет вызываться функция `btn_click`, которая определена в коде JavaScript.
 
 Следующий пример по клику запускает функцию `countRabbits()`:
-```js
+```html
 <script>
   function countRabbits() {
     for(let i=1; i<=3; i++) {
