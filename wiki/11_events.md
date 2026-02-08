@@ -375,7 +375,7 @@ console.log('Clicked!')
 <input type="button" id="elem" onclick="alert('Было')" value="Нажми меня">
 <script>
   elem.onclick = function() { // перезапишет существующий обработчик
-    alert('Станет'); // выведется только это
+    alert('Станет');          // выведется только это
   };
 </script>
 ```
