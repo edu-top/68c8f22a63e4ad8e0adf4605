@@ -21,6 +21,10 @@
   - [Объект location](#объект-location)
     - [Управление адресом](#управление-адресом)
   - [Объект navigator](#объект-navigator)
+  - [Таймеры](#таймеры)
+    - [Функция setTimeout](#функция-settimeout)
+    - [Функция setInterval](#функция-setinterval)
+    - [requestAnimationFrame()](#requestanimationframe)
   - [Источники информации](#источники-информации)
 
 ### Browser Object Model и объект window
@@ -964,6 +968,105 @@ console.log(navigator.languages);   // список поддерживаемых
 console.log(navigator.plugins);     // список поддерживаемых плагинов
 ```
 
+### Таймеры
+Для выполнения действий через определенные промежутки времени в объекте **`window`** предусмотрены функции таймеров. Есть два типа таймеров: одни выполняются только один раз, а другие постоянно через промежуток времени.[^7.6]
+
+#### Функция setTimeout
+Для одноразового выполнения действий через промежуток времени предназначена функция **`setTimeout()`**. Она может принимать два параметра:
+```js
+const timerId = setTimeout(someFunction, period)
+```
+
+Параметр `period` указывает на период в миллисекундах, через который будет выполняться функция из параметра `someFunction`. А в качестве результата функция возвращает `id` таймера.
+
+```js
+function printMessage() { console.log("Hello world");}
+setTimeout(printMessage, 5000);
+```
+
+В данном случае через 5 секунд после загрузки страницы произойдет срабатывание функции `printMessage`.
+
+Для остановки таймера применяется функция **`clearTimeout()`**, в которую передается `id` таймера:
+```js
+function printMessage() { console.log("Hello world");}
+const timerId = setTimeout(printMessage, 5000);
+clearTimeout(timerId);
+```
+
+#### Функция setInterval
+Функции **`setInterval()`** и **`clearInterval()`** работают аналогично функциям `setTimeout()` и `clearTimeout()` с той лишь разницей, что **`setInterval()`** постоянно выполняет определенную функцию через промежуток времени.
+
+Например, напишем небольшую программу для вывода текущего времени:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DevPM</title>
+</head>
+<body>
+    <div id="timer"></div>
+    <script>
+        const timer = document.getElementById("timer");
+        function updateTime() {
+            const now = new Date();
+            timer.textContent = `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+        }
+        setInterval(updateTime, 1000);
+    </script>
+</body>
+</html>
+```
+
+Здесь через каждую секунду (1000 миллисекунд) вызывается функция `updateTime()`, которая обновляет содержимое поля `<div id="timer" >`, устанавливая в качестве его текста текущее вемя.
+
+#### requestAnimationFrame()
+Метод **`requestAnimationFrame()`** действует аналогично `setInterval()` за тем исключением, что он больше заточен под анимации, работу с графикой и имеет ряд оптимизаций, которые улучшают его производительность.
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <style>
+    #rect {
+        margin: 100px;
+        width: 100px;
+        height: 100px;
+        background: #50c878;
+    }
+    </style>
+</head>
+<body>
+    <div id="rect"></div>
+    <script>
+        const square = document.getElementById("rect");
+        let offset = 0;
+        let step = 1;
+        function moveRect() {
+            if(offset  >=600) step = -1;
+            if(offset  <=0) step = 1;
+            offset +=step;
+            square.style.marginLeft = offset + "px";
+            window.requestAnimationFrame(moveRect);
+        }
+        window.requestAnimationFrame(moveRect);
+    </script>
+</body>
+</html>
+```
+
+В метод `window.requestAnimationFrame()` передается функция, которая будет вызываться определенное количество раз (обычно 60) в секунду. В данном случае в этот метод передается функция `moveRect`, которая изменяет угол поворота блока на странице и затем обращается опять же к методу `window.requestAnimationFrame(moveRect)`.
+
+В качестве возвращаемого результата метод `window.requestAnimationFrame()` возвращает уникальный `id`, который может потом использоваться для остановки анимации:
+```js
+// получаем id
+const id = window.requestAnimationFrame(moveRect);
+
+//  останавливаем анимацию
+window.cancelAnimationFrame(id);
+```
+
 ### Источники информации
 [^7.1]: [Browser Object Model и объект window](https://metanit.com/web/javascript/7.1.php)
 [^7.2]: [Диалоговые окна и поиск на странице](https://metanit.com/web/javascript/7.2.php)
@@ -971,3 +1074,4 @@ console.log(navigator.plugins);     // список поддерживаемых
 [^7.3]: [История браузера. History API](https://metanit.com/web/javascript/7.3.php)
 [^7.4]: [Объект location](https://metanit.com/web/javascript/7.4.php)
 [^7.5]: [Объект navigator](https://metanit.com/web/javascript/7.5.php)
+[^7.6]: [Таймеры](https://metanit.com/web/javascript/7.6.php)
