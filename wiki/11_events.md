@@ -1256,7 +1256,7 @@ P.S. В этой задаче разработка структуры HTML/CSS �
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>DevPM</title>
+    <title>Example</title>
 </head>
 <body>
     <a id="link" href="https://example.com" onclick="return a_click(this)">example</a>
@@ -1289,7 +1289,7 @@ function a_click(anchor){
 
 Если же мы вовсе уберем возвращении результата, то событие будет обрабатываться, как будто возвращается значение `true`:
 ```html
-<a id="link" href="https://metanit.com" onclick="a_click(this)">Metanit.com</a>
+<a id="link" href="https://example.com" onclick="a_click(this)">example.com</a>
 <script>
 function a_click(anchor){
     console.log(anchor.href);
