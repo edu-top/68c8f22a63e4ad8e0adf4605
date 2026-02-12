@@ -558,10 +558,10 @@ function moveWindow(){
 
     Простейший пример
     ```js
-    const state = { url: "/", title: "Home", decription: "Home Page" };
+    const state = { url: "/", title: "Home", description: "Home Page" };
     // history.pushState(state, state.title);               // без url
     history.pushState(state, state.title, state.url);       // с url
-    console.log(state);  // {url: "/", title: "Home", decription: "Home Page"}
+    console.log(state);  // {url: "/", title: "Home", description: "Home Page"}
     ```
 
 - Метод **`replaceState()`** программно заменяет текущую запись в истории просмотров на новую. Он принимает те же три параметра:
@@ -807,14 +807,14 @@ history.pushState(pages.home, "Home", pages.home.url);
 
 - **`hash`**: идентификатор фрагмента — та часть адреса, которая идет после символа решетки `#` (при его наличии)
 
-- **`search`**: строка запроса — та часть адреса, которая идет после знака вопроса `?` (при его налии)
+- **`search`**: строка запроса — та часть адреса, которая идет после знака вопроса `?` (при его наличии)
 
 - **`username`**: имя пользователя, которое указано в адресе. Например, в адресе https://tom:qwerty5@localhost.com это подстрока "tom"
 
 - **`password`**: пароль, который указан в адресе. Например, в адресе «https://tom:qwerty5@localhost.com это подстрока "qwerty5"
 
 В общем случае формат адреса URL выглядит следующим образом:
-```js
+```
 protocol//username:password@hostname:port/path?search#hash
 ```
 
@@ -902,8 +902,6 @@ btn.addEventListener("click", () => {
 ```
 
 Перезагрузка страницы:
-
-Переход с помощью метода **`replace()`** производится аналогично:
 ```js
 const btn = document.getElementById("btn");
 btn.addEventListener("click", () => {
