@@ -2696,7 +2696,7 @@ document.addEventListener("payment", (e)=>{
 </script>
 ```
 
-Таким образом, для подобных случаев лучше использовать тип **`CustomEvent`**. Так, изменим код JavaScript следующим образом:
+Таким образом, для подобных случаев лучше использовать тип **`CustomEvent`**. Так, изменим наш код JavaScript следующим образом:
 ```js
 const button = document.getElementById("btn");
 document.addEventListener("payment", (e)=>{
@@ -2712,17 +2712,16 @@ button.addEventListener("click", ()=>myAcc.pay(50));
 function Account(money) {
     _money = money;
     this.pay=function(sum){
-        if(_money >= sum){
-            _money -= sum;
-            // определяем объект события
-            const event = new CustomEvent("payment", {
-                detail:{                //  передаем в CustomEvent данные о событии
-                    paymentSum: sum,
-                    balance: _money
-                }
-            });
-            document.dispatchEvent(event);      // генерируем событие для всего документа
-        }
+        if(_money < sum) return;
+        _money -= sum;
+        // определяем объект события
+        const event = new CustomEvent("payment", {
+            detail:{                //  передаем в CustomEvent данные о событии
+                paymentSum: sum,
+                balance: _money
+            }
+        });
+        document.dispatchEvent(event);      // генерируем событие для всего документа
     }
 }
 ```
@@ -2803,7 +2802,7 @@ function Account(money) {
 }
 ```
 
-Теперь, если средстd достаточно на счете генерируется событие "payment_success", а если недостаточно — то "payment_fail". И для каждого из этих событий определяем свой обработчик.
+Теперь, если средств достаточно на счете генерируется событие "payment_success", а если недостаточно — то "payment_fail". И для каждого из этих событий определяем свой обработчик.
 
 консольный вывод программы (при трех нажатиях на кнопку):
 ```
