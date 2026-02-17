@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация</title>
+    <style>
+        legend {
+            font-weight: bold;
+        }
+        .required {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<h1 id="top">Регистрация</h1>
+
+<form   action="#" method="post"
+        onreset="setTimeout(() => { const r = document.getElementById('grade'); r.nextElementSibling.value = r.value; }, 0)"
+        onsubmit="alert('Спасибо за ваш отзыв!');this.reset();return false;"
+>
+<fieldset>
+    <legend>Основная информация*</legend>
+
+    <p>
+        <label  for="login">Учетное имя</label><br>
+        <input  type="text" id="username" name="username" placeholder="от 3 до 20 символов"
+                minlength="3" maxlength="30" required autofocus
+                >
+    </p>
+
+    <p>
+        <label  for="email">Email</label><br>
+        <input  type="email" id="email" name="email" placeholder="example@mail.com" required>
+    </p>
+
+    <p>
+        <label  for="email">Пароль</label><br>
+        <input  type="email" id="email" name="email" placeholder="не менее 8 символов" required>
+    </p>
+
+    <p>
+        <label  for="email">Подтверждение пароля</label><br>
+        <input  type="email" id="email" name="email" placeholder="повторите пароль" required>
+    </p>
+
+</fieldset>
+
+<fieldset>
+    <legend>Настройки профиля</legend>
+
+    <p>
+        <label for="color">Аватар
+            <input  type="file" name="avatar" accept="image/*">
+        </label>
+    </p>
+
+    <p>
+        <label for="color">Цветовая тема
+            <input  type="color" id="color" name="color" value="#fc2783"
+                    oninput="this.nextElementSibling.value = this.value">
+            <input  value="#fc2783" style="width: 50px"
+                    oninput="this.previousElementSibling.value = this.value"
+                    >
+        </label>
+    </p>
+
+</fieldset>
+
+<fieldset>
+    <legend>Персональные данные</legend>
+
+    <p>
+        <label  for="name">Имя</label><br>
+        <input  type="text" id="name" name="name" placeholder="не более 30 символов"
+                minlength="3" maxlength="30" required
+                >
+    </p>
+
+    <p>
+        <label  for="surname">Фамилия</label><br>
+        <input  type="text" id="name" name="surname" placeholder="не более 30 символов"
+                minlength="3" maxlength="30" required
+                >
+    </p>
+
+    <p>
+        <label  for="birthday">Дата рождения</label><br>
+        <input  type="date" id="birthday" name="birthday"
+                max="2020-01-01" min="1900-01-01"
+        >
+    </p>
+
+    <p>
+        Пол
+        <label for="male">
+            <input type="radio" id="male" name="gender" value="male"> мужской
+        </label>
+        <label for="female">
+            <input type="radio" id="female" name="gender" value="female"> женский
+        </label>
+    </p>
+
+    <p>
+        <label  for="country">Страна</label><br>
+        <select id="country" name="country" required>
+            <option value="" disabled selected>-- выберите страну --</option>
+            <option value="ru">Россия</option>
+            <option value="us">США</option>
+            <option value="de">Германия</option>
+            <option value="fr">Франция</option>
+            <option value="jp">Япония</option>
+        </select>
+    </p>
+
+</fieldset>
+
+    <fieldset>
+        <legend>Контактные сведения</legend>
+
+    <p>
+        <label  for="phone">Телефон</label><br>
+        <input  type="tel" id="phone" name="phone" placeholder="+7 (123) 456-78-90"
+                pattern="\+7\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}" title="Формат: +7 (999) 123-45-67"
+                >
+    </p>
+
+    <p>
+        <label  for="site">Персональный сайт</label><br>
+        <input  type="url" id="site" name="site" placeholder="https://www.example.com">
+    </p>
+
+</fieldset>
+
+<fieldset>
+    <legend><strong>Профессиональные компетенции</strong></legend>
+
+    <p>
+        Уровень образования (укажите все имеющиеся)<br>
+        <label>
+            <input type="checkbox" id="high" name="education" value="high" checked> среднее общее
+        </label>
+        <label>
+            <input type="checkbox" id="pro" name="education" value="pro"> среднее профессиональное
+        </label>
+        <br>
+        <label>
+            <input type="checkbox" id="higher" name="education" value="higher"> высшее
+        </label>
+        <label>
+            <input type="checkbox" id="post" name="education" value="post"> аспирантура
+        </label>
+    </p>
+
+    <p>
+        <label for="job">Профессия / специальность</label><br>
+        <input list="job-list" id="job" name="job" placeholder="выберите или введите">
+        <datalist id="job-list">
+            <option value="администратор">
+            <option value="верстальщик">
+            <option value="девопс">
+            <option value="дизайнер">
+            <option value="менеджер">
+            <option value="программист">
+            <option value="системный администратор">
+            <option value="тестировщик">
+            <option value="техлит">
+            <option value="тимлид">
+        </datalist>
+    </p>
+
+    <p>
+        <label for="experience">Стаж (лет)
+            <input  type="number" id="experience" name="experience" placeholder="0"
+                    min="0" max="80" step="1">
+        </label>
+    </p>
+
+    <p>
+        <label  for="grade">Уровень квалификации</label><br>
+        <input  type="range" id="grade" name="grade"
+                min="0" max="10" value="5" step="1"
+                oninput="this.nextElementSibling.value = this.value"
+            >
+        <output>5</output>
+    </p>
+
+</fieldset>
+
+
+<fieldset>
+    <legend>Дополнительная информация</legend>
+
+    <p>
+        <label for="message">Расскажите немного себе</label><br>
+        <textarea id="message" name="message" rows="5" cols="40"
+                  placeholder="не более 500 символов" required minlength="50" maxlength="500"
+        ></textarea>
+    </p>
+
+    <p>
+        <label  for="datetime">Дата и время</label><br>
+        <input  type="datetime-local" id="datetime" name="datetime" required>
+    </p>
+
+    <p>
+        <label for="languages">Интересы (выберите несколько)</label><br>
+        <select id="languages" name="languages" multiple size="5">
+            <option>Искусство</option>
+            <option>Литература</option>
+            <option>Музыка</option>
+            <option>Программирование</option>
+            <option>Спорт</option>
+            <option>Технологии</option>
+            <option>Языки</option>
+        </select>
+    </p>
+
+</fieldset>
+
+<p>
+    <label for="subscribe">
+    <input type="checkbox" id="subscribe" name="subscribe" value="yes" required>
+        Согласие на обработку персональных данных*
+    </label>
+</p>
+
+<p>
+    <button type="reset">Очистить</button>
+    <button type="submit">Регистация</button>
+</p>
+
+</form>
+
+</body>
+</html>
