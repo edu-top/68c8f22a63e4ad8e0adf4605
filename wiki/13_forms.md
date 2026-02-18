@@ -333,14 +333,34 @@ form.reset();
 #### Элементы форм
 Форма может содержать различные элементы ввода html: `input`, `textarea`, `button`, `select` и т.д. Для каждого из элементов существует свой тип JavaScript:
 
-html-элемент | Тип JavaScript
--- | --
-`<input>` | `HTMLInputElement`
-`<textarea>` | `HTMLTextAreaElement`
-`<select>` | `HTMLSelectElement`
-`<option>` (в списках `<select>`) | `HTMLOptionElement`
+| Элемент    | Описание                                                                    | Тип JavaScript      |
+| ---------- | --------------------------------------------------------------------------- | ------------------- |
+| `<form>`     | Контейнер формы                                                  | `HTMLFormElement`     |
+| `<input>`    | Универсальное поле ввода (`text`, `password`, `checkbox`, `radio`, и т.д.) | `HTMLInputElement`    |
+| `<textarea>` | Многострочное текстовое поле schoolsw3​                                     | `HTMLTextAreaElement` |
+| `<button>`   | Кнопка (submit, reset, button) schoolsw3​                                   | `HTMLButtonElement`   |
+| `<select>`   | Выпадающий список schoolsw3​                                                | `HTMLSelectElement`   |
+| `<option>`   | Пункт списка `<select>` или `<datalist>` schoolsw3​                             | `HTMLOptionElement`   |
+| `<optgroup>` | Группа пунктов в `<select>` schoolsw3​                                        | `HTMLOptgroupElement` |
+| `<label>`    | Подпись к элементу ввода schoolsw3​                                         | `HTMLLabelElement`    |
+| `<fieldset>` | Группа связанных элементов schoolsw3​                                       | `HTMLFieldSetElement` |
+| `<legend>`   | Заголовок для `<fieldset>`                                 | `HTMLLegendElement`   |
+| `<datalist>` | Список подсказок для `<input>` schoolsw3​                                     | `HTMLDataListElement` |
+| `<output>`   | Результат вычислений​                                             | `HTMLOutputElement`   |
+| `<progress>` | Индикатор прогресса                                              | `HTMLProgressElement` |
+| `<meter>`    | Индикатор уровня/объема                                          | `HTMLMeterElement`    |
 
-Для получения элементов форм можно использовать два способа:
+- **Обязательные элементы**: `<form>`, `<input>`, `<textarea>`, `<select>`, `<button>` — основа любой формы.
+
+- **Группировка**: `<fieldset>`, `<legend>`, `<optgroup>` — для структурирования.
+
+- **Индикация состояния**: `<progress>`, `<meter>` — визуализация данных.
+
+- **Управление UX**: `<datalist>`, `<label>`, `<output>` — улучшают взаимодействие.
+
+Этот список покрывает все элементы, которые могут находиться внутри `<form>` или быть связаны с ней через атрибут `form`.
+
+Для получения элементов форм можно использовать следующие способы:
 
 - Применение стандартных методов `getElementById()`, `getElementsByClassName()`, `getElementsByTagName()`, `getElementsByName()`, `querySelector()` и `querySelectorAll()` для поиска элементов соответственно по id, классу, тегу, имени или селектору. Например, возьмем ранее определенную форму и получим ее поле ввода:
 
