@@ -418,11 +418,12 @@ const keyField = form.elements["key"];
 console.log(keyField.type); // text
 ```
 
-Из методов можно выделить методы **`focus()`** (устанавливает фокус на элемент) и **`blur()`** (убирает фокус с элемента):
+Из методов можно выделить **`focus()`** (устанавливает фокус на элемент) и **`blur()`** (убирает фокус с элемента):
 ```js
 const searchForm = document.forms["search"];
 const keyField = searchForm.elements["key"];
 keyField.focus();
+keyField.blur();
 ```
 
 ##### input и textarea
