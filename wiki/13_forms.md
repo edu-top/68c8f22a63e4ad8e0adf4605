@@ -141,7 +141,7 @@ alert(ageElems[0]); // [object HTMLInputElement]
         alert(form.elements.login); // <input name="login">
 
         let fieldset = form.elements.userFields;
-        alert(fieldset); // HTMLFieldSetElement
+        alert(fieldset);            // HTMLFieldSetElement
 
         // мы можем достать элемент по имени как из формы, так и из fieldset с ним
         alert(fieldset.elements.login == form.elements.login); // true
