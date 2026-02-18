@@ -220,7 +220,7 @@ const formBySelector = document.querySelector("form");
 ```
 
 #### Свойства и методы форм
-Форма имеет ряд свойств, из которых перечислю основные:
+Форма имеет ряд свойств, из которых основные:
 
 - **`name`**: имя формы
 
@@ -257,12 +257,78 @@ const formBySelector = document.querySelector("form");
 </html>
 ```
 
+Основные методы:
+- **`submit()`**
+
+  Отправляет данные формы на сервер, аналогично нажатию кнопки `<button type="submit">`. Не всегда запускает событие `submit`, поэтому валидаторы могут не сработать.
+
+  ```js
+  const form = document.forms["search"];
+  form.submit(); // Программная отправка
+  ```
+
+- **`reset()`**
+
+  Очищает все поля формы, возвращая их к значениям по умолчанию из HTML. Запускает событие `reset`.
+
+  ```js
+  form.reset(); // Сброс формы
+  ```
+
+- **`checkValidity()`**
+
+  Проверяет соответствие формы требованиям HTML5-валидации (`required`, `min`, `max`, `pattern`). Возвращает `true` при успехе или `false` при ошибках.
+
+  ```js
+  if (form.checkValidity()) {
+      console.log("Форма валидна");
+  } else {
+      console.log("Есть ошибки валидации");
+  }
+  ```
+
+- **`reportValidity()`**
+
+  Как `checkValidity()`, но показывает браузерные сообщения об ошибках (всплывающие подсказки).
+
+  ```js
+  form.reportValidity(); // Проверка + UI-уведомления
+  ```
+
+- **`requestSubmit([submitter])`**
+
+  Современная замена `submit()`. Запускает событие `submit` и обработчики. Принимает кнопку отправки как параметр.
+
+  ```js
+  const submitBtn = document.querySelector('#submit');
+  form.requestSubmit(submitBtn); // С кнопкой
+  form.requestSubmit(); // Без кнопки
+  ```
+
+- **`namedItem(name)`**
+
+  Возвращает первый элемент формы с указанным атрибутом `name` (удобно для радио-кнопок, чекбоксов).
+
+  ```js
+  const gender = form.namedItem("gender");
+  ```
+
 Среди методов формы надо отметить метод **`submit()`**, который отправляет данные формы на сервер, и метод **`reset()`**, который очищает поля формы:
 ```js
 const form = document.forms["search"];
 form.submit();
 form.reset();
 ```
+
+| Метод            | Описание            | Возвращает событие |
+| ---------------- | ------------------- | ------------------ |
+| `submit()`         | Отправка формы      | Не всегда `submit`   |
+| `reset()`          | Сброс полей         | `reset`              |
+| `checkValidity()`  | Проверка валидации  | `boolean`            |
+| `reportValidity()` | Проверка + UI       | `boolean`            |
+| `requestSubmit()`  | Отправка с событием | `undefined`          |
+
+Эти методы покрывают 95% задач по программному управлению формами.
 
 #### Элементы форм
 Форма может содержать различные элементы ввода html: `input`, `textarea`, `button`, `select` и т.д. Для каждого из элементов существует свой тип JavaScript:
