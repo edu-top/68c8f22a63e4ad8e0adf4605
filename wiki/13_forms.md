@@ -2242,7 +2242,7 @@ function validateEmail() {
     console.log("Может валидироваться:", emailField.willValidate);
     console.log("Значение отсутствует:", emailField.validity.valueMissing);
     console.log("Значение валидно:", emailField.validity.valid);
-    console.log("Значение соответствует типу", emailField.validity.typeMismatch);
+    console.log("Значение не соответствует типу", emailField.validity.typeMismatch);
     console.log(emailField.validationMessage);
 }
 </script>
@@ -2301,11 +2301,11 @@ function validateEmail() {
 
 ![Вывод ошибок валидации полей формы в JavaScript](../img/validation2.png)
 
-Как видно, браузер сам определяет сообщение об ошибке. Однако мы можем проверять валидацию по конкретным параметрам и устанавливать свои сообщения об ошибке
+Как видно, браузер сам определяет сообщение об ошибке. Однако мы можем проверять валидацию по конкретным параметрам и устанавливать свои сообщения об ошибке:
 ```js
 function validateEmail() {
     if(!emailField.validity.valueMissing){
-        emailErrors.textContent = "Отстуствет email!";
+        emailErrors.textContent = "Отсутствует email!";
         emailErrors.style.display = "block";
     }
     else{
@@ -2313,6 +2313,47 @@ function validateEmail() {
         emailErrors.style.display = "none";
     }
 }
+```
+
+Дополнительно можно добавить универсальную функцию для всех полей:
+```js
+function validateField(field, errorElement, customMessages = {}) {
+    const validity = field.validity;
+
+    errorElement.textContent = "";
+    errorElement.style.display = "none";
+
+    const defaultMessages = {
+        valueMissing: `${field.name || 'Поле'} обязательно!`,
+        typeMismatch: `Некорректный формат ${field.name || 'данных'}!`,
+        tooShort: `Минимум ${field.minLength} символов!`,
+        tooLong: `Максимум ${field.maxLength} символов!`,
+        patternMismatch: "Формат не соответствует требованиям!"
+    };
+
+    const messages = { ...defaultMessages, ...customMessages };
+
+    for (let [error, message] of Object.entries(messages)) {
+        if (validity[error]) {
+            errorElement.textContent = message;
+            errorElement.style.display = "block";
+            return false;
+        }
+    }
+
+    return true;
+}
+
+// Использование:
+validateField(emailField, emailErrors, {
+    typeMismatch: "Введите email вида user@example.com"
+});
+```
+
+Подключение к событиям:
+```js
+emailField.addEventListener('blur', () => validateEmail());
+emailField.addEventListener('input', () => validateEmail());
 ```
 
 ### Управление валидацией форм
