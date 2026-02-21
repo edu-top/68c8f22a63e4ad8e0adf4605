@@ -43,6 +43,7 @@
     - [Событие: change](#событие-change)
     - [Событие: input](#событие-input)
     - [События: cut, copy, paste](#события-cut-copy-paste)
+      - [Практические примеры](#практические-примеры)
     - [Итого](#итого-2)
     - [Задачи](#задачи-2)
       - [Депозитный калькулятор](#депозитный-калькулятор)
@@ -1720,6 +1721,80 @@ P.S. Мы также можем заменить `mouse.onclick` на `mouse.onf
    - `iframe` без `permissions-policy`
 
 Также запрещается генерировать «пользовательские» события буфера обмена при помощи `dispatchEvent` во всех браузерах, кроме Firefox.
+
+##### Практические примеры
+*Современный способ работы с буфером обмена (async Clipboard API)*:
+```js
+// Чтение из буфера (требует user gesture)
+async function readClipboard() {
+  try {
+    const text = await navigator.clipboard.readText();
+    console.log('Скопировано:', text);
+  } catch(err) {
+    console.error('Ошибка чтения:', err);
+  }
+}
+
+// Запись в буфер
+async function copyToClipboard(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    console.log('Скопировано в буфер');
+  } catch(err) {
+    console.error('Ошибка записи:', err);
+  }
+}
+```
+
+*Работа с файлами через `paste`*:
+```js
+input.onpaste = function(event) {
+  const items = event.clipboardData.items;
+  for(let item of items) {
+    if(item.kind === 'file') {
+      const file = item.getAsFile();
+      console.log('Вставлен файл:', file.name);
+      // Можно загрузить файл
+    }
+  }
+};
+```
+
+*Копирование в один клик*:
+```js
+button.onclick = () => {
+  navigator.clipboard.writeText('Скопированный текст')
+    .then(() => showToast('Скопировано!'));
+};
+```
+
+*Предотвращение копирования конфиденциальных данных*:
+```js
+confidentialField.oncopy = (e) => {
+  e.preventDefault();
+  showWarning('Копирование запрещено');
+};
+```
+
+*Валидация вставляемых данных*:
+```js
+input.onpaste = (e) => {
+  const pastedText = e.clipboardData.getData('text');
+  if(!isValidFormat(pastedText)) {
+    e.preventDefault();
+    showError('Неверный формат');
+  }
+};
+```
+
+*Permissions Policy для `iframe`*:
+```html
+<iframe src="..."
+        allow="clipboard-read; clipboard-write">
+</iframe>
+```
+
+**Вывод**: События буфера обмена — мощный инструмент для UX, но требуют осторожности из-за глобального доступа к ОС. Всегда проверяйте `user gesture` и используйте async Clipboard API для современных приложений.
 
 #### Итого
 События изменения данных:
