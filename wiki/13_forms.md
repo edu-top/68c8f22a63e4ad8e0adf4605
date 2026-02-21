@@ -972,7 +972,7 @@ keyBox.addEventListener("input", oninput);
 
             // получаем элемент printBlock
             const printBlock = document.getElementById("printBlock"),
-                length = printBlock.textContent.length;
+                  length = printBlock.textContent.length;
             // обрезаем строку по последнему символу
             printBlock.textContent = printBlock.textContent.substring(0, length-1);
         }
@@ -1048,7 +1048,7 @@ for (let i = 0; i < myForm.languages.length; i++) {
 }
 ```
 
-Значение выбранного радиокнопки также можно получить через объект `Event: e.target.value`.
+Значение выбранной радиокнопки также можно получить через объект `Event: e.target.value`.
 
 ![RadioButton в JavaScript](../img/radiobutton.png)
 
@@ -2336,6 +2336,12 @@ From <input id="start" type="number" value=1> – To <input id="end" type="numbe
 ### Глоссарий
 CSRF (Cross-Site Request Forgery, «Межсайтовая подделка запроса»)
 : атака, вынуждающая авторизованного пользователя выполнить нежелательные действия (перевод денег, смена пароля) на другом сайте без его ведома. Злоумышленник использует доверие сайта к браузеру жертвы, который автоматически отправляет cookies с запросом.
+
+Радиокнопки (*radio buttons*)
+: группа кнопок, из которых мы можем выбрать только одну. Радиокнопки создаются элементом `<input type="radio">`.
+
+Флажок (*checkbox*)
+: поле, в которое можно поставить отметки и которое создается с помощью элемента `<input type="checkbox">`. Отличительную особенность флажка составляет свойство **`checked`**, которое в отмеченном состоянии принимает значение `true`.
 
 ### Источники информации
 [^10.1]: [Формы и их элементы](https://metanit.com/web/javascript/10.1.php)
