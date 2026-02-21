@@ -44,6 +44,7 @@
     - [Событие: input](#событие-input)
     - [События: cut, copy, paste](#события-cut-copy-paste)
       - [Практические примеры](#практические-примеры)
+      - [Проверка user gesture](#проверка-user-gesture)
     - [Итого](#итого-2)
     - [Задачи](#задачи-2)
       - [Депозитный калькулятор](#депозитный-калькулятор)
@@ -1795,6 +1796,94 @@ input.onpaste = (e) => {
 ```
 
 **Вывод**: События буфера обмена — мощный инструмент для UX, но требуют осторожности из-за глобального доступа к ОС. Всегда проверяйте `user gesture` и используйте async Clipboard API для современных приложений.
+
+##### Проверка user gesture
+
+<dfn title="проверка user gesture">Проверка user gesture</dfn> (жеста пользователя) — это механизм безопасности браузеров, который гарантирует, что доступ к чувствительным функциям (буфер обмена, уведомления, полноэкранный режим, автопроигрывание) возможен только из прямого действия пользователя.
+
+Что считается user gesture?
+
+✅ Разрешённые события (активны ~100-300мс после срабатывания):
+- `click`, `mousedown`, `mouseup`,
+- `keydown`, `keypress`, `keyup`,
+- `touchstart`, `touchend`,
+- `pointerdown`, `pointerup`
+
+❌ Запрещённые (асинхронный контекст):
+- `setTimeout(() => navigator.clipboard.writeText('text'), 0);` // ❌ Ошибка`
+- `setInterval(callback, 1000);`                                // ❌
+- `requestAnimationFrame(callback);`                            // ❌
+- `fetch('/api').then(() => copyToClipboard());`                // ❌
+- `new Event('click').dispatchEvent();`                         // ❌
+
+*Практический пример с буфером обмена*:
+```js
+// ✅ Работает — в обработчике клика
+button.onclick = async () => {
+  await navigator.clipboard.writeText('Скопировано!');
+  console.log('✅ User gesture OK');
+};
+
+// ❌ Не работает — через setTimeout
+button.onclick = () => {
+  setTimeout(async () => {
+    await navigator.clipboard.writeText('Скопировано!');
+    // Ошибка: DOMException: Document is not focused
+  }, 0);
+};
+```
+
+Как проверить наличие user gesture?
+```js
+// Современный способ (Chrome 92+)
+if (navigator.permissions) {
+  navigator.permissions.query({ name: 'clipboard-write' })
+    .then(permission => {
+      if (permission.state === 'granted') {
+        // Можно писать в буфер без gesture
+      }
+    });
+}
+
+// Простой тест через попытку
+async function testClipboard() {
+  try {
+    await navigator.clipboard.writeText('test');
+    console.log('✅ User gesture присутствует');
+  } catch(e) {
+    console.log('❌ Требуется user gesture');
+  }
+}
+```
+
+*Типичные сценарии использования*
+
+| Сценарий                        | Требует user gesture | Пример                 |
+| ------------------------------- | -------------------- | ---------------------- |
+| `navigator.clipboard.writeText()` | ✅ Да                 | Копирование в 1 клик   |
+| `navigator.clipboard.readText()`  | ✅ Да                 | Вставка из буфера      |
+| `Notification()`                  | ✅ Да                 | Push-уведомления       |
+| `element.requestFullscreen()`     | ✅ Да                 | Полноэкранный режим    |
+| `HTMLMediaElement.play()`         | ✅ Да                 | Автопроигрывание видео |
+| `window.open()`                   | ✅ Да (popup)         | Новые окна             |
+
+*Обход ограничений (правильный подход)*:
+```js
+// 1. Сохраняем gesture и используем сразу
+button.onclick = async () => {
+  await copyToClipboard('текст');  // ✅ В том же стеке вызовов
+};
+
+// 2. Показываем кнопку "Скопировать"
+function showCopyButton() {
+  copyBtn.style.display = 'block';
+  copyBtn.focus(); // Подготавливаем gesture
+}
+
+copyBtn.onclick = () => navigator.clipboard.writeText(text);
+```
+
+**Вывод**: User gesture — защита от злоупотреблений API браузера. Всегда привязывайте чувствительные операции к пользовательским событиям и не полагайтесь на асинхронные вызовы.
 
 #### Итого
 События изменения данных:
