@@ -2553,9 +2553,9 @@ function validate(){
 
 В функции `validate` проверяем значение поля `usernameField`. Если оно равно "admin", то устанавливаем сообщение об ошибке.[^10.7]
 
-![Кастомная логика валидации в JavaScript](../img/validation5.png)
+![Кастомная логика валидации в JavaScript](../img/validation5_cp.png)
 
-Поскольку мы установили сообщение об ошибке, то поле `username` уже не проходит валидацию, даже если оно соответствует атрибутам `required`, `maxlength` и `minlength`. Соотвественно далее мы можем получить это сообщение через свойство `validationMessage`:
+Поскольку мы установили сообщение об ошибке, то поле `username` уже не проходит валидацию, даже если оно соответствует атрибутам `required`, `maxlength` и `minlength`. Соответственно далее мы можем получить это сообщение через свойство `validationMessage`:
 ```html
 <!DOCTYPE html>
 <html>
@@ -2604,7 +2604,63 @@ function validate(e){
 </html>
 ```
 
-![Кастомная логика валидации HTML5 в JavaScript](../img/validation6.png)
+![Кастомная логика валидации HTML5 в JavaScript](../img/validation6_cp.png)
+
+Таким образом, `setCustomValidity()` — это метод, который переопределяет встроенную валидацию HTML5, позволяя задать любую логику с собственными сообщениями об ошибках.
+
+Ключевые принципы:
+```js
+// 1. ОБЯЗАТЕЛЬНО сбрасываем перед проверкой
+field.setCustomValidity("");
+
+// 2. Устанавливаем ошибку ИЛИ пустую строку для успеха
+if (условиеОшибки) {
+    field.setCustomValidity("Мое сообщение");
+} else {
+    field.setCustomValidity(""); // ✅ ВАЖНО!
+}
+
+// 3. Проверяем результат
+field.checkValidity(); // Теперь учитывает нашу логику
+```
+
+*3 сценария использования*
+| Когда использовать   | Пример                          |
+| -------------------- | ------------------------------- |
+| Запрещенные значения | `value === "admin" `              |
+| Сложные паттерны     | `!/\\w+@\\w+\\.\\w+/.test(email)` |
+| Бизнес-логика        | `!availableUsers.includes(value)` |
+
+*Общие ошибки*
+```js
+// ❌ Забыли сбросить
+field.setCustomValidity("Ошибка"); // Ошибка навсегда!
+
+// ❌ Не очистили при успехе
+if (условие) {
+    field.setCustomValidity("Ошибка");
+}
+// Поле всегда invalid!
+
+// ❌ Проверяете validity.valid без setCustomValidity
+// Работает только встроенные атрибуты
+```
+
+*Универсальный шаблон*
+```js
+function customValidate(field, rules) {
+    field.setCustomValidity(""); // Сброс
+
+    for (let [testFn, message] of Object.entries(rules)) {
+        if (testFn(field.value)) {
+            field.setCustomValidity(message);
+            return false;
+        }
+    }
+
+    return field.checkValidity();
+}
+```
 
 ### Selection и Range
 В этой главе мы рассмотрим выделение как в документе, так и в полях формы, таких как `<input>`.
