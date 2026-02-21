@@ -2414,6 +2414,87 @@ function validate(){
 }
 ```
 
+Однако `checkValidity()` лучше использовать по нескольким причинам:
+
+Основные преимущества `checkValidity()`
+1. Запускает полную цепочку валидации
+
+    ```js
+    // checkValidity() - проверяет ВСЕ ограничения + вызывает событие invalid
+    if (!registerForm.username.checkValidity()) {
+        console.log(registerForm.username.validationMessage); // Готовое сообщение
+    }
+
+    // validity.valid - только состояние, без событий
+    if (!registerForm.username.validity.valid) {
+        // Нужно вручную разбирать validity.valueMissing, typeMismatch и т.д.
+    }
+    ```
+
+2. Автоматически генерирует `validationMessage`
+
+    ```js
+    function validate() {
+        if (!registerForm.username.checkValidity()) {
+            // Браузер сам определит: "Пожалуйста, заполните это поле" или "Введите число"
+            showError(registerForm.username.validationMessage);
+        }
+    }
+    ```
+
+*Сравнение производительности*
+
+| Метод           | Вызов события `invalid` | `validationMessage` | Проверяет все constraints |
+| --------------- | --------------------- | ----------------- | ------------------------- |
+| `checkValidity()` | ✅ Да                  | ✅ Обновляется     | ✅ Все                     |
+| `validity.valid`  | ❌ Нет                 | ✅ Уже есть        | ✅ Все                     |
+
+*Рекомендуемый подход*
+```js
+function validate() {
+    // 1. Поля по отдельности (с кастомными сообщениями)
+    if (!registerForm.username.checkValidity()) {
+        showFieldError(registerForm.username);
+    }
+
+    // 2. Форма целиком (быстрая проверка)
+    if (!registerForm.checkValidity()) {
+        registerForm.reportValidity(); // Показывает все ошибки браузера
+        return false;
+    }
+
+    // 3. Кастомная валидация (если нужна)
+    if (registerForm.username.value.length < 3) {
+        registerForm.username.setCustomValidity('Минимум 3 символа');
+        registerForm.username.reportValidity();
+        return false;
+    }
+
+    return true; // Форма валидна
+}
+
+// Подключение
+registerForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (validate()) {
+        registerForm.submit();
+    }
+});
+```
+
+**Итоговая рекомендация**: используйте `checkValidity()` всегда — это стандартный API, который:
+
+- делает код короче и понятнее4
+
+- автоматически обрабатывает все ограничения HTML5;
+​
+- генерирует локализованные сообщения ошибок;
+​
+- запускает событие `invalid` для дополнительных обработчиков;
+
+
+Проверка свойства `validity.valid` имеет смысл только если нужна тонкая настройка без триггера событий или для проверки состояния без побочных эффектов.
+
 #### Настройка собственных сообщений валидации
 Для настройки своих сообщений валидации в метод **`setCustomValidity()`** передается необходимое сообщение:
 ```html
