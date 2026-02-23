@@ -2796,8 +2796,6 @@ From <input id="start" type="number" value=1> – To <input id="end" type="numbe
 
 #### Задание
 
-Добавить пункт к выпадающему списку.
-
 Имеется `<select>`:
 ```html
 <select id="genres">
@@ -2811,6 +2809,8 @@ From <input id="start" type="number" value=1> – To <input id="end" type="numbe
 1. Вывести значение и текст выбранного пункта.
 2. Добавить пункт: `<option value="classic">Классика</option>`.
 3. Сделать его выбранным.
+
+Решение предоставить в виде файлов исходного кода.
 
 <details>
 <summary>Решение</summary>
