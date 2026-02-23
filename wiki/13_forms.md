@@ -1492,7 +1492,7 @@ form.addEventListener('submit', validateForm);
 
 У этой проблемы два решения.
 
-Первое: забавная особенность – `focus`/`blur` не всплывают, но передаются вниз на фазе перехвата.
+**Первое**: забавная особенность – `focus`/`blur` не всплывают, но передаются вниз на фазе перехвата.
 
 Это сработает:
 ```html
@@ -1517,7 +1517,7 @@ form.addEventListener('submit', validateForm);
 
 ![Focusin/Focusout](../img/focusin-focusout_2.png)
 
-Второе решение: события `focusin` и `focusout` – такие же, как и `focus`/`blur`, но они всплывают.
+**Второе решение**: события `focusin` и `focusout` – такие же, как и `focus`/`blur`, но они всплывают.
 
 Заметьте, что эти события должны использоваться с `elem.addEventListener`, но не с `on<event>`.
 
