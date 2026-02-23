@@ -68,6 +68,7 @@
   - [Выделение](#выделение)
     - [Range](#range)
       - [Выделение частей текстовых узлов](#выделение-частей-текстовых-узлов)
+      - [Методы Range](#методы-range)
   - [Практическая работа. Динамическое создание элементов форм](#практическая-работа-динамическое-создание-элементов-форм)
     - [Задание](#задание)
   - [Практическая работа. Создание редактируемых элементов](#практическая-работа-создание-редактируемых-элементов)
@@ -2791,6 +2792,100 @@ From <input id="start" type="number" value=1> – To <input id="end" type="numbe
   - в примере выше: `false`
 - `commonAncestorContainer` – ближайший общий предок всех узлов в пределах диапазона,
   - в примере выше: `<p>`
+
+##### Методы Range
+Существует множество удобных методов для манипулирования диапазонами.
+
+Установить начало диапазона:
+
+- `setStart(node, offset)` установить начальную границу в позицию `offset` в `node`
+- `setStartBefore(node)` установить начальную границу прямо перед `node`
+- `setStartAfter(node)` установить начальную границу прямо после `node`
+
+Установить конец диапазона (похожи на предыдущие методы):
+
+- `setEnd(node, offset)` установить конечную границу в позицию `offset` в `node`
+- `setEndBefore(node)` установить конечную границу прямо перед `node`
+- `setEndAfter(node)` установить конечную границу прямо после `node`
+
+**Как было показано, `node` может быть как текстовым узлом, так и элементом: для текстовых узлов `offset` пропускает указанное количество символов, в то время как для элементов – указанное количество дочерних узлов.**
+
+Другие:
+
+- `selectNode(node)` выделить `node` целиком
+- `selectNodeContents(node)` выделить всё содержимое `node`
+- `collapse(toStart)` если указано `toStart=true`, установить конечную границу в начало, иначе установить начальную границу в конец, схлопывая таким образом диапазон
+- `cloneRange()` создать новый диапазон с идентичными границами
+
+Чтобы манипулировать содержимым в пределах диапазона:
+
+- `deleteContents()` – удалить содержимое диапазона из документа
+- `extractContents()` – удалить содержимое диапазона из документа и вернуть как `DocumentFragment`
+- `cloneContents()` – склонировать содержимое диапазона и вернуть как `DocumentFragment`
+- `insertNode(node)` – вставить `node` в документ в начале диапазона
+- `surroundContents(node)` – обернуть `node` вокруг содержимого диапазона. Чтобы этот метод сработал, диапазон должен содержать как открывающие, так и закрывающие теги для всех элементов внутри себя: не допускаются частичные диапазоны по типу `<i>abc`.
+
+Используя эти методы, мы можем делать с выделенными узлами что угодно.
+
+Проверим описанные методы в действии:
+```html
+Нажмите на кнопку, чтобы соответствующий метод отработал на выделении, или на "resetExample", чтобы восстановить выделение как было.
+
+<p id="p">Example: <i>italic</i> and <b>bold</b></p>
+
+<p id="result"></p>
+<script>
+  let range = new Range();
+
+  // Каждый описанный метод представлен здесь:
+  let methods = {
+    deleteContents() {
+      range.deleteContents()
+    },
+    extractContents() {
+      let content = range.extractContents();
+      result.innerHTML = "";
+      result.append("Извлечено: ", content);
+    },
+    cloneContents() {
+      let content = range.cloneContents();
+      result.innerHTML = "";
+      result.append("Клонировано: ", content);
+    },
+    insertNode() {
+      let newNode = document.createElement('u');
+      newNode.innerHTML = "НОВЫЙ УЗЕЛ";
+      range.insertNode(newNode);
+    },
+    surroundContents() {
+      let newNode = document.createElement('u');
+      try {
+        range.surroundContents(newNode);
+      } catch(e) { alert(e) }
+    },
+    resetExample() {
+      p.innerHTML = `Example: <i>italic</i> and <b>bold</b>`;
+      result.innerHTML = "";
+
+      range.setStart(p.firstChild, 2);
+      range.setEnd(p.querySelector('b').firstChild, 3);
+
+      window.getSelection().removeAllRanges();
+      window.getSelection().addRange(range);
+    }
+  };
+
+  for(let method in methods) {
+    document.write(`<div><button onclick="methods.${method}()">${method}</button></div>`);
+  }
+
+  methods.resetExample();
+</script>
+```
+
+![Range methods](../img/range-methods.png)
+
+Также существуют методы сравнения диапазонов, но они редко используются. Когда они вам понадобятся, вы можете прочитать о них в [спецификации](https://dom.spec.whatwg.org/#interface-range) или [справочнике MDN](https://developer.mozilla.org/ru/docs/Web/API/Range).[^selection-range]
 
 ### Практическая работа. Динамическое создание элементов форм
 
