@@ -1736,6 +1736,8 @@ promise
 </details>
 
 #### Обработка ошибок
+Цепочки промисов отлично подходят для перехвата ошибок. Если промис завершается с ошибкой, то управление переходит в ближайший обработчик ошибок. На практике это очень удобно.[^promise-error-handling]
+
 Для обработки ошибок в цепочке в конце добавляется метод **`catch()`**, который также возвращет объект `Promise`. Рассмотрим на простом примере:
 ```js
 function generateNumber(str){
@@ -1777,6 +1779,37 @@ if (isNaN(parsed)) reject("Not a number");
 ```js
 .catch(error => console.log(error));
 ```
+
+Например, в представленном ниже примере для `fetch` указана неправильная ссылка (сайт не существует), и `.catch` перехватывает ошибку:
+```js
+fetch('https://no-such-server.blabla') // ошибка
+  .then(response => response.json())
+  .catch(err => alert(err)) // TypeError: failed to fetch (текст может отличаться)
+```
+
+Как видно, `.catch` не обязательно должен быть сразу после ошибки, он может быть далее, после одного или даже нескольких `.then`
+
+Или, может быть, с сервером всё в порядке, но в ответе мы получим некорректный JSON. Самый лёгкий путь перехватить все ошибки – это добавить `.catch` в конец цепочки:
+```js
+fetch('/article/promise-chaining/user.json')
+  .then(response => response.json())
+  .then(user => fetch(`https://api.github.com/users/${user.name}`))
+  .then(response => response.json())
+  .then(githubUser => new Promise((resolve, reject) => {
+    let img = document.createElement('img');
+    img.src = githubUser.avatar_url;
+    img.className = "promise-avatar-example";
+    document.body.append(img);
+
+    setTimeout(() => {
+      img.remove();
+      resolve(githubUser);
+    }, 3000);
+  }))
+  .catch(error => alert(error.message));
+```
+
+Если все в порядке, то такой `.catch` вообще не выполнится. Но если любой из промисов будет отклонён (проблемы с сетью или некорректная json-строка, или что угодно другое), то ошибка будет перехвачена.[^promise-error-handling]
 
 ##### Обработка ошибок в цепочке промисов
 Теперь усложним цепочку. Пусть у нас в цепочке выполняется сразу несколько промисов:
@@ -2459,3 +2492,4 @@ printNumbers();
 [^promise-chaining]: [Цепочка промисов](https://learn.javascript.ru/promise-chaining)
 [^17.6]: [Async и await](https://metanit.com/web/javascript/17.6.php)
 [^17.7]: [Асинхронные итераторы](https://metanit.com/web/javascript/17.7.php)
+[^promise-error-handling]: [Промисы: обработка ошибок](https://learn.javascript.ru/promise-error-handling)
