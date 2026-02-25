@@ -57,6 +57,7 @@
     - [Promise.any](#promiseany)
     - [Сравнение методов](#сравнение-методов)
     - [Promise.resolve/reject](#promiseresolvereject)
+      - [Promise.resolve](#promiseresolve)
   - [Async и await](#async-и-await)
     - [Выполнение последовательности асинхронных операций](#выполнение-последовательности-асинхронных-операций)
     - [Обработка ошибок](#обработка-ошибок-1)
@@ -2663,6 +2664,36 @@ Promise.any([promise1, promise2])
 Методы `Promise.resolve` и `Promise.reject` редко используются в современном коде, так как синтаксис `async`/`await` (мы рассмотрим его чуть позже) делает их, в общем-то, не нужными.
 
 Мы рассмотрим их здесь для полноты картины, а также для тех, кто по каким-то причинам не может использовать `async`/`await`.
+
+##### Promise.resolve
+- `Promise.resolve(value)` создаёт успешно выполненный промис с результатом `value`.
+
+То же самое, что:
+```js
+let promise = new Promise(resolve => resolve(value));
+```
+
+Этот метод используют для совместимости: когда ожидается, что функция возвратит именно промис.
+
+Например, функция `loadCached` ниже загружает URL и запоминает (кеширует) его содержимое. При будущих вызовах с тем же URL он тут же читает предыдущее содержимое из кеша, но использует `Promise.resolve`, чтобы сделать из него промис, для того, чтобы возвращаемое значение всегда было промисом:
+```js
+let cache = new Map();
+
+function loadCached(url) {
+  if (cache.has(url)) {
+    return Promise.resolve(cache.get(url)); // (*)
+  }
+
+  return fetch(url)
+    .then(response => response.text())
+    .then(text => {
+      cache.set(url,text);
+      return text;
+    });
+}
+```
+
+Мы можем писать `loadCached(url).then(…)`, потому что функция `loadCached` всегда возвращает промис. Мы всегда можем использовать `.then` после `loadCached`. Это и есть цель использования `Promise.resolve` в строке `(*)`.
 
 ### Async и await
 Внедение стандарта ES2017 в JavaScript привнесло два новых оператора: **`async`** и **`await`**, который призваны упростить работу с промисами.
