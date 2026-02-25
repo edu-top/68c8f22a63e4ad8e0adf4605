@@ -2696,7 +2696,7 @@ let range = new Range();
 Затем мы установим границы выделения, используя `range.setStart(node, offset)` и `range.setEnd(node, offset)`.
 
 Например, рассмотрим этот фрагмент HTML-кода:
-```js
+```html
 <p id="p">Example: <i>italic</i> and <b>bold</b></p>
 ```
 
@@ -2708,7 +2708,7 @@ let range = new Range();
 
 ![Range example](../svg/range-example-p-0-1.svg)
 
-```js
+```html
 <p id="p">Example: <i>italic</i> and <b>bold</b></p>
 
 <script>
