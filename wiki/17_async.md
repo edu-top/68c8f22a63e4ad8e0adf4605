@@ -49,6 +49,7 @@
     - [Итого](#итого-1)
     - [Задачи](#задачи-2)
       - [Ошибка в setTimeout](#ошибка-в-settimeout)
+  - [Promise API](#promise-api)
   - [Функции Promise.all, Promise.allSettled, Promise.any и Promise.race](#функции-promiseall-promiseallsettled-promiseany-и-promiserace)
     - [Функция Promise.all](#функция-promiseall)
     - [Promise.allSettled](#promiseallsettled)
@@ -2154,6 +2155,9 @@ new Promise(function(resolve, reject) {
 
 </details>
 
+### Promise API
+В классе `Promise` есть 6 статических методов. Давайте познакомимся с ними.[^promise-api]
+
 ### Функции Promise.all, Promise.allSettled, Promise.any и Promise.race
 Функции **`Promise.all()`**, **`Promise.allSettled()`** и **`Promise.race()`** позволяют сгруппировать выполнение нескольких промисов.[^17.5]
 
@@ -2783,3 +2787,4 @@ yield await new Promise(resolve => setTimeout(() => resolve(person), 2000));
 [^17.7]: [Асинхронные итераторы](https://metanit.com/web/javascript/17.7.php)
 [^promise-error-handling]: [Промисы: обработка ошибок](https://learn.javascript.ru/promise-error-handling)
 [^17.8]: [Асинхронные генераторы](https://metanit.com/web/javascript/17.8.php)
+[^promise-api]: [Promise API](https://learn.javascript.ru/promise-api)
