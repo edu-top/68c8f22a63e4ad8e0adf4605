@@ -60,6 +60,7 @@
   - [Асинхронные итераторы](#асинхронные-итераторы)
     - [Цикл for-await-of](#цикл-for-await-of)
     - [Создание асинхронного итератора](#создание-асинхронного-итератора)
+  - [Асинхронные генераторы](#асинхронные-генераторы)
   - [Источники информации](#источники-информации)
 
 ### Асинхронные действия и коллбеки
@@ -2657,6 +2658,95 @@ printNumbers();
 
 Здесь асинхронный итератор объекта `generateNumber` возвращает числа от 0 до 10.
 
+### Асинхронные генераторы
+Асинхронные итераторы открывают нам путь к созданию асинхронных генераторов. Асинхронные генераторы позволяют нам использовать оператор **`await`** и получать и возвращать данные асинхронным образом.[^17.8]
+
+Для определения асинхронного генератора перед функцией генератора ставится оператор **`async`**
+```js
+async function* название_функции_генератора(){
+
+    yield возвращаемое_значение;
+}
+```
+
+Рассмотрим простейший генератор:
+```js
+async function* generatePersonAsync(){
+    yield "Tom";
+}
+```
+
+Здесь определен асинхронный генератор `generatePersonAsync`, в котором возвращается одно значение — строка "Tom".
+
+Особенностью асинхронного генератора является то, что при обращении к его методу **`next()`** возвращается объект `Promise`. А полученный объект `Promise`, в свою очередь, возвращает объект с двумя свойствами `{ value, done }`, где `value` собственно хранит возвращаемое значение, а `done` указывает, доступны ли в генераторе еще данные.
+
+Например, возьмем выше определенный асинхронный генератор:
+```js
+async function* generatePersonAsync(){
+    yield "Tom";
+}
+const personGenerator = generatePersonAsync();
+personGenerator.next(); // Promise
+```
+
+Здесь с помощью метода `next()` получаем промис. Далее через метод `then()` мы можем получить из промиса объект:
+```js
+const personGenerator = generatePersonAsync();
+personGenerator.next()
+    .then(data => console.log(data));    // {value: "Tom", done: false}
+```
+
+И при обращении к свойству `value` полученного из промиса получить сами данные:
+```js
+const personGenerator = generatePersonAsync();
+personGenerator.next()
+    .then(data => console.log(data.value));  // Tom
+```
+
+С помощью оператора **`await`** из метода `next()` генератора мы можем получить данные:
+```js
+async function* generatePersonAsync(){
+    yield "Tom";
+    yield "Sam";
+    yield "Bob";
+}
+async function printPeopleAsync(){
+    const personGenerator = generatePersonAsync();
+    while(!(person = await personGenerator.next()).done){
+        console.log(person.value);
+    }
+}
+
+printPeopleAsync();
+```
+
+Консольный вывод:
+```
+Tom
+Sam
+Bob
+```
+
+Поскольку асинхронный генератор представляет асинхронный итератор, то данные генератора также можно получить через цикл **`for-await-of`**:
+```js
+async function* generatePersonAsync(){
+    yield "Tom";
+    yield "Sam";
+    yield "Bob";
+}
+async function printPeopleAsync(){
+    const personGenerator = generatePersonAsync();
+    for await(person of personGenerator){
+        console.log(person);
+    }
+}
+
+printPeopleAsync();
+// Tom
+// Sam
+// Bob
+```
+
 ### Источники информации
 [^17.9]: [Асинхронные функции и коллбеки](https://metanit.com/web/javascript/17.9.php)
 [^17.1]: [Введение в промисы](https://metanit.com/web/javascript/17.1.php)
@@ -2670,3 +2760,4 @@ printNumbers();
 [^17.6]: [Async и await](https://metanit.com/web/javascript/17.6.php)
 [^17.7]: [Асинхронные итераторы](https://metanit.com/web/javascript/17.7.php)
 [^promise-error-handling]: [Промисы: обработка ошибок](https://learn.javascript.ru/promise-error-handling)
+[^17.8]: [Асинхронные генераторы](https://metanit.com/web/javascript/17.8.php)
