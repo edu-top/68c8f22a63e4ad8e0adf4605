@@ -52,6 +52,7 @@
   - [Promise API](#promise-api)
     - [Promise.all](#promiseall)
     - [Promise.allSettled](#promiseallsettled)
+      - [Полифил](#полифил)
     - [Promise.race](#promiserace)
     - [Promise.any](#promiseany)
   - [Async и await](#async-и-await)
@@ -2445,6 +2446,28 @@ Promise.allSettled([
 
 !!! warning "Новая возможность"
     Эта возможность была добавлена в язык недавно. Метод поддерживается во всех современных браузерах и Node.js 12.9.0+. В старых браузерах может понадобиться полифил.
+
+##### Полифил
+Если браузер не поддерживает `Promise.allSettled`, для него легко сделать полифил:
+```js
+if(!Promise.allSettled) {
+  Promise.allSettled = function(promises) {
+    return Promise.all(promises.map(p => Promise.resolve(p).then(value => ({
+      status: 'fulfilled',
+      value: value
+    }), error => ({
+      status: 'rejected',
+      reason: error
+    }))));
+  };
+}
+```
+
+В этом коде `promises.map` берёт аргументы, превращает их в промисы (на всякий случай) и добавляет каждому обработчик `.then`.
+
+Этот обработчик превращает успешный результат `value` в `{state:'fulfilled', value: value}`, а ошибку `error` в `{state:'rejected', reason: error}`. Это как раз и есть формат результатов `Promise.allSettled`.
+
+Затем мы можем использовать `Promise.allSettled`, чтобы получить результаты всех промисов, даже если при выполнении какого-то возникнет ошибка.
 
 #### Promise.race
 Функция **`Promise.race()`** также принимает несколько промисов, только возвращает первый завершенный промис (вне зависимости завершился от успешно или с ошибкой):
