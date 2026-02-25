@@ -61,6 +61,7 @@
     - [Цикл for-await-of](#цикл-for-await-of)
     - [Создание асинхронного итератора](#создание-асинхронного-итератора)
   - [Асинхронные генераторы](#асинхронные-генераторы)
+    - [await в асинхронных генераторах](#await-в-асинхронных-генераторах)
   - [Источники информации](#источники-информации)
 
 ### Асинхронные действия и коллбеки
@@ -2745,6 +2746,27 @@ printPeopleAsync();
 // Tom
 // Sam
 // Bob
+```
+
+#### await в асинхронных генераторах
+Главным преимуществом асинхронным генераторов является то, что мы можем использовать в них оператор **`await`** и соответственно получать данные из источников данных, которые используют асинхронный API.
+
+```js
+async function* generatePersonAsync(people){
+    for(const person of people)
+        yield await new Promise(resolve => setTimeout(() => resolve(person), 2000));
+}
+async function printPeopleAsync(people){
+    for await (const item of generatePersonAsync(people)) {
+        console.log(item);
+    }
+}
+printPeopleAsync(["Tom", "Sam", "Bob"]);
+```
+
+Здесь для имитации получения данных из асинхронного источника данных применяется промис, который через 2000 секуд возвращает один из элементов массива, который передается в функцию генератора:
+```js
+yield await new Promise(resolve => setTimeout(() => resolve(person), 2000));
 ```
 
 ### Источники информации
