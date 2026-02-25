@@ -2470,6 +2470,13 @@ if(!Promise.allSettled) {
 Затем мы можем использовать `Promise.allSettled`, чтобы получить результаты всех промисов, даже если при выполнении какого-то возникнет ошибка.
 
 #### Promise.race
+Метод очень похож на `Promise.all`, но ждёт только первый *выполненный* промис, из которого берёт результат (или ошибку).
+
+Синтаксис:
+```js
+let promise = Promise.race(iterable);
+```
+
 Функция **`Promise.race()`** также принимает несколько промисов, только возвращает первый завершенный промис (вне зависимости завершился от успешно или с ошибкой):
 ```js
 const promise1 = new Promise((resolve) => {
@@ -2484,6 +2491,17 @@ Promise.race([promise1, promise2])
 ```
 
 В данном случае первым выполненным будет промис `promise1`. Поэтому в метод `then(value => console.log(value))` в качестве `value` будет передана строка "Hello".
+
+Например, тут результат будет `1`:
+```js
+Promise.race([
+  new Promise((resolve, reject) => setTimeout(() => resolve(1), 1000)),
+  new Promise((resolve, reject) => setTimeout(() => reject(new Error("Ошибка!")), 2000)),
+  new Promise((resolve, reject) => setTimeout(() => resolve(3), 3000))
+]).then(alert); // 1
+```
+
+Быстрее всех выполнился первый промис, он и дал результат. После этого остальные промисы игнорируются.[^promise-api]
 
 #### Promise.any
 Функция **`Promise.any()`** принимает несколько промисов и возвращает первый успешно завершившийся промис:
