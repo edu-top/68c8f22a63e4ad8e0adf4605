@@ -2150,11 +2150,11 @@ HTML5 поддерживает нативную валидацию форм и �
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>METANIT.COM</title>
+    <title>Example</title>
     <style>
-    input {width: 150px;}
-    input:invalid {border-color: red; }
-    input:valid { border-color: green;}
+      input {width: 150px;}
+      input:invalid {border-color: red; }
+      input:valid { border-color: green;}
     </style>
 </head>
 <body>
