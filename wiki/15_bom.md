@@ -1,3 +1,5 @@
+<link href="../styles.css" rel="stylesheet" />
+
 # Объектная модель браузера
 
 - [Browser Object Model и объект window](#browser-object-model-и-объект-window)
