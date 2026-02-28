@@ -332,7 +332,7 @@ btn.addEventListener("click", ()=>{
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>DevPM</title>
+    <title>Example</title>
 </head>
 <body>
     <button id="btn">Print</button>
@@ -347,6 +347,10 @@ btn.addEventListener("click", ()=>{
 </body>
 </html>
 ```
+
+![Print](../img/print-msg_1.png)
+
+![Print](../img/print-msg_2.png)
 
 В зависимости от браузера окно печати может выглядеть различным образом. Например, вид в Google Chrome:
 
