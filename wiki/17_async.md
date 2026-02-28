@@ -70,6 +70,8 @@
     - [Создание асинхронного итератора](#создание-асинхронного-итератора)
   - [Асинхронные генераторы](#асинхронные-генераторы)
     - [await в асинхронных генераторах](#await-в-асинхронных-генераторах)
+- [Событийный цикл](#событийный-цикл)
+  - [Микрозадачи](#микрозадачи)
 - [Источники информации](#источники-информации)
 
 ## Асинхронные действия и коллбеки
@@ -3300,6 +3302,28 @@ printPeopleAsync(["Tom", "Sam", "Bob"]);
 yield await new Promise(resolve => setTimeout(() => resolve(person), 2000));
 ```
 
+## Событийный цикл
+
+### Микрозадачи
+Обработчики промисов `.then`/`.catch`/`.finally` всегда асинхронны.
+
+Даже когда промис сразу же выполнен, код в строках ниже `.then`/`.catch`/`.finally` будет запущен до этих обработчиков.
+
+Вот демо:
+```js
+let promise = Promise.resolve();
+
+promise.then(() => alert("промис выполнен"));
+
+alert("код выполнен"); // этот alert показывается первым
+```
+
+Если вы запустите его, сначала вы увидите код выполнен, а потом промис выполнен.
+
+Это странно, потому что промис определённо был выполнен с самого начала.
+
+Почему `.then` срабатывает позже? Что происходит?[^microtask-queue]
+
 ## Источники информации
 [^17.9]: [Асинхронные функции и коллбеки](https://metanit.com/web/javascript/17.9.php)
 [^17.1]: [Введение в промисы](https://metanit.com/web/javascript/17.1.php)
@@ -3316,3 +3340,4 @@ yield await new Promise(resolve => setTimeout(() => resolve(person), 2000));
 [^17.8]: [Асинхронные генераторы](https://metanit.com/web/javascript/17.8.php)
 [^promise-api]: [Promise API](https://learn.javascript.ru/promise-api)
 [^promisify]: [Промисификация](https://learn.javascript.ru/promisify)
+[^microtask-queue]: [Микрозадачи](https://learn.javascript.ru/microtask-queue)
