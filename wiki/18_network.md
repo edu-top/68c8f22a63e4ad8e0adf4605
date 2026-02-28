@@ -14,6 +14,7 @@
     - [Определение сервера](#определение-сервера)
     - [Определение кода html для загрузки](#определение-кода-html-для-загрузки)
     - [Определение главной страницы и загрузка данных](#определение-главной-страницы-и-загрузка-данных)
+    - [Управление html-содержимым](#управление-html-содержимым)
 - [Глоссарий](#глоссарий)
 - [Источники информации](#источники-информации)
 
@@ -483,6 +484,83 @@ C:\app>node server.js
 После запуска сервера мы можем перейти в браузере по адресу http://localhost:3000, нам отобразится страница, в javascript-коде которой произойдет обращение к странице "home.html". Код javascript получит эту страницу и выведет ее содержимое на консоль:
 
 ![Получение кода html в ajax-запросе с помощью XMLHttpRequest в javascript](../img/xmlhttprequest6.png)
+
+#### Управление html-содержимым
+В примере выше мы получали содержимое страницы как обычный текст. Однако так как этот текст фактически содержит разметку HTML, то мы можем загрузить его на веб-страницу. Так, изменим код страницы *index.html* следующим образом:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Example</title>
+</head>
+<body>
+    <div id="content"></div>
+    <script>
+        const contentDiv = document.getElementById("content");  // элемент для загрузки html
+        const xhr = new XMLHttpRequest();
+
+        xhr.onload = () => {
+            if (xhr.status == 200) {
+                contentDiv.innerHTML = xhr.responseText;    // выводим полученный ответ в contentDiv
+            } else {                                        // иначе выводим текст статуса
+                console.log("Server response: ", xhr.statusText);
+            }
+        };
+        xhr.open("GET", "/home.html");                      // GET-запрос к ресурсу /home.html
+        xhr.setRequestHeader("Accept", "text/html");        // принимаем только html
+        xhr.send();                                         // выполняем запрос
+    </script>
+</body>
+</html>
+```
+
+В данном случае загружаем полученный код страницы "home.html" в элемент c `id=content`
+
+![Загрузка кода html на веб-страницу в ajax-запросе с помощью XMLHttpRequest в javascript](../img/xmlhttprequest7.png)
+
+Однако проблема в данном случае состоит в том, что код страницы "home.html" кроме собственно некоторого содержимого также содержит элементы `head`, `title`, метаописания страницы с помощью тегов `<meta>`. Эти элементы нет смысла загружать на другую веб-страницу. Либо мы хотим загрузить какой-то определенный элемент со страницы "home.html", а не весь ее код. В этом случае мы можем получить ответ через свойство **`responseXML`** и затем манипулировать ответом как стандартным документом html. Например, изменим код javascript следующим образом:
+```js
+const contentDiv = document.getElementById("content");
+
+const xhr = new XMLHttpRequest();
+xhr.onload = () => {                            // обработчик получения ответа сервера
+    if (xhr.status == 200) {
+        // загружаем только содержимое элемента body
+        contentDiv.innerHTML = xhr.responseXML.body.innerHTML;
+    } else {
+        console.log("Server response: ", xhr.statusText);
+    }
+};
+xhr.open("GET", "/home.html");                  // GET-запрос к ресурсу /home.html
+xhr.responseType = "document";                  // устанавливаем тип ответа
+xhr.setRequestHeader("Accept", "text/html");    // принимаем только html
+xhr.send();     // выполняем запрос
+```
+
+Здесь следует отметить два момента. Прежде всего устанавливаем для ответа тип "document":
+```js
+xhr.responseType = "document";
+```
+
+Это позволит нам получить ответ как объект типа **`Document`**, аналогичный тому, что представляет свойство `document` на веб-странице.
+
+Чтобы получить ответ в виде html/xml используем свойство **`responseXML`**. И далее, поскольку это свойство представляет объект **`Document`**, используем свойство `body` для обращения к непосредственному содержимому страницы:
+```js
+contentDiv.innerHTML = xhr.responseXML.body.innerHTML;
+```
+
+В результате в `contentDiv` будет загружено содержимое элемента `body` страницы "home.html".
+
+Подобным образом можно обращаться к другим свойствам объекта `Document`. Например, получим заголовок:
+```js
+document.title = xhr.responseXML.title;
+```
+
+Или загрузим на страницу только текст из заголовка `<ht1>`:
+```js
+contentDiv.innerHTML =  xhr.responseXML.querySelector("h1").textContent;
+```
 
 ## Глоссарий
 AJAX (*Asynchronous JavaScript And XML*)
