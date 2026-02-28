@@ -687,9 +687,60 @@ newWindow.onload = function() {
 Обратите внимание: сразу после `window.open` новое окно ещё не загружено. Это демонстрируется в строке `(*)`. Так что нужно ждать `onload`, чтобы его изменить. Или же поставить обработчик `DOMContentLoaded` на `newWin.document`.
 
 !!! warning "Политика одного источника"
-    Окна имеют свободный доступ к содержимому друг друга только если они с одного источника (у них совпадают домен, протокол и порт (protocol://domain:port).
+    Окна имеют свободный доступ к содержимому друг друга только если они с одного источника (у них совпадают домен, протокол и порт — `protocol://domain:port`).
 
     Иначе, например, если основное окно с *site.com*, а попап с *gmail.com*, это невозможно по соображениям пользовательской безопасности. Детали изложены в разделе "Общение между окнами".[^popup-windows]
+
+    **Что происходит при нарушении политики:**
+    ```js
+    // Основное окно: https://site.com
+    let popup = window.open('https://gmail.com', 'test');
+
+    // Ошибка! Нельзя прочитать содержимое чужого окна
+    console.log(popup.document.body); // Uncaught DOMException: Blocked a frame...
+    ```
+
+    **Разрешённые сценарии (same-origin):**
+    - `https://site.com` ↔ `https://site.com/page1`
+    - `http://localhost:3000` ↔ `http://localhost:3000/admin`
+    - `https://site.com:443` ↔ `https://site.com`
+
+    **Что именно блокируется:**
+    - Чтение/запись `document`, `location`, `history`
+    - Выполнение скриптов в чужом окне
+    - Изменение `innerHTML`, `style`, форм и т.д.
+
+    **Рабочие обходные пути:**
+
+    1. **Передача данных через URL:**
+       ```js
+       let popup = window.open(`/popup.html?user=123&action=edit`);
+       // popup может прочитать параметры из своего location.search
+       ```
+
+    2. **postMessage API (между разными источниками):**
+       ```js
+       // Из основного окна
+       popup.postMessage({userId: 123}, 'https://trusted-site.com');
+
+       // В попапе
+       window.addEventListener('message', (e) => {
+         if (e.origin === 'https://site.com') {
+           console.log(e.data.userId); // 123
+         }
+       });
+       ```
+
+    3. **Собственный сервер для попапов:**
+       ```js
+       // Всегда открывать свои страницы
+       let popup = window.open('/my-popup.html', 'popup');
+       popup.postMessage({data: 'safe'}, '*'); // или конкретный origin
+       ```
+
+    **Практический совет:** Для внутренних приложений используйте относительные пути (`/popup.html`) вместо абсолютных URL — это гарантирует same-origin.
+
+    Детали изложены в разделе "Общение между окнами".[^popup-windows]
 
 ### Доступ к открывшему окну из попапа
 Попап также может обратиться к открывшему его окну по ссылке `window.opener`. Она равна `null` для всех окон, кроме попапов.
