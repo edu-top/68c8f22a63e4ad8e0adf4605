@@ -391,6 +391,8 @@ btn.addEventListener("click", ()=>{
 Эти методы не блокируют скрипт полностью, позволяя анимации и фоновые задачи.
 
 ## Открытие, закрытие и позиционирование окон
+*[PKCE]: Proof Key for Code Exchange
+*[SPA]: Single Page Application
 
 Всплывающее окно («попап» – от англ. Popup window) – один из древнейших способов показать пользователю ещё один документ.[^popup-windows]
 
@@ -410,6 +412,90 @@ window.open('https://example.com/')
 1. Попап – это отдельное окно со своим JavaScript-окружением. Так что открытие попапа со стороннего, не доверенного сайта вполне безопасно
 2. Открыть попап очень просто.
 3. Попап может производить навигацию (менять URL) и отсылать сообщения в основное окно.
+
+Попапы идеально подходят для OAuth, потому что после успешной авторизации провайдер (Google, Facebook и т.д.) может легко закрыть попап и отправить данные обратно в родительское окно через `postMessage`. Это позволяет реализовать плавный flow без перезагрузки основной страницы.
+
+Вот базовый пример OAuth-попапа:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OAuth Popup Example</title>
+</head>
+<body>
+    <button id="loginBtn">Войти через Google</button>
+
+    <script>
+        document.getElementById('loginBtn').addEventListener('click', function() {
+            // Открываем попап с OAuth URL
+            const popup = window.open(
+                'https://accounts.google.com/o/oauth2/auth?client_id=YOUR_CLIENT_ID&redirect_uri=YOUR_REDIRECT_URI&scope=profile&response_type=token',
+                'oauth',
+                'width=500,height=600,menubar=no,toolbar=no'
+            );
+
+            // Слушаем сообщения от попапа
+            window.addEventListener('message', function(event) {
+                if (event.origin !== 'https://accounts.google.com') return; // Безопасность!
+
+                if (event.data.type === 'oauth_success') {
+                    popup.close();
+                    console.log('Токен получен:', event.data.token);
+                    // Обновляем UI пользователя
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+```
+
+В попапе (на `redirect_uri`) после получения токена:
+```js
+// В попапе после авторизации
+const urlParams = new URLSearchParams(window.location.hash.substring(1));
+const token = urlParams.get('access_token');
+
+window.opener.postMessage({
+    type: 'oauth_success',
+    token: token
+}, 'https://yourdomain.com'); // Только доверенный origin!
+
+window.close();
+```
+
+Почему именно попапы для OAuth?
+- **Изоляция**: Попап имеет отдельный `origin` и `sandbox`. Даже если провайдер взломан, основной сайт в безопасности.
+
+- **UX**: Пользователь не покидает сайт — попап закрывается автоматически.
+
+- **Кросс-доменная связь**: `postMessage` позволяет безопасно передать токен.
+
+Хотя попапы работают, сейчас чаще используют:
+
+- Popup SDK от провайдеров (Google Sign-In, Facebook JS SDK)
+
+- Redirect flow с `state` параметром
+
+- PKCE для SPA без попапов
+
+Но для легковесных решений без SDK попапы — золотой стандарт уже 15+ лет.
+
+!!! info "Немного о PKCE"
+
+    <dfn title="PKCE">PKCE</dfn> (Proof Key for Code Exchange, произносится «пикси») — это расширение протокола OAuth 2.0, разработанное для безопасного обмена кодами авторизации. Оно защищает мобильные и одностраничные приложения (SPA) от атак перехвата кода (*authorization code interception*), требуя от клиента доказать владение уникальным секретом (`code_verifier`) при каждом запросе.
+
+    Основные аспекты PKCE:
+    - **Назначение**: предотвращение CSRF-атак и атак на перехват кода.
+    - **Применение**: обязателен для публичных клиентов (мобильные/SPA), которые не могут безопасно хранить `client_secret`.
+    - **Принцип работы**: на этапе авторизации клиент создает `code_verifier` (случайная строка) и его хеш `code_challenge`. При обмене кода на токен, клиент отправляет `code_verifier`, который сервер проверяет, сравнивая с исходным `code_challenge`.
+
+    **Компоненты**:
+    - **Code Verifier**: случайная строка.
+    - **Code Challenge**: хешированная версия `verifier` (обычно SHA-256).
+    - **Code Challenge Method**: метод хеширования (обычно S256).
+
+    PKCE делает потоки авторизации безопаснее, гарантируя, что токен получает именно то приложение, которое инициировало запрос, даже если код был перехвачен. 
 
 ### Блокировка попапов
 В прошлом злонамеренные сайты заваливали посетителей всплывающими окнами. Такие страницы могли открывать сотни попапов с рекламой. Поэтому теперь большинство браузеров пытаются заблокировать всплывающие окна, чтобы защитить пользователя.
