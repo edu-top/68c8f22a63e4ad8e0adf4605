@@ -13,6 +13,7 @@
   - [Загрузка HTML с помощью XMLHttpRequest](#загрузка-html-с-помощью-xmlhttprequest)
     - [Определение сервера](#определение-сервера)
     - [Определение кода html для загрузки](#определение-кода-html-для-загрузки)
+    - [Определение главной страницы и загрузка данных](#определение-главной-страницы-и-загрузка-данных)
 - [Глоссарий](#глоссарий)
 - [Источники информации](#источники-информации)
 
@@ -442,6 +443,46 @@ else{
 </body>
 </html>
 ```
+
+#### Определение главной страницы и загрузка данных
+Теперь определим код главной страницы *index.html*, которая будет загружать страницу *home.html*:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Example</title>
+</head>
+<body>
+    <script>
+        const xhr = new XMLHttpRequest();
+        xhr.onload = () => {                        // обработчик получения ответа сервера
+            if (xhr.status == 200) {                // если код ответа 200
+                const html = xhr.responseText;      // получаем ответ
+                console.log(html);      // выводим полученный ответ на консоль браузера
+            } else {                                // иначе выводим текст статуса
+                console.log("Server response: ", xhr.statusText);
+            }
+        };
+        xhr.open("GET", "/home.html");                  // GET-запрос к ресурсу /home.html
+        xhr.setRequestHeader("Accept", "text/html");    // принимаем только html
+        xhr.send();     // выполняем запрос
+    </script>
+</body>
+</html>
+```
+
+В обработчике загрузке `xhr.onload` получаем текст ответа через `xhr.responseText` и выводим ответ на консоль.
+
+Теперь в консоли перейдем к папке сервера с помощью команды **`cd`** и запустим сервер с помощью команды **`node server.js`**
+```
+C:\app>node server.js
+Сервер запущен по адресу http://localhost:3000
+```
+
+После запуска сервера мы можем перейти в браузере по адресу http://localhost:3000, нам отобразится страница, в javascript-коде которой произойдет обращение к странице "home.html". Код javascript получит эту страницу и выведет ее содержимое на консоль:
+
+![Получение кода html в ajax-запросе с помощью XMLHttpRequest в javascript](../img/xmlhttprequest6.png)
 
 ## Глоссарий
 AJAX (*Asynchronous JavaScript And XML*)
