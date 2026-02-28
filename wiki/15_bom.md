@@ -323,6 +323,8 @@ btn.addEventListener("click", ()=>{
 
 ![Функция find и поиск на странице в JavaScript](../img/find.png)
 
+![Find](../img/find-msg.png)
+
 ### print
 Метод **`print()`** отображает диалоговое сообщение для вывода страницы на печать:
 ```html
