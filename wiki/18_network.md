@@ -15,6 +15,7 @@
     - [Определение кода html для загрузки](#определение-кода-html-для-загрузки)
     - [Определение главной страницы и загрузка данных](#определение-главной-страницы-и-загрузка-данных)
     - [Управление html-содержимым](#управление-html-содержимым)
+    - [Динамическая загрузка компонентов](#динамическая-загрузка-компонентов)
 - [Глоссарий](#глоссарий)
 - [Источники информации](#источники-информации)
 
@@ -561,6 +562,120 @@ document.title = xhr.responseXML.title;
 ```js
 contentDiv.innerHTML =  xhr.responseXML.querySelector("h1").textContent;
 ```
+
+#### Динамическая загрузка компонентов
+Возможность загружать html-код и вставлять его на страницу позволяет нам пойти дальше и разделить функционал приложения на несколько компонентов и при необходимости подгружать их. Например, пусть в проекте у нас есть следующие файлы:
+
+- *server.js*: файл приложения сервера на Node.js
+
+- *index.html*: главная страница приложения
+
+- *home.html*: файл компонента home
+
+- *about.html*: файл компонента about
+
+- *contact.html*: файл компонента contact
+
+Файл приложения сервера на Node.js — *server.js* — остается тем же, что был определен выше в данной статье.
+
+Пусть файл *home.html* содержит какой-нибудь простейший код типа следующего:
+```html
+<h1>Home Page</h1>
+<p>Home Page Text</p>
+```
+
+Файл *about.html* пусть выглядит аналогичным образом:
+```html
+<h1>About Page</h1>
+<p>About Page Text</p>
+```
+
+И код файла *contact.html*:
+```html
+<h1>Contact Page</h1>
+<p>Contact Page Text</p>
+```
+
+Эти файлы представляют компоненты, которые будут загружаться на главной странице.
+
+На главной странице *index.html* определим следующий код:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Example</title>
+</head>
+<body>
+<nav><a href="home">Home</a> | <a href="about">About</a> | <a href="contact">Contact</a></nav>
+<div id="content"></div>
+<script>
+const contentDiv = document.getElementById("content");
+
+function loadContent(fileName){
+    const xhr = new XMLHttpRequest();
+    xhr.onload = () => {
+        if (xhr.status == 200) {
+            contentDiv.innerHTML = xhr.responseText;    // xhr.responseXML.body.innerHTML;
+            document.title = fileName;
+        }
+    };
+    xhr.open("GET", fileName + ".html");                // GET-запрос по адресу ссылки
+    xhr.setRequestHeader("Accept", "text/html");        // принимаем только html
+    xhr.send();                                         // выполняем запрос
+}
+
+// устанавливаем обработчик нажатия для кнопок
+const links = document.getElementsByTagName("a");
+for (let i = 0; i < links.length; i++) {
+    links[i].addEventListener("click", (e)=>{
+        loadContent(links[i].getAttribute("href"));
+        e.preventDefault();
+    });
+}
+// по умолчанию загружаем компонент home
+loadContent("home");
+</script>
+</body>
+</html>
+```
+
+Здесь для навигации по компонентам на страницу помещаем ряд ссылок:
+```html
+<nav><a href="home">Home</a> | <a href="about">About</a> | <a href="contact">Contact</a></nav>
+```
+
+Адрес каждой такой ссылки совпадает с названием страницы соответствующего компонента без расширения ".html".
+
+Каждый из компонентов будет загружаться на странице в элемент с `id="content"`, который получаем в коде JavaScript в константу `contentDiv`:
+```js
+const contentDiv = document.getElementById("content");
+```
+
+Также в коде JavaScript для каждой ссылки устанавливаем обработчки, в котором вызываем функцию `loadContent` и в которую передаем значение атрибута `href` ссылки — то есть адрес компонента
+```js
+const links = document.getElementsByTagName("a");
+for (let i = 0; i < links.length; i++) {
+    links[i].addEventListener("click", (e)=>{
+        loadContent(links[i].getAttribute("href"));
+        e.preventDefault();
+    });
+}
+```
+
+В функции `loadContent` используем адрес ссылки для отправки ajax-запроса, а ответ (полученный html) загружаем в элемент `contentDiv`
+```js
+contentDiv.innerHTML = xhr.responseText; // xhr.responseXML.body.innerHTML;
+```
+
+При загрузке страницы сразу загружаем код компонента `home`, как компонента по умолчанию:
+```js
+loadContent("home");
+```
+
+Таким образом, на главной странице мы сможем обращаться к конкретным компонентам, переходя по ссылкам:
+
+![Динамическая загрузка компонентов на веб-страницу в ajax-запросе с помощью XMLHttpRequest в javascript](../img/xmlhttprequest8.png)
 
 ## Глоссарий
 AJAX (*Asynchronous JavaScript And XML*)
