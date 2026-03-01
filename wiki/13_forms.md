@@ -3023,13 +3023,13 @@ From <input id="start" type="number" value=1> – To <input id="end" type="numbe
 
 - `collapse(node, offset)` – заменить выделенный диапазон новым, который начинается и заканчивается на `node`, на позиции `offset`.
 - `setPosition(node, offset)` – то же самое, что `collapse` (дублирующий метод-псевдоним).
-- `collapseToStart()` – схлопнуть (заменить на пустой диапазон) к началу выделения,
-- `collapseToEnd()` – схлопнуть диапазон к концу выделения,
-- `extend(node, offset)` – переместить фокус выделения к данному `node`, с позиции `offset`,
-- `setBaseAndExtent(anchorNode, anchorOffset, focusNode, focusOffset)` – заменить диапазон выделения на заданные начало `anchorNode`/`anchorOffset` и конец `focusNode`/`focusOffset`. Будет выделено всё содержимое между этими границами
+- `collapseToStart()` – схлопнуть (заменить на пустой диапазон) к началу выделения.
+- `collapseToEnd()` – схлопнуть диапазон к концу выделения.
+- `extend(node, offset)` – переместить фокус выделения к данному `node`, с позиции `offset`.
+- `setBaseAndExtent(anchorNode, anchorOffset, focusNode, focusOffset)` – заменить диапазон выделения на заданные начало `anchorNode`/`anchorOffset` и конец `focusNode`/`focusOffset`. Будет выделено всё содержимое между этими границами.
 - `selectAllChildren(node)` – выделить все дочерние узлы данного узла `node`.
 - `deleteFromDocument()` – удалить содержимое выделения из документа.
-- `containsNode(node, allowPartialContainment = false)` – проверяет, содержит ли выделение node (частично, если второй аргумент равен `true`)
+- `containsNode(node, allowPartialContainment = false)` – проверяет, содержит ли выделение node (частично, если второй аргумент равен `true`).
 
 Так что для многих задач мы можем вызывать методы `Selection`, не обращаясь к связанному объекту `Range`.
 
