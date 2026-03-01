@@ -30,6 +30,7 @@
     - [Доступ к содержимому ифрейма](#доступ-к-содержимому-ифрейма)
   - [Окна на поддоменах: document.domain](#окна-на-поддоменах-documentdomain)
     - [Ифрейм: подождите документ](#ифрейм-подождите-документ)
+  - [Коллекция window.frames](#коллекция-windowframes)
 - [История браузера. History API](#история-браузера-history-api)
   - [Событие popstate](#событие-popstate)
   - [Перемещение по одностраничному сайту](#перемещение-по-одностраничному-сайту)
@@ -1211,6 +1212,44 @@ document.domain = 'site.com';
     clearInterval(timer); // отключим setInterval, он нам больше не нужен
   }, 100);
 </script>
+```
+
+### Коллекция window.frames
+Другой способ получить объект `window` из `<iframe>` – забрать его из именованной коллекции `window.frames`:
+
+- По номеру: `window.frames[0]` – объект `window` для первого фрейма в документе.
+- По имени: `window.frames.iframeName` – объект `window` для фрейма со свойством `name="iframeName"`.
+
+Например:
+```html
+<iframe src="/" style="height:80px" name="win" id="iframe"></iframe>
+
+<script>
+  alert(iframe.contentWindow == frames[0]); // true
+  alert(iframe.contentWindow == frames.win); // true
+</script>
+```
+
+Ифрейм может иметь другие ифреймы внутри. Таким образом, объекты `window` создают иерархию.
+
+Навигация по ним выглядит так:
+
+- `window.frames` – коллекция «дочерних» `window` (для вложенных фреймов).
+- `window.parent` – ссылка на «родительский» (внешний) `window`.
+- `window.top` – ссылка на самого верхнего родителя.
+
+Например:
+```js
+window.frames[0].parent === window; // true
+```
+
+Можно использовать свойство `top`, чтобы проверять, открыт ли текущий документ внутри ифрейма или нет:
+```js
+if (window == top) { // текущий window == window.top?
+  alert('Скрипт находится в самом верхнем объекте window, не во фрейме');
+} else {
+  alert('Скрипт запущен во фрейме!');
+}
 ```
 
 ## История браузера. History API
