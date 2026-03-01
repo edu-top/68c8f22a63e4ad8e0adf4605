@@ -19,6 +19,7 @@
   - [Загрузка XML с помощью XMLHttpRequest](#загрузка-xml-с-помощью-xmlhttprequest)
     - [Определение данных](#определение-данных)
     - [Определение сервера](#определение-сервера-1)
+    - [Загрузка XML на веб-странице](#загрузка-xml-на-веб-странице)
 - [Глоссарий](#глоссарий)
 - [Источники информации](#источники-информации)
 
@@ -764,6 +765,64 @@ else{
 ```
 
 В конце с помощью функции **`listen()`** запускаем веб-сервер на 3000 порту. То есть сервер будет запускаться по адресу http://localhost:3000/.
+
+#### Загрузка XML на веб-странице
+Для получения файла "users.xml" с сервера определим в файле *index.html* следующий код:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Example</title>
+</head>
+<body>
+    <script>
+        const xhr = new XMLHttpRequest();
+        xhr.onload = () => {
+            if (xhr.status == 200) {
+                const xml = xhr.responseXML;
+                console.log(xml);
+            }
+        };
+        xhr.open("GET", "/data");                   // GET-запрос к /data
+        xhr.responseType = "document";              // устанавливаем тип ответа
+        xhr.setRequestHeader("Accept", "text/xml"); // принимаем только xml
+        xhr.send();                                 // выполняем запрос
+    </script>
+</body>
+</html>
+```
+
+Для получения данных отправляем запрос по адресу "/data". Чтобы полученные данные автоматически были распарсены в документ XML, свойству `responseType` присваиваем значение `"document"`.
+
+```js
+xhr.responseType = "document";
+```
+
+Кроме того, следует установить для заголовка `Accept` значение `"text/xml"` или `"application/xml"`, чтобы принимать данные только в формате XML:
+```js
+xhr.setRequestHeader("Accept", "text/xml");
+```
+
+В обработчике события `onload` документ XML доступен через свойство `responseXML` в виде объекта типа **`Document`**, который в данном случае просто выводится на консоль:
+```js
+xhr.onload = () => {
+    if (xhr.status == 200) {
+        const xml = xhr.responseXML;
+        console.log(xml);
+    }
+};
+```
+
+После определения всех файлов в консоли перейдем к папке сервера с помощью команды **`cd`** и запустим сервер с помощью команды **`node server.js`**
+```
+C:\app>node server.js
+Сервер запущен по адресу http://localhost:3000
+```
+
+После запуска сервера мы можем перейти в браузере по адресу http://localhost:3000, нам отобразится страница, в javascript-коде произойдет обращение по адресу "/data". Сервер в ответ отправит содержимое файла *users.xml*, и консоль барузера отобразит это содержимое:
+
+![Получение xml с помощью XMLHttpRequest в javascript](../img/xmlhttprequest9.png)
 
 ## Глоссарий
 AJAX (*Asynchronous JavaScript And XML*)
