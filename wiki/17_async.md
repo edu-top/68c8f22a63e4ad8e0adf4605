@@ -68,6 +68,10 @@
   - [Выполнение последовательности асинхронных операций](#выполнение-последовательности-асинхронных-операций)
   - [Обработка ошибок](#обработка-ошибок-1)
   - [Итого](#итого-3)
+  - [Задачи](#задачи-3)
+    - [Перепишите, используя async/await](#перепишите-используя-asyncawait)
+    - [Перепишите, используя async/await](#перепишите-используя-asyncawait-1)
+    - [Вызовите async–функцию из "обычной"](#вызовите-asyncфункцию-из-обычной)
   - [Асинхронные итераторы](#асинхронные-итераторы)
     - [Цикл for-await-of](#цикл-for-await-of)
     - [Создание асинхронного итератора](#создание-асинхронного-итератора)
@@ -3296,6 +3300,208 @@ calculate("4");     // Result:  16
 Вместе они предоставляют отличный каркас для написания асинхронного кода. Такой код легко и писать, и читать.
 
 Хотя при работе с `async`/`await` можно обходиться без `promise.then/catch`, иногда всё-таки приходится использовать эти методы (на верхнем уровне вложенности, например). Также `await` отлично работает в сочетании с `Promise.all`, если необходимо выполнить несколько задач параллельно.
+
+### Задачи
+
+#### Перепишите, используя async/await
+Перепишите один из примеров раздела "Цепочка промисов", используя `async/await` вместо `.then/catch`:
+```js
+function loadJson(url) {
+  return fetch(url)
+    .then(response => {
+      if (response.status == 200) {
+        return response.json();
+      } else {
+        throw new Error(response.status);
+      }
+    })
+}
+
+loadJson('no-such-user.json') // (3)
+  .catch(alert); // Error: 404
+```
+
+<details>
+<summary>Решение</summary>
+
+Комментарии к решению под кодом:
+```js
+async function loadJson(url) { // (1)
+  let response = await fetch(url); // (2)
+
+  if (response.status == 200) {
+    let json = await response.json(); // (3)
+    return json;
+  }
+
+  throw new Error(response.status);
+}
+
+loadJson('no-such-user.json')
+  .catch(alert); // Error: 404 (4)
+```
+
+Комментарии:
+
+1. Функция `loadJson` теперь асинхронная.
+
+2. Все `.then` внутри неё заменены на `await`.
+
+3. Можно было бы просто вернуть промис во внешний код `return response.json()`, вот так:
+
+    ```js
+    if (response.status == 200) {
+      return response.json(); // (3)
+    }
+    ```
+
+    Тогда внешнему коду пришлось бы получать результат промиса самостоятельно (через `.then` или `await`). В нашем варианте это не обязательно.
+
+4. Выброшенная из `loadJson` ошибка перехватывается с помощью `.catch`. Здесь нельзя использовать `await loadJson(…)`, так как мы находимся не в теле функции `async`.
+
+</details>
+
+#### Перепишите, используя async/await
+Ниже пример из раздела "Цепочка промисов", перепишите его, используя `async/await` вместо `.then/catch`.
+
+В функции `demoGithubUser` замените рекурсию на цикл: используя `async/await`, сделать это будет просто.
+
+```js
+class HttpError extends Error {
+  constructor(response) {
+    super(`${response.status} for ${response.url}`);
+    this.name = 'HttpError';
+    this.response = response;
+  }
+}
+
+function loadJson(url) {
+  return fetch(url)
+    .then(response => {
+      if (response.status == 200) {
+        return response.json();
+      } else {
+        throw new HttpError(response);
+      }
+    })
+}
+
+// Запрашивать логин, пока github не вернёт существующего пользователя.
+function demoGithubUser() {
+  let name = prompt("Введите логин?", "iliakan");
+
+  return loadJson(`https://api.github.com/users/${name}`)
+    .then(user => {
+      alert(`Полное имя: ${user.name}.`);
+      return user;
+    })
+    .catch(err => {
+      if (err instanceof HttpError && err.response.status == 404) {
+        alert("Такого пользователя не существует, пожалуйста, повторите ввод.");
+        return demoGithubUser();
+      } else {
+        throw err;
+      }
+    });
+}
+
+demoGithubUser();
+```
+
+<details>
+<summary>Решение</summary>
+
+В этой задаче нет ничего сложного. Нужно заменить `.catch` на `try...catch` внутри `demoGithubUser` и добавить `async/await`, где необходимо:
+```js
+class HttpError extends Error {
+  constructor(response) {
+    super(`${response.status} for ${response.url}`);
+    this.name = 'HttpError';
+    this.response = response;
+  }
+}
+
+async function loadJson(url) {
+  let response = await fetch(url);
+  if (response.status == 200) {
+    return response.json();
+  } else {
+    throw new HttpError(response);
+  }
+}
+
+// Запрашивать логин, пока github не вернёт существующего пользователя.
+async function demoGithubUser() {
+
+  let user;
+  while(true) {
+    let name = prompt("Введите логин?", "iliakan");
+
+    try {
+      user = await loadJson(`https://api.github.com/users/${name}`);
+      break; // ошибок не было, выходим из цикла
+    } catch(err) {
+      if (err instanceof HttpError && err.response.status == 404) {
+        // после alert начнётся новая итерация цикла
+        alert("Такого пользователя не существует, пожалуйста, повторите ввод.");
+      } else {
+        // неизвестная ошибка, пробрасываем её
+        throw err;
+      }
+    }
+  }
+
+
+  alert(`Полное имя: ${user.name}.`);
+  return user;
+}
+
+demoGithubUser();
+```
+
+</details>
+
+#### Вызовите async–функцию из "обычной"
+Есть «обычная» функция. Как можно внутри неё получить результат выполнения `async`–функции?
+
+```js
+async function wait() {
+  await new Promise(resolve => setTimeout(resolve, 1000));
+
+  return 10;
+}
+
+function f() {
+  // ...что здесь написать?
+  // чтобы вызвать wait() и дождаться результата "10" от async–функции
+  // не забывайте, здесь нельзя использовать "await"
+}
+```
+
+P.S. Технически задача очень простая, но этот вопрос часто задают разработчики, недавно познакомившиеся с `async/await`.
+
+<details>
+<summary>Решение</summary>
+
+Это тот случай, когда понимание внутреннего устройства работы `async/await` очень кстати.
+
+Здесь нужно думать о вызове функции `async`, как о промисе. И просто воспользоваться `.then`:
+```js
+async function wait() {
+  await new Promise(resolve => setTimeout(resolve, 1000));
+
+  return 10;
+}
+
+function f() {
+  // покажет 10 через 1 секунду
+  wait().then(result => alert(result));
+}
+
+f();
+```
+
+</details>
 
 ### Асинхронные итераторы
 
