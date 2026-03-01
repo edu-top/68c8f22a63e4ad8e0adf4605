@@ -20,6 +20,7 @@
     - [Определение данных](#определение-данных)
     - [Определение сервера](#определение-сервера-1)
     - [Загрузка XML на веб-странице](#загрузка-xml-на-веб-странице)
+    - [Вывод данных их xml-документа на страницу](#вывод-данных-их-xml-документа-на-страницу)
 - [Глоссарий](#глоссарий)
 - [Источники информации](#источники-информации)
 
@@ -823,6 +824,111 @@ C:\app>node server.js
 После запуска сервера мы можем перейти в браузере по адресу http://localhost:3000, нам отобразится страница, в javascript-коде произойдет обращение по адресу "/data". Сервер в ответ отправит содержимое файла *users.xml*, и консоль барузера отобразит это содержимое:
 
 ![Получение xml с помощью XMLHttpRequest в javascript](../img/xmlhttprequest9.png)
+
+#### Вывод данных их xml-документа на страницу
+Теперь усложим задачу — допустим, нам надо вывести данные о пользователях из xml в таблицу на веб-страницу. Для этого изменим код *index.html* следующим образом:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Example</title>
+</head>
+<body>
+    <div id="content"></div>
+    <script>
+        const contentDiv = document.getElementById("content");
+
+        const xhr = new XMLHttpRequest();
+        xhr.onload = () => {
+            if (xhr.status == 200) {
+                const xmlDoc = xhr.responseXML;
+                const table = createTable();
+                // выбираем все элементы user
+                const users = xmlDoc.getElementsByTagName("user");
+                for (let i = 0; i < users.length; i++) {
+                    const user = users[i];
+                    const userName = user.getAttribute("name");
+                    const userAge = user.getAttribute("age");
+                    const contact = user.querySelector("contacts email").textContent;
+                    const row = createRow(userName, userAge, contact);
+                    table.appendChild(row);
+                }
+                contentDiv.appendChild(table);
+            }
+        };
+        xhr.open("GET", "/data");
+        xhr.responseType = "document";
+        xhr.setRequestHeader("Accept", "text/xml");
+        xhr.send();
+
+        // создаем таблицу
+        function createTable() {
+            const table = document.createElement("table");
+            const headerRow = document.createElement("tr");
+            const nameColumnHeader = document.createElement("th");
+            const ageColumnHeader = document.createElement("th");
+            const contactColumnHeader = document.createElement("th");
+            nameColumnHeader.appendChild(document.createTextNode("Name"));
+            ageColumnHeader.appendChild(document.createTextNode("Age"));
+            contactColumnHeader.appendChild(document.createTextNode("Contacts"));
+            headerRow.appendChild(nameColumnHeader);
+            headerRow.appendChild(ageColumnHeader);
+            headerRow.appendChild(contactColumnHeader);
+            table.appendChild(headerRow);
+            return table;
+        }
+        // создаем одну строку для таблицы
+        function createRow(userName, userAge, userContact) {
+            const row = document.createElement("tr");
+            const nameColumn = document.createElement("td");
+            const ageColumn = document.createElement("td");
+            const contactColumn = document.createElement("td");
+            nameColumn.appendChild(document.createTextNode(userName));
+            ageColumn.appendChild(document.createTextNode(userAge));
+            contactColumn.appendChild(document.createTextNode(userContact));
+            row.appendChild(nameColumn);
+            row.appendChild(ageColumn);
+            row.appendChild(contactColumn);
+            return row;
+        }
+    </script>
+</body>
+</html>
+```
+
+В данном случае загружаем таблицу на страницу в элемент с идентификатором "content", который получаем в коде JavaScript в элемент `contentDiv`
+```js
+const contentDiv = document.getElementById("content");
+```
+
+Для создания таблицы определены две вспомогательные функции. Функция `createTable` создает элемент `table` с одной строкой — заголовками столбцов. Функция `createRow` принимает через параметры имя, возраст и контакты пользователя и для них создает строку.
+
+В основной части кода выполняем запрос на сервер. Поскольку ответ сервера будет представлять документ xml в виде типа `Document`, то с помощью стандартных методов типа `getElementsByTagName` или `querySelector` мы можем найти нужные в документе элементы. И в начале выбираем все элементы `user`:
+```js
+const xmlDoc = xhr.responseXML;
+const table = createTable();
+// выбираем все элементы user
+const users = xmlDoc.getElementsByTagName("user");
+```
+
+Далее перебираем все элементы `user` и выбираем у каждого атрибуты `name` и `age`, а также вложенный элемент `email`:
+```js
+for (let i = 0; i < users.length; i++) {
+    const user = users[i];
+    const userName = user.getAttribute("name");
+    const userAge = user.getAttribute("age");
+    const contact = user.querySelector("contacts email").textContent;
+    const row = createRow(userName, userAge, contact);
+    table.appendChild(row);
+}
+```
+
+Для каждого элемента `user` создается строка, которая затем добавляется в таблицу.
+
+Таким образом, при обращении к странице *index.html* будет загружен xml-документ, по которому будет создана таблица:
+
+![Загрузка xml в таблицу с помощью XMLHttpRequest в javascript](../img/xmlhttprequest10.png)
 
 ## Глоссарий
 AJAX (*Asynchronous JavaScript And XML*)
