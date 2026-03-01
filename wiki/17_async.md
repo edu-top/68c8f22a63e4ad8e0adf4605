@@ -2844,6 +2844,7 @@ f(...).then(arrayOfResults => ..., err => ...)
     Поэтому промисификация используется для функций, которые вызывают колбэк только один раз. Последующие вызовы колбэка будут проигнорированы.
 
 ## Async/await
+Существует специальный синтаксис для работы с промисами, который называется «async/await». Он удивительно прост для понимания и использования.[^async-await]
 
 ### Async и await
 Внедение стандарта ES2017 в JavaScript привнесло два новых оператора: **`async`** и **`await`**, который призваны упростить работу с промисами.
@@ -3428,3 +3429,4 @@ window.addEventListener('unhandledrejection', event => alert(event.reason));
 [^promise-api]: [Promise API](https://learn.javascript.ru/promise-api)
 [^promisify]: [Промисификация](https://learn.javascript.ru/promisify)
 [^microtask-queue]: [Микрозадачи](https://learn.javascript.ru/microtask-queue)
+[^async-await]: [Async/await](https://learn.javascript.ru/async-await)
