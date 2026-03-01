@@ -2965,7 +2965,7 @@ From <input id="start" type="number" value=1> – To <input id="end" type="numbe
 
 ###### Демо отслеживания выделения
 Ниже представлено небольшое демо. В нём границы выделения выводятся динамически по мере того, как оно меняется:
-```js
+```html
 <p id="p">Выдели меня: <i>курсив</i> и <b>жирный</b></p>
 
 От <input id="from" disabled> – До <input id="to" disabled>
