@@ -24,6 +24,7 @@
   - [Загрузка JSON с помощью XMLHttpRequest](#загрузка-json-с-помощью-xmlhttprequest)
     - [Определение данных](#определение-данных-1)
     - [Определение сервера](#определение-сервера-2)
+    - [Загрузка JSON на веб-странице](#загрузка-json-на-веб-странице)
 - [Глоссарий](#глоссарий)
 - [Источники информации](#источники-информации)
 
@@ -1036,6 +1037,64 @@ else{
 ```
 
 В конце с помощью функции **`listen()`** запускаем веб-сервер на 3000 порту. То есть сервер будет запускаться по адресу http://localhost:3000/.
+
+#### Загрузка JSON на веб-странице
+Для получения файла "data.json" с сервера определим в файле *index.html* следующий код:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>METANIT.COM</title>
+</head>
+<body>
+    <script>
+        const xhr = new XMLHttpRequest();
+        xhr.onload = () => {
+            if (xhr.status == 200) {
+                const json = xhr.response;
+                console.log(json);
+            }
+        };
+        xhr.open("GET", "/data");               // GET-запрос к /data
+        xhr.responseType = "json";              // устанавливаем тип ответа
+        xhr.setRequestHeader("Accept", "application/json");    // принимаем только json
+        xhr.send();     // выполняем запрос
+    </script>
+</body>
+</html>
+```
+
+Для получения данных отправляем запрос по адресу "/data". Чтобы полученные данные автоматически были распарсены в документ JSON, свойству `responseType` присваиваем значение `"json"`.
+
+```js
+xhr.responseType = "json";
+```
+
+Кроме того, следует установить для заголовка `Accept` значение `"application/json"`:
+```js
+xhr.setRequestHeader("Accept", "application/json");
+```
+
+В обработчике события `onload` объект JSON доступен через свойство `response`, который в данном случае просто выводится на консоль:
+```js
+xhr.onload = () => {
+    if (xhr.status == 200) {
+        const json = xhr.response;
+        console.log(json);
+    }
+};
+```
+
+После определения всех файлов в консоли перейдем к папке сервера с помощью команды **`cd`** и запустим сервер с помощью команды **`node server.js`**
+```
+C:\app>node server.js
+Сервер запущен по адресу http://localhost:3000
+```
+
+После запуска сервера мы можем перейти в браузере по адресу http://localhost:3000, нам отобразится страница, в javascript-коде произойдет обращение по адресу "/data". Сервер в ответ отправит содержимое файла *data.json*, и консоль барузера отобразит это содержимое:
+
+![Получение объектов json с помощью XMLHttpRequest в javascript](../img/xmlhttprequest11.png)
 
 [^13.6]
 
