@@ -27,6 +27,7 @@
     - [Загрузка JSON на веб-странице](#загрузка-json-на-веб-странице)
     - [Вывод данных JSON на страницу](#вывод-данных-json-на-страницу)
   - [Отправка данных в ajax-запросе](#отправка-данных-в-ajax-запросе)
+    - [Отправка json](#отправка-json)
 - [Глоссарий](#глоссарий)
 - [Источники информации](#источники-информации)
 
@@ -1278,6 +1279,95 @@ response.end(userName);
 Для отправки применяется метод `POST`. А в качестве отправляемых данных выступает простая строка `"Tom"`. То есть на сервер отправляется простой текст. И поскольку сервер в ответ также отправляет текст, то для получения ответа здесь применяется свойство `xhr.responseText`. И при запуске данной веб-страницы будет выполняться отправка данных на сервер, и в консоли браузера можно будет увидеть полученный от сервера ответ:
 
 ![Отправка данных на сервер в функции XMLHttpRequest и javascript на сервер node.js](../img/xmlhttprequest4.png)
+
+#### Отправка json
+Подобным образом можно отправлять более сложные по структуре данные. Например, рассмотрим отправку json. Для этого на стороне node.js определим следующий сервер:
+```js
+const http = require("http");
+const fs = require("fs");
+
+http.createServer(async (request, response) => {
+
+    if(request.url == "/user"){
+
+        // получаем строковое представление ответа
+        let data="";
+        for await (const chunk of request) {
+            data += chunk;
+        }
+        // мы ожидаем данные типа {"name":"value","age":1234}
+        const user = JSON.parse(data); // парсим строку в json
+
+        // для теста изменяем данные полученного объекта
+        user.name = user.name + " Smith";
+        user.age += 1;
+        // отправляем измененый объект обратно клиенту
+        response.end(JSON.stringify(user));
+    }
+    else{
+        fs.readFile("index.html", (_, data) => response.end(data));
+    }
+}).listen(3000, ()=>console.log("Сервер запущен по адресу http://localhost:3000"))
+```
+
+В данном случае на сервера ожидаем, что мы получим объект в формате json, который имеет два свойства — `name` и `age`. Для примера сервер меняет значения этих свойств и отправляет измененный объект обратно клиенту.
+
+На веб-странице установим объект json для отправки и получим обратно данные:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Example</title>
+</head>
+<body>
+    <script>
+        // данные для отправки
+        const tom = {
+            name: "Tom",
+            age: 37
+        };
+        // кодируем объект в формат json
+        const data = JSON.stringify(tom);
+        const xhr = new XMLHttpRequest();
+
+        xhr.onload = () => {
+            if (xhr.status == 200) {
+                const user = JSON.parse(xhr.responseText)
+                console.log(user.name, "-", user.age);
+            } else {
+                console.log("Server response: ", xhr.statusText);
+            }
+        };
+
+        xhr.open("POST", "/user");
+        xhr.setRequestHeader("Content-Type", "application/json");
+
+        xhr.send(data);
+    </script>
+</body>
+</html>
+```
+
+Здесь на сервер отправляется объект tom, который имеет два свойства: `name` и `age`. Перед отправкой он кодируется в формат json с помощью функции `JSON.stringify()`.
+
+```js
+const data = JSON.stringify(tom);
+```
+
+При отправке с помощью метода **`setRequestHeader()`** для заголовка "Content-Type" устанавливаем значение "application/json", тем самым указывая, что мы отправляем данные в формате json:
+```js
+xhr.setRequestHeader("Content-Type", "application/json");
+```
+
+В обработчике события load сначала парсим текст ответа из формата json в стандартный объект JavaScript:
+```js
+const user = JSON.parse(xhr.responseText)
+```
+
+Затем выводим данные полученного объекта на консоль браузера:
+
+![Отправка json на сервер node.js в функции XMLHttpRequest и javascript](../img/xmlhttprequest5.png)
 
 ## Глоссарий
 AJAX (*Asynchronous JavaScript And XML*)
