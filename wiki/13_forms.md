@@ -3112,7 +3112,7 @@ From <input id="start" type="number" value=1> – To <input id="end" type="numbe
 </script>
 ```
 
-![Selection](../img/selection_01.png)
+![Selection example](../img/selection_01.png)
 
 Заметьте:
 
