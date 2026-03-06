@@ -78,6 +78,7 @@
     - [Выделение в элементах форм](#выделение-в-элементах-форм)
       - [Пример: отслеживание выделения](#пример-отслеживание-выделения)
       - [Пример: изменение позиции курсора](#пример-изменение-позиции-курсора)
+      - [Пример: изменение выделения](#пример-изменение-выделения)
   - [Практическая работа. Динамическое создание элементов форм](#практическая-работа-динамическое-создание-элементов-форм)
     - [Задание](#задание)
   - [Практическая работа. Создание редактируемых элементов](#практическая-работа-создание-редактируемых-элементов)
@@ -3146,6 +3147,56 @@ From <input id="start" type="number" value=1> – To <input id="end" type="numbe
 ```
 
 ![Selection example](../img/selection_02.png)
+
+##### Пример: изменение выделения
+Чтобы изменять содержимое выделения, мы можем использовать метод `input.setRangeText`. Конечно, мы можем читать `selectionStart/End` и, зная позиции выделения, изменять соответствующую подстроку в `value`, но `setRangeText` намного мощнее и, зачастую, удобнее.
+
+Это довольно сложный метод. В простейшем случае он принимает один аргумент, заменяет содержание выделенной области и снимает выделение.
+
+В этом примере выделенный текст будет обёрнут в `*...*`:
+```js
+<input id="input" style="width:200px" value="Select here and click the button">
+<button id="button">Обернуть выделение звёздочками  *...*</button>
+
+<script>
+button.onclick = () => {
+  if (input.selectionStart == input.selectionEnd) {
+    return; // ничего не выделено
+  }
+
+  let selected = input.value.slice(input.selectionStart, input.selectionEnd);
+  input.setRangeText(`*${selected}*`);
+};
+</script>
+```
+
+![Selection example](../img/selection_03-1.png)
+
+![Selection example](../img/selection_03-2.png)
+
+![Selection example](../img/selection_03-3.png)
+
+Передавая больше параметров, мы можем устанавливать `start` и `end`.
+
+В этом примере мы найдём `"ЭТО"` в поле ввода, заменим его и оставим заменённый текст выделенным:
+```html
+<input id="input" style="width:200px" value="Замените ЭТО в тексте">
+<button id="button">Заменить ЭТО</button>
+
+<script>
+button.onclick = () => {
+  let pos = input.value.indexOf("ЭТО");
+  if (pos >= 0) {
+    input.setRangeText("*ЭТО*", pos, pos + 3, "select");
+    input.focus(); // ставим фокус, чтобы выделение было видно
+  }
+};
+</script>
+```
+
+![Selection example](../img/selection_04-1.png)
+
+![Selection example](../img/selection_04-2.png)
 
 ### Практическая работа. Динамическое создание элементов форм
 
