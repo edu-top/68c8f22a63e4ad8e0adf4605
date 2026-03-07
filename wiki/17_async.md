@@ -3604,6 +3604,7 @@ f();
 </details>
 
 ## Асинхронные итераторы
+Асинхронные итераторы позволяют перебирать данные, поступающие асинхронно. Например, когда мы загружаем что-то по частям по сети. Асинхронные генераторы делают такой перебор ещё удобнее.[^async-iterators-generators]
 
 Асинхронные итераторы объединяют возможности итераторов и операторов **`async`** и **`await`**. Асинхронные итераторы прежде всего предназначены для обращения к источникам данных данных, которые используют асинхронный API. Это могут быть какие-нибудь данные, которые загружаются по части, например, по сети, из файловой системы или из базы данных.
 
@@ -4028,3 +4029,4 @@ window.addEventListener('unhandledrejection', event => alert(event.reason));
 [^promisify]: [Промисификация](https://learn.javascript.ru/promisify)
 [^microtask-queue]: [Микрозадачи](https://learn.javascript.ru/microtask-queue)
 [^async-await]: [Async/await](https://learn.javascript.ru/async-await)
+[^async-iterators-generators]: [Асинхронные итераторы и генераторы](https://learn.javascript.ru/async-iterators-generators)
