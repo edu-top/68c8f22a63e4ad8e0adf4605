@@ -36,6 +36,7 @@
     - [postMessage](#postmessage)
     - [Событие message](#событие-message)
   - [Итого](#итого-1)
+- [Атака типа clickjacking](#атака-типа-clickjacking)
 - [История браузера. History API](#история-браузера-history-api)
   - [Событие popstate](#событие-popstate)
   - [Перемещение по одностраничному сайту](#перемещение-по-одностраничному-сайту)
@@ -1516,6 +1517,11 @@ window.addEventListener("message", function(event) {
 
    В окне-получателе следует добавить обработчик для этого события с помощью метода `addEventListener`.
 
+## Атака типа clickjacking
+Атака типа clickjacking (англ. «захват клика») позволяет вредоносной странице кликнуть по сайту-жертве от имени посетителя.
+
+Многие сайты были взломаны подобным способом, включая Twitter, Facebook, Paypal и другие. Все они, конечно же, сейчас защищены.[^clickjacking]
+
 ## История браузера. History API
 При навигации между страницами браузер сохраняет всю историю о переходах в специальном стеке, который называется **history stack**. И каждый раз, когда браузер загружает новую веб-страницу или переходит по ссылке на веб-странице, браузер по умолчанию создает новую запись в истории просмотров. В коде JavaScript историю можно получить через свойство **`history`** объекта `window`. Данное свойство представляет тип **`History`**.[^7.3]
 
@@ -2970,3 +2976,4 @@ PKCE (*Proof Key for Code Exchange*, произносится «пикси»)
 [^settimeout-setinterval]: [Планирование: setTimeout и setInterval](https://learn.javascript.ru/settimeout-setinterval)
 [^popup-windows]: [Открытие окон и методы window](https://learn.javascript.ru/popup-windows)
 [^cross-window-communication]: [Общение между окнами](https://learn.javascript.ru/cross-window-communication)
+[^clickjacking]: [Атака типа clickjacking](https://learn.javascript.ru/clickjacking)
