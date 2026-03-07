@@ -29,6 +29,7 @@
   - [Отправка данных в ajax-запросе](#отправка-данных-в-ajax-запросе)
     - [Отправка json](#отправка-json)
   - [Отправка форм в ajax-запросе](#отправка-форм-в-ajax-запросе)
+    - [Определение клиента](#определение-клиента)
 - [Глоссарий](#глоссарий)
 - [Источники информации](#источники-информации)
 
@@ -1471,6 +1472,97 @@ response.end(`Your name: ${userName}  Your Age: ${userAge}`);
 ```
 
 В конце с помощью функции **`listen()`** запускаем веб-сервер на 3000 порту. То есть сервер будет запускаться по адресу http://localhost:3000/
+
+#### Определение клиента
+Теперь определим файл *index.html*, который находится в одной папке с файлом сервера *app.js* и который будет представлять код клиента:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Example</title>
+</head>
+<body>
+    <script>
+        // данные для отправки
+        const formData = new FormData();
+        formData.append("name", "Tom");
+        formData.append("age", 39);
+
+        const xhr = new XMLHttpRequest();
+        xhr.onload = () => {
+            if (xhr.status == 200) {
+                console.log(xhr.responseText);
+            } else {
+                console.log("Server response: ", xhr.statusText);
+            }
+        };
+
+        xhr.open("POST", "user", true);
+        xhr.send(formData);
+    </script>
+</body>
+</html>
+```
+
+Здесь данные формы определяются вручную в виде объекта `FormData`. После создания объекта `FormData` с помощью метода `add()` в него можно добавлять отдельные свойства и их значения. Затем для отправки на сервер объект `FormData` в качестве аргумента методу `send()`. В качестве метода HTTP устанавливается метод **`POST`**.
+
+В обработчике `onload` выводим полученное от сервера сообщение на консоль.
+
+В конце перейдем в консоли к папке сервера с помощью команды **`cd`** и запустим сервер с помощью команды **`node server.js`**
+```
+C:\app>node server.js
+Сервер запущен по адресу http://localhost:3000
+```
+
+После запуска сервера мы можем перейти в браузере по адресу http://localhost:3000, нам отобразится страница, в javascript-коде которой будет выполняться POST-запрос по адресу "/user". Код javascript получит ответ от сервера и выведет его на консоль:
+
+![Отправка форм в ajax-запросе с помощью XMLHttpRequest в javascript](../img/xmlhttprequest13.png)
+
+В примере выше данные формы определяются вручную. Но аналогичным образом можно отправлять и данные форм, которые определены в коде html. Например, изменим код страницы *index.html* следующим образом:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Example</title>
+</head>
+<body>
+    <form id="myForm" method="post" action="/user">
+    <p>
+        <label>User Name:</label><br>
+        <input name="name" />
+    </p>
+    <p>
+        <label>User Age:</label><br>
+        <input name="age" />
+    </p>
+    <input type="submit" value="Send" />
+    </form>
+    <script>
+        // данные для отправки
+        const myForm = document.getElementById("myForm");
+        myForm.addEventListener("submit", (e)=>{
+            e.preventDefault();
+            const formData = new FormData(myForm);
+
+            const xhr = new XMLHttpRequest();
+            xhr.onload = () => {
+                if (xhr.status == 200) {
+                    console.log(xhr.responseText);
+                }
+            };
+            xhr.open("POST", "user", true);
+            xhr.send(formData);
+        });
+    </script>
+</body>
+</html>
+```
+
+Здесь в коде формы определена форма с двумя полями ввода для отправки на сервер. Причем эти поля также имеют названия name и age. В коде JavaScript перехватываем отправку формы, из формы получаем объект `FormData` и отправляем его на сервер.
+
+![Отправка форм в ajax-запросе с помощью XMLHttpRequest в javascript](../img/xmlhttprequest13.png)
 
 ## Глоссарий
 AJAX (*Asynchronous JavaScript And XML*)
