@@ -79,6 +79,7 @@
   - [Создание асинхронного итератора](#создание-асинхронного-итератора)
 - [Асинхронные генераторы](#асинхронные-генераторы)
   - [await в асинхронных генераторах](#await-в-асинхронных-генераторах)
+  - [Асинхронно перебираемые объекты](#асинхронно-перебираемые-объекты)
 - [Событийный цикл](#событийный-цикл)
   - [Микрозадачи](#микрозадачи)
     - [Очередь микрозадач](#очередь-микрозадач)
@@ -4101,6 +4102,69 @@ printPeopleAsync(["Tom", "Sam", "Bob"]);
 ```js
 yield await new Promise(resolve => setTimeout(() => resolve(person), 2000));
 ```
+
+### Асинхронно перебираемые объекты
+Как мы уже знаем, чтобы сделать объект перебираемым, нужно добавить к нему `Symbol.iterator`.
+
+```js
+let range = {
+  from: 1,
+  to: 5,
+  [Symbol.iterator]() {
+    return <объект с next, чтобы сделать range перебираемым>
+  }
+}
+```
+
+Обычная практика для `Symbol.iterator` – возвращать генератор, а не простой объект с `next`, как в предыдущем примере.
+
+Давайте вспомним пример из раздела про генераторы:
+```js
+let range = {
+  from: 1,
+  to: 5,
+
+  *[Symbol.iterator]() { // сокращение для [Symbol.iterator]: function*()
+    for(let value = this.from; value <= this.to; value++) {
+      yield value;
+    }
+  }
+};
+
+for(let value of range) {
+  alert(value); // 1, потом 2, потом 3, потом 4, потом 5
+}
+```
+
+Здесь созданный объект range является перебираемым, а генератор `*[Symbol.iterator]` реализует логику для перечисления значений.
+
+Если хотим добавить асинхронные действия в генератор, нужно заменить `Symbol.iterator` на асинхронный `Symbol.asyncIterator`:
+```js
+let range = {
+  from: 1,
+  to: 5,
+
+  async *[Symbol.asyncIterator]() { // то же, что и [Symbol.asyncIterator]: async function*()
+    for(let value = this.from; value <= this.to; value++) {
+
+      // пауза между значениями, ожидание
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      yield value;
+    }
+  }
+};
+
+(async () => {
+
+  for await (let value of range) {
+    alert(value); // 1, потом 2, потом 3, потом 4, потом 5
+  }
+
+})();
+```
+
+Теперь значения поступают с задержкой в одну секунду между ними.[^async-iterators-generators]
 
 ## Событийный цикл
 
