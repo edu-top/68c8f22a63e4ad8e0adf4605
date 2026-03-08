@@ -2082,7 +2082,7 @@ new Promise((resolve, reject) => {
 }).catch(alert); // Error: Ошибка!
 ```
 
-…Работает так же, как и этот:
+…работает так же, как и этот:
 ```js
 new Promise((resolve, reject) => {
   reject(new Error("Ошибка!"));
@@ -2099,7 +2099,7 @@ new Promise((resolve, reject) => {
   resolve("ок");
 }).then((result) => {
   throw new Error("Ошибка!"); // генерируем ошибку
-}).catch(alert); // Error: Ошибка!
+}).catch(alert);              // Error: Ошибка!
 ```
 
 Это происходит для всех ошибок, не только для тех, которые вызваны оператором `throw`. Например, программная ошибка:
@@ -2107,8 +2107,8 @@ new Promise((resolve, reject) => {
 new Promise((resolve, reject) => {
   resolve("ок");
 }).then((result) => {
-  blabla(); // нет такой функции
-}).catch(alert); // ReferenceError: blabla is not defined
+  blabla();                 // нет такой функции
+}).catch(alert);            // ReferenceError: blabla is not defined
 ```
 
 Финальный `.catch` перехватывает как промисы, в которых вызван `reject`, так и случайные ошибки в обработчиках.[^promise-error-handling]
