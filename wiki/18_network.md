@@ -35,6 +35,7 @@
   - [Функция fetch](#функция-fetch)
     - [Определение ресурса на севере](#определение-ресурса-на-севере-1)
     - [Вызов функции fetch()](#вызов-функции-fetch)
+    - [fetch с async/await](#fetch-с-asyncawait)
 - [Глоссарий](#глоссарий)
 - [Источники информации](#источники-информации)
 
@@ -1765,6 +1766,30 @@ node server.js
 fetch("http://localhost:3000/hello")
     .then(response => response.text())
     .then(responseText => console.log(responseText));
+```
+
+#### fetch с async/await
+Поскольку функция **`fetch()`** возвращает `Promise`, то вместо нанизывания методов **`then()`** мы можем использовать операторы **`async/await`** для извлечения ответа. Например, перепишем предыдущий пример:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Example</title>
+</head>
+<body>
+    <script>
+        getText();
+        async function getText() {
+            // получаем объект ответа
+            const response = await fetch("/hello");
+            // из объекта ответа извлекаем текст ответа
+            const responseText = await response.text();
+            console.log(responseText);
+        }
+    </script>
+</body>
+</html>
 ```
 
 ## Глоссарий
