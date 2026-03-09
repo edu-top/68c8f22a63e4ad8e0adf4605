@@ -2876,7 +2876,7 @@ Promise.any([
 });
 ```
 
-Как вы можете видеть, объекты ошибок для отклонённых промисов доступны в свойстве `errors` объекта `AggregateError`.[^promise-api]
+Как вы можете видеть, объекты ошибок для отклонённых промисов доступны в свойстве `errors` объекта `AggregateError`.[^promise-api] В данном случае `AggregateError` — коллектор всех ошибок.
 
 Таким образом, функция **`Promise.any()`** принимает несколько промисов и возвращает первый успешно завершившийся промис:
 ```js
@@ -2924,6 +2924,54 @@ Promise.any([promise1, promise2])
     .then(value => console.log(value))
     .catch(e => console.log(e.errors));  // ["error in promise1", "error in promise2"]
 ```
+
+**`AggregateError`** — это специальный класс ошибки, который используется только в `Promise.any()` для передачи всех ошибок из отклонённых промисов, когда ни один не выполнился успешно.
+
+*Ключевые свойства*
+
+| Свойство | Описание                     | Пример                          |
+| -------- | ---------------------------- | ------------------------------- |
+| `name`     | "AggregateError"             | `error.name === "AggregateError"` |
+| `message`  | "All promises were rejected" | Стандартное сообщение           |
+| `errors`   | Массив ВСЕХ ошибок           | `error.errors[0]` — первая ошибка |
+
+*Практический пример*
+```js
+// Множественные API запросы
+Promise.any([
+  fetch('https://api1.com/data').then(r => r.json()),
+  fetch('https://api2.com/data').then(r => r.json()),
+  fetch('https://api3.com/data').then(r => r.json())
+])
+.then(firstSuccess => console.log("Первый успех:", firstSuccess))
+.catch(aggregateError => {
+  console.log("🚨 Все API недоступны:");
+  aggregateError.errors.forEach((err, i) => {
+    console.log(`API ${i + 1}:`, err.message);
+  });
+});
+```
+
+*Сравнение с обычной ошибкой*
+```js
+// Обычный Promise.race() — только одна ошибка
+Promise.race([
+  Promise.reject(new Error("Быстрая ошибка")),
+  Promise.resolve("Успех")
+]).catch(err => {
+  console.log(err.errors); // undefined — обычная Error
+});
+
+// Promise.any() — все ошибки
+Promise.any([
+  Promise.reject(new Error("Ошибка 1")),
+  Promise.reject(new Error("Ошибка 2"))
+]).catch(err => {
+  console.log(err.errors.length); // 2 — AggregateError!
+});
+```
+
+`AggregateError` используется только в `Promise.any()`, когда все промисы отклонены и позволяет узнать все причины провала, а не только первую, и не используется в `Promise.all()`, `race()`, `allSettled()`.
 
 #### Сравнение методов
 Таким обарзом все четыре метода работают с наборами промисов, но имеют разные цели по ожиданию результата и обработке ошибок.
