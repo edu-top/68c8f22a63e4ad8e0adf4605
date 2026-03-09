@@ -3498,7 +3498,32 @@ function loadCached(url) {
 let promise = new Promise((resolve, reject) => reject(error));
 ```
 
-На практике этот метод почти никогда не используется.
+Этот метод используют в аналогичных случаях для совместимости — когда функция должна всегда возвращать промис, но по какой-то причине нужно вернуть отклонённый промис.
+
+Например, функция `getJson` ниже пытается загрузить JSON по URL. Если URL некорректный (начинается не с http), она сразу возвращает ошибку через `Promise.reject`, чтобы сохранить единообразие API:
+```js
+function getJson(url) {
+  if (!url.startsWith('http')) {
+    return Promise.reject(new Error(`Некорректный URL: ${url}`)); // (*)
+  }
+
+  return fetch(url)
+    .then(response => response.json());
+}
+
+// Использование:
+getJson('https://javascript.info/json')
+  .then(data => console.log(data)) // сработает
+  .catch(error => console.log(error.message)); // не сработает
+
+getJson('jsontest.json')
+  .then(data => console.log(data)) // не сработает
+  .catch(error => console.log(error.message)); // "Некорректный URL: jsontest.json"
+```
+
+Мы можем писать `getJson(url).catch(…)`, потому что функция `getJson` всегда возвращает промис (либо успешный, либо отклонённый). Это и есть цель использования `Promise.reject` в строке `(*)`.
+
+На практике этот метод редко нужен, так как ошибки обычно возникают естественно (например, при сбоях сети), но он полезен для гарантированно единообразного API. В современном коде с поддержкой `async`/`await` он почти никогда не используется.
 
 #### Итого
 Мы ознакомились с шестью статическими методами класса `Promise`:
