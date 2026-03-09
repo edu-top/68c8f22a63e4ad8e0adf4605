@@ -2749,7 +2749,7 @@ Promise.race([promise1, promise2])
 
 В данном случае первым выполненным будет промис `promise1`. Поэтому в метод `then(value => console.log(value))` в качестве `value` будет передана строка "Hello".
 
-Например, тут результат будет `1`:
+Например, тут результат будет `1` (первый успешный промис):
 ```js
 Promise.race([
   new Promise((resolve, reject) => setTimeout(() => resolve(1), 1000)),
@@ -2759,6 +2759,89 @@ Promise.race([
 ```
 
 Быстрее всех выполнился первый промис, он и дал результат. После этого остальные промисы игнорируются.[^promise-api]
+
+Таким образом, `Promise.race()` возвращает **первый завершенный промис** — независимо от того, успешно он завершился или с ошибкой.
+
+*Первый промис с ошибкой*
+```js
+Promise.race([
+  new Promise((_, reject) => setTimeout(() => reject(new Error("BOOM!")), 100 )),  // 0.1 сек
+  new Promise((resolve) => setTimeout(() => resolve("Успех"), 1000 ))              // 1 сек
+])
+.then(alert)     // НЕ выполнится
+.catch(alert);   // Error: BOOM! (самая быстрая ошибка)
+```
+
+*Смешанный случай*
+```js
+Promise.race([
+  new Promise((resolve, reject) => setTimeout(() => reject("Ошибка"), 500 )),   // 0.5 сек ❌
+  new Promise((resolve) => setTimeout(() => resolve("Победа"), 1000 ))          // 1 сек ✅
+])
+.then(alert)     // НЕ выполнится
+.catch(alert);   // "Ошибка" (ошибка пришла первой)
+```
+
+!!! warning Остальные промисы НЕ отменяются!
+    `Promise.race()` НЕ имеет механизма отмены остальных промисов. Когда один промис завершается, гонка заканчивается, но остальные продолжают выполняться в фоне.
+    ```js
+    const slow = new Promise(resolve => setTimeout(() => resolve("медленный"), 5000));
+    const fast = new Promise(resolve => setTimeout(() => resolve("быстрый"), 100));
+
+    Promise.race([slow, fast])
+      .then(result => {
+        console.log(result); // "быстрый"
+        // slow всё ещё выполняется в фоне!
+      });
+    ```
+
+Практические применения
+
+1. Таймаут для запросов
+
+    ```js
+    function fetchWithTimeout(url, timeout = 5000) {
+      return Promise.race([
+        fetch(url),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Таймаут!')), timeout)
+        )
+      ]);
+    }
+
+    fetchWithTimeout('/api/data', 3000)
+      .then(response => response.json())
+      .catch(error => console.log(error.message)); // "Таймаут!" если > 3 сек
+    ```
+
+2. Поиск самого быстрого API
+
+    ```js
+    Promise.race([
+      fetch('https://api1.com/data'),
+      fetch('https://api2.com/data'),
+      fetch('https://api3.com/data')
+    ])
+    .then(response => response.json())
+    .then(data => console.log('Самый быстрый API:', data));
+    ```
+
+Сравнение с `Promise.all()`:
+```js
+// Promise.all() - ждёт ВСЕ успешные
+Promise.all([p1, p2, p3]).then(/* все результаты */);
+
+// Promise.race() - берёт первый ЛЮБОЙ
+Promise.race([p1, p2, p3]).then(/* один результат */);
+```
+
+*Быстрая таблица отличий*
+| Метод          | Ждёт         | Результат            |
+| -------------- | ------------ | -------------------- |
+| `Promise.all()`  | Все успешные | Массив всех значений |
+| `Promise.race()` | Первый любой | Одно значение/ошибка |
+
+**Ключевое отличие**: `race` — это спринт, `all` — эстафета!
 
 #### Promise.any
 Метод очень похож на `Promise.race`, но ждёт только первый *успешно выполненный* промис, из которого берёт результат.
