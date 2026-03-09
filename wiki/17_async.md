@@ -3657,6 +3657,14 @@ f(...).then(arrayOfResults => ..., err => ...)
 
 Также существуют модули с более гибкой промисификацией, например, [es6-promisify](https://github.com/digitaldesignlabs/es6-promisify) или встроенная функция `util.promisify` в Node.js.
 
+**Популярные цели промисификации**:
+
+- таймеры (`setTimeout`, `setInterval`)
+
+- события DOM (`addEventListener`)
+
+- старые API Node.js (`fs.readFile`)
+
 !!! info "На заметку:"
     Промисификация – это отличный подход, особенно, если вы будете использовать `async`/`await` (см. следующий раздел об Async/await) но она не является тотальной заменой любых колбэков.
 
