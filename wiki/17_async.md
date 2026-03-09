@@ -60,6 +60,7 @@
       - [Полифил](#полифил)
     - [Promise.race](#promiserace)
     - [Promise.any](#promiseany)
+    - [Проблема отмены промисов](#проблема-отмены-промисов)
     - [Сравнение методов](#сравнение-методов)
     - [Promise.resolve/reject](#promiseresolvereject)
       - [Promise.resolve](#promiseresolve)
@@ -2972,6 +2973,415 @@ Promise.any([
 ```
 
 `AggregateError` используется только в `Promise.any()`, когда все промисы отклонены и позволяет узнать все причины провала, а не только первую, и не используется в `Promise.all()`, `race()`, `allSettled()`.
+
+#### Проблема отмены промисов
+В стандартном Promise API JavaScript отсутствует встроенный механизм для отмены промисов, что создаёт проблему при необходимости прервать асинхронные операции, такие как длительные запросы или вычисления. Промис может перейти только в состояния `fulfilled` или `rejected`, но не остаётся в `pending` после отмены, а колбэки `then()` всё равно могут выполниться, если не реализованы хаки.
+
+Промисы спроектированы как "огнеупорные" — их состояние меняется только внутри executor-функции, и внешний код не может принудительно отменить выполнение. Это приводит к утечкам ресурсов: фоновые задачи (например, `fetch` или таймеры) продолжают работать, даже если результат уже не нужен.
+
+Так, методы `Promise.race()` и `Promise.any()` не имеют механизмов автоматической отмены промисов — они продолжают выполняться в фоне даже после завершения "победителя".
+
+Демонстрация проблемы на примере `Promise.race`:
+```js
+console.log("🚀 Старт гонки...");
+
+const slowPromise = new Promise(resolve => {
+  setTimeout(() => {
+    console.log("🐌 Медленный промис завершился");
+    resolve("медленно");
+  }, 3000);
+});
+
+const fastPromise = new Promise(resolve => {
+  setTimeout(() => {
+    console.log("⚡ Быстрый промис завершился");
+    resolve("быстро");
+  }, 500);
+});
+
+Promise.race([slowPromise, fastPromise])
+  .then(result => {
+    console.log("🏁 Результат гонки:", result); // "быстро"
+  });
+
+// Вывод в консоли:
+// 🚀 Старт гонки...
+// ⚡ Быстрый промис завершился
+// 🏁 Результат гонки: быстро
+// 🐌 Медленный промис завершился ← ПРОБЛЕМА!
+```
+
+`Promise.any()` тоже НЕ отменяет остальные промисы. Как только находится первый успешно выполненный промис, гонка завершается, но остальные продолжают работать в фоне — точно как в `Promise.race()`:
+```js
+console.log("🏁 Старт Promise.any()...");
+
+const slowSuccess = new Promise(resolve => {
+  setTimeout(() => {
+    console.log("🐌 Медленный УСПЕХ");
+    resolve("медленно");
+  }, 3000);
+});
+
+const fastError = new Promise((_, reject) => {
+  setTimeout(() => {
+    console.log("⚡ Быстрая ОШИБКА");
+    reject("ошибка");
+  }, 500);
+});
+
+const fastSuccess = new Promise(resolve => {
+  setTimeout(() => {
+    console.log("🚀 Быстрый УСПЕХ");
+    resolve("быстро");
+  }, 1000);
+});
+
+Promise.any([slowSuccess, fastError, fastSuccess])
+  .then(result => {
+    console.log("✅ Результат:", result); // "быстро"
+  })
+  .catch(error => {
+    if (error instanceof AggregateError) {
+      console.log("❌ Все провалились");
+    }
+  });
+
+// Вывод:
+// 🏁 Старт Promise.any()...
+// ⚡ Быстрая ОШИБКА (игнорируется)
+// 🚀 Быстрый УСПЕХ
+// ✅ Результат: быстро
+// 🐌 Медленный УСПЕХ ← ПРОБЛЕМА! Всё равно выполнился
+```
+
+Ключевое отличие от `race()`:
+
+| Метод          | Что берёт первым     | Игнорирует | Остальные промисы |
+| -------------- | -------------------- | ---------- | ----------------- |
+| `Promise.race()` | Любой (успех/ошибка) | ❌          | Продолжают        |
+| `Promise.any()`  | Только успех         | Ошибки     | Продолжают        |
+
+`Promise.any()` просто терпеливее — пропускает ошибки, но механизм отмены отсутствует в обоих случаях.
+
+Последствия
+1. Затрачены ресурсы зря (CPU, память, сеть)
+
+2. Могут выполниться обработчики после завершения гонки
+
+3. Сложно контролировать состояние
+
+*Проверка выполнения остальных промисов*
+```js
+const promises = [
+  new Promise(resolve => setTimeout(resolve, 1000, "1сек")),
+  new Promise(resolve => setTimeout(resolve, 2000, "2сек")),
+  new Promise(resolve => setTimeout(resolve, 3000, "3сек"))
+];
+
+const race = Promise.race(promises);
+
+race.then(result => {
+  console.log("Гонка завершена:", result); // 1сек
+});
+
+// Добавим then к каждому промису
+promises.forEach((p, i) => {
+  p.then(result => console.log(`Промис ${i}:`, result));
+});
+
+// Вывод:
+// Гонка завершена: 1сек
+// Промис 0: 1сек
+// Промис 1: 2сек  ← всё равно выполнился!
+// Промис 2: 3сек  ← всё равно выполнился!
+```
+
+*Полная таблица поведения*
+
+| Метод                | Ждёт завершения       | Отмена остальных | Ресурсы при раннем завершении |
+| -------------------- | --------------------- | ---------------- | ----------------------------- |
+| `Promise.race()`       | Первый любой          | ❌ Нет            | Затрачиваются зря             |
+| `Promise.any()`        | Первый успех          | ❌ Нет            | Затрачиваются зря             |
+| `Promise.all()`        | Все или первая ошибка | ❌ Нет            | Затрачиваются зря             |
+| `Promise.allSettled()` | Все всегда            | ❌ Нет            | Правильно                     |
+
+Таким образом, только `allSettled()` работает "правильно" с ресурсами — ждёт все до конца и даёт полный отчёт. Все остальные методы экономят только ваше время, но не ресурсы — промисы живут своей жизнью!
+
+**Решения проблемы**
+
+1. **`Promise.race()` с reject-промисом**.
+
+    Это популярный хак для имитации таймаута или "отмены" промиса, но он не останавливает исходную операцию. Метод создаёт гонку между целевым промисом и специально подготовленным промисом, который сразу (или по таймауту) отклоняется, заставляя `race` завершиться раньше времени.
+
+    ```js
+    // Reject-промис для отмены (немедленно отклоняется)
+    const cancelPromise = new Promise((_, reject) =>
+      reject(new Error('Отменено'))
+    );
+
+    // Или с таймаутом (более реалистично)
+    const timeoutPromise = (ms) => new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Таймаут')), ms)
+    );
+
+    // Пример использования
+    const slowPromise = new Promise(resolve =>
+      setTimeout(() => resolve('Готово через 5 сек'), 5000)
+    );
+
+    Promise.race([slowPromise, timeoutPromise(2000)])
+      .then(result => console.log(result))
+      .catch(err => console.log(err.message)); // "Таймаут"
+    ```
+
+    В этом примере `timeoutPromise` выигрывает гонку за 2 секунды, `slowPromise` игнорируется, хотя продолжает работать фоном до 5 секунд.
+
+    **Плюсы подхода**
+    - **Простота**: Не требует изменений в коде исходного промиса.
+
+    - **Таймауты**: Идеально для ограничения времени ожидания (например, API-запросы).
+
+    - **Цепочки**: Легко встраивается в `then`/`catch`.
+
+    **Критические минусы**:
+
+    - Исходный промис не знает об отмене и продолжает тратить ресурсы (CPU, память, сеть).
+
+    Этот хак маскирует проблему, но не решает её — для настоящей отмены следует использовать `AbortController` или библиотеки вроде p-cancelable.
+
+    ```js
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    fetch('/api/data', { signal })
+      .then(res => res.json())
+      .catch(err => {
+        if (err.name === 'AbortError') console.log('Отменено');
+      });
+
+    // Отмена
+    controller.abort();
+    ```
+
+    Этот хак маскирует проблему, но не решает её — для настоящей отмены используйте `AbortController` или библиотеки вроде p-cancelable.
+
+2. **Ручная отмена через флаг**
+
+    Это простой хак, где внешняя переменная (флаг) передаётся в промис и проверяется внутри его исполнителя (*executor*) для прерывания логики. Флаг позволяет разработчику контролировать выполнение, но не меняет состояние стандартного промиса — он либо завершится раньше, либо проигнорирует флаг после `resolve`/`reject`.
+
+    Принцип работы: создается общий флаг (`let cancelled = false`), он передается в промис и проверяется на каждом шаге асинхронной логики. При отмене флаг устанавливается в `true`, чтобы прервать циклы, запросы или таймеры.
+
+    ```js
+    let isCancelled = false;
+
+    const cancellablePromise = new Promise((resolve, reject) => {
+      const checkCancelled = () => {
+        if (isCancelled) {
+          reject(new Error('Отменено'));
+          return true;
+        }
+        return false;
+      };
+
+      // Имитация долгой работы
+      let interval = setInterval(() => {
+        if (checkCancelled()) {
+          clearInterval(interval);
+          return;
+        }
+        console.log('Работаю...');
+        // resolve('Готово'); // раскомментировать для успеха
+      }, 500);
+    });
+
+    // Использование
+    cancellablePromise
+      .then(result => console.log(result))
+      .catch(err => console.log(err.message));
+
+    // Отмена через 1.5 сек
+    setTimeout(() => {
+      isCancelled = true;
+    }, 1500);
+    ```
+
+    Здесь флаг прерывает `setInterval` при отмене, очищая ресурс.
+
+    Решение для `Promise.race`:
+    ```js
+    let cancelled = false;
+
+    function cancellablePromise(delay, value) {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          if (!cancelled) {
+            resolve(value);
+          }
+        }, delay);
+      });
+    }
+
+    const p1 = cancellablePromise(500, "быстро");
+    const p2 = cancellablePromise(3000, "медленно");
+
+    Promise.race([p1, p2]).then(result => {
+      cancelled = true; // ✅ Блокируем остальные
+      console.log(result);
+    });
+    ```
+
+    Решение для `Promise.any`:
+    ```js
+    let cancelled = false;
+
+    Promise.any([
+      cancellablePromise(1000, "быстро"),
+      cancellablePromise(3000, "медленно")
+    ]).then(result => {
+      cancelled = true; // ✅ Блокируем остальных
+    });
+    ```
+
+    **Плюсы подхода**:
+    - **Гибкость**: Работает с любыми циклами, рекурсией или кастомной логикой.
+
+    - **Простота**: Не требует `AbortController` или библиотек.
+
+    - **Локальность**: Флаг виден только нужному промису.
+
+    **Минусы и ограничения**
+    - Флаг не останавливает промис автоматически — код после `resolve`/`reject` выполнится, а `then`/`catch` сработают независимо от флага. Подходит только для промисов под вашим контролем.
+
+    Для полной отмены этот подход следует комбинировать с `AbortController`; флаг хорош как дополнение для вычислений.
+
+3. **Библиотека p-cancelable**
+
+    p-cancelable — это популярная библиотека от Sindre Sorhus для создания отменяемых промисов с удобным API. Она оборачивает обычный промис, добавляя метод `.cancel()` и колбэк `onCancel` для очистки ресурсов внутри исполнителя (*executor*), полностью совместима с Promise API.
+
+    ```js
+    // npm i p-cancelable
+    import pCancelable from 'p-cancelable';
+
+    const task1 = new pCancelable(Promise.resolve('быстро'), { timeout: 500 });
+    const task2 = new pCancelable(Promise.resolve('медленно'), { timeout: 3000 });
+
+    Promise.race([task1, task2])
+      .then(result => {
+        task1.cancel(); // ✅ Отменяем
+        task2.cancel();
+      });
+    ```
+
+    Библиотека устанавливается как зависимость:
+    ```js
+    npm install p-cancelable
+    ```
+
+    Конструктор принимает executor с тремя аргументами: (`resolve`, `reject`, `onCancel`). Вызов `.cancel()` reject'ит промис с `CanceledError` и выполняет `onCancel` для очистки (*cleanup*).
+
+    *Пример использования*
+    ```js
+    const { PCancelable } = require('p-cancelable');
+
+    const cancellablePromise = new PCancelable((resolve, reject, onCancel) => {
+      const timeoutId = setTimeout(() => {
+        resolve('Данные загружены');
+      }, 5000);
+
+      // Регистрируем очистку: вызывается при .cancel()
+      onCancel(() => {
+        clearTimeout(timeoutId);
+        console.log('Таймер очищен');
+      });
+    });
+
+    cancellablePromise
+      .then(result => console.log(result))
+      .catch(err => {
+        if (err.name === 'CanceledError') {
+          console.log('Промис отменён');
+        } else {
+          console.error(err);
+        }
+      });
+
+    // Отмена через 2 секунды
+    setTimeout(() => {
+      cancellablePromise.cancel(); // → CanceledError + onCancel()
+    }, 2000);
+    ```
+
+    **Плюсы**:
+    - Чистый API: `.cancel()`, `.isCanceled()`
+    - Автоматическая обработка CanceledError
+    - Цепочки then/catch работают как обычно.
+
+    **Минусы**:
+    - Зависимость (4.0.1, 2024)
+    - Нестандартно
+    - Устаревает с `AbortController`/AsyncContext
+
+    Идеально для legacy-кода или fetch/axios-оберток до ES202X.
+
+4. **`AbortController` (рекомендуется для `fetch`/`XMLHttpRequest`)**
+
+    Для API вроде `fetch` следует использовать `AbortController` и `AbortSignal` — это стандартный способ отмены с 2017 года. При abort промис reject'ится с `AbortError`, а ресурсы освобождаются.
+
+    ```js
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    fetch('/api/data', { signal })
+      .then(res => res.json())
+      .catch(err => {
+        if (err.name === 'AbortError') console.log('Отменено');
+      });
+
+    // Отмена
+    controller.abort();
+    ```
+
+    Решение для `Promise.race`:
+    ```js
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    const promise1 = fetch('/api/data1', { signal });
+    const promise2 = fetch('/api/data2', { signal });
+
+    Promise.race([promise1, promise2])
+      .then(result => {
+        controller.abort(); // ✅ Отменяем остальные!
+        console.log(result);
+      })
+      .catch(err => {
+        if (err.name === 'AbortError') console.log('Отменено');
+      });
+    ```
+
+    Решение для `Promise.any`:
+    ```js
+    const controller = new AbortController();
+    Promise.any([
+      fetch('/api1', { signal: controller.signal }),
+      fetch('/api2', { signal: controller.signal })
+    ]).then(result => {
+      controller.abort(); // ✅ Отменяем остальных
+    });
+    ```
+
+    Этот подход интегрируется с Promise API, но требует поддержки в создаваемых промисах. Для кастомных промисов передавайте signal в executor и проверяйте `signal.aborted`.
+
+**Выводы**: `Promise.all()` и `Promise.allSettled()` ждут ВСЕ промисы до конца, поэтому отмена не нужна — все они всегда выполняются полностью. Методы `Promise.race()` и `Promise.any` идеальны для соревнования (состояния гонки), но требуют дополнительного контроля для ресурсоёмких операций!
+
+Для решения проблемы используются разные подходы:
+
+| Подход          | Очистка (*cleanup*)         | API       | Зависимости      |
+| --------------- | --------------- | --------- | ---------------- |
+| Флаг            | Ручная проверка | Сырой     | Нет |
+| `Promise.race()`  | Нет             | Простой   | Нет              |
+| p-cancelable    | Авто `onCancel`   | `.cancel()` | npm      |
+| `AbortController` | `signal`          | Стандарт  | Встроенный       |
 
 #### Сравнение методов
 Таким обарзом все четыре метода работают с наборами промисов, но имеют разные цели по ожиданию результата и обработке ошибок.
