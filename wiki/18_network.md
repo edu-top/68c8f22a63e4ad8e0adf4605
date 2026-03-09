@@ -38,6 +38,7 @@
     - [fetch с async/await](#fetch-с-asyncawait)
   - [Получение ответа. Объект Response и его свойства](#получение-ответа-объект-response-и-его-свойства)
   - [Получение заголовков](#получение-заголовков)
+  - [Переадресация](#переадресация)
 - [Глоссарий](#глоссарий)
 - [Источники информации](#источники-информации)
 
@@ -1966,7 +1967,47 @@ fetch("/hello").then(response => {
 
 Если заголовок не установлен, то метод `response.headers.get()` возвращает `null`.
 
-[^20.2]
+### Переадресация
+Если в процессе запроса произошла переадресация, то свойство **`redirected`** равно `true`, а свойство **`url`** хранит адрес, на который произошла переадресация. Например, пусть сервер на node.js выполняет переадресацию с адреса "/hello" на адрес "/newpage":
+```js
+const http = require("http");
+const fs = require("fs");
+
+http.createServer(function(request, response){
+
+    if(request.url == "/hello"){
+        response.statusCode = 302; // 302 - код временной переадресации
+        response.setHeader("Location", "/newpage"); // переадресация на адрес localhost:3000/newpage
+        response.end();
+    }
+    else if(request.url == "/newpage"){
+        response.setHeader("Secret-Code", "New Page Code: 567"); // для теста устанавливаем заголовок
+        response.end("This is a new page");
+    }
+    else{
+        fs.readFile("index.html", (error, data) => response.end(data));
+    }
+}).listen(3000, ()=>console.log("Сервер запущен по адресу http://localhost:3000"));
+```
+
+Выполним запрос по адресу "/hello" на веб-странице:
+```js
+fetch("/hello").then(response =>{
+
+    if (response.redirected) {
+        console.log("Произошел редирект на адрес", response.url);
+        console.log(response.headers.get("Secret-Code"));
+  }
+});
+```
+
+Вывод консоли браузера:
+```
+Произошел редирект на адрес http://localhost:3000/newpage
+New Page Code: 567
+```
+
+По консольному выводу, а именно по заголовку `Secret-Code` мы видим, что функция `fetch` получила ответ от нового адреса — "/newpage".[^20.2]
 
 ## Глоссарий
 AJAX (*Asynchronous JavaScript And XML*)
