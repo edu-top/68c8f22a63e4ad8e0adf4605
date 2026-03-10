@@ -43,6 +43,7 @@
     - [Получение ответа в виде текста](#получение-ответа-в-виде-текста)
     - [Получение ответа в виде json](#получение-ответа-в-виде-json)
       - [Отправка набора данных](#отправка-набора-данных)
+      - [Отправка файла json](#отправка-файла-json)
 - [Глоссарий](#глоссарий)
 - [Источники информации](#источники-информации)
 
@@ -2166,6 +2167,43 @@ async function getUsers() {
     const users = await response.json();
     users.forEach(user=> console.log(user.name, " - ", user.age))
 }
+```
+
+##### Отправка файла json
+Пусть в папке сервера определен файл *users.json* со следующим содержимым:
+```js
+[
+    {"name": "Tom", "age": 37},
+    {"name": "Sam", "age": 25},
+    {"name": "Bob", "age": 41}
+]
+```
+
+![Получение файла json в fetch и javascript](../img/fetch4.png)
+
+В случае с сервером node.js мы могли бы в качестве варианта отправить данный файл следующим образом:
+```js
+const http = require("http");
+const fs = require("fs");
+
+http.createServer(function(request, response){
+
+    if(request.url == "/users.json"){
+        fs.readFile("users.json", (error, data) => response.end(data));
+    }
+    else{
+        fs.readFile("index.html", (error, data) => response.end(data));
+    }
+}).listen(3000, ()=>console.log("Сервер запущен по адресу http://localhost:3000"));
+```
+
+В зависимости от конкретной технологии сервера отправка файлов может отличаться. Здесь же, как и в случае с отправкой файла *index.html*, считываем данные из файла *users.json* с помощью функции `fs.readFile()` и отправляем в ответ.
+
+На стороне клиента был бы тот же код, что и в предыдущем случае:
+```js
+fetch("/users.json")
+    .then(response => response.json())
+    .then(users => users.forEach(user=> console.log(user.name, " - ", user.age)));
 ```
 
 [^20.3]
