@@ -40,6 +40,7 @@
   - [Получение заголовков](#получение-заголовков)
   - [Переадресация](#переадресация)
   - [Получение данных из ответа](#получение-данных-из-ответа)
+    - [Получение ответа в виде текста](#получение-ответа-в-виде-текста)
 - [Глоссарий](#глоссарий)
 - [Источники информации](#источники-информации)
 
@@ -2028,6 +2029,60 @@ New Page Code: 567
 - **`redirect()`**: возвращает новый объект `Response` с другим адресом URL
 
 - **`text()`**: возвращает `promise`, который получает содержимое ответа в виде строки текста
+
+#### Получение ответа в виде текста
+Для получения ответа в виде текста применяется метод **`text()`**. Например, сервер на Node.js отправляет в ответ клиенту некоторый текст:
+```js
+const http = require("http");
+const fs = require("fs");
+
+http.createServer(function(request, response){
+
+    if(request.url == "/hello"){
+        response.end("Fetch на METANIT.COM");
+    }
+    else{
+        fs.readFile("index.html", (error, data) => response.end(data));
+    }
+}).listen(3000, ()=>console.log("Сервер запущен по адресу http://localhost:3000"));
+```
+
+В данном случае при обращении по адресу "/hello" сервер будет отправлять в ответ клиенту строку текста `"Fetch на METANIT.COM"`.
+
+На странице *index.html* с помощью метода **`text()`** получим эту строку
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Example</title>
+</head>
+<body>
+    <script>
+        fetch("/hello")
+            .then(response => response.text())
+            .then(responseText => console.log(responseText));
+    </script>
+</body>
+</html>
+```
+
+Для получения отправленного текста у объекта response вызывается метод `response.text()`, который возвращает `Promise`. И чтобы получить собственно текст ответа, подсоединяем второй метод `then()`, в котором в функции-колбеке получаем текст ответа:
+```js
+then(responseText => console.log(responseText));
+```
+
+Либо можно использовать `async`/`await`
+```js
+getText();
+async function getText() {
+    // получаем объект ответа
+    const response = await fetch("/hello");
+    // из объекта ответа извлекаем текст ответа
+    const responseText = await response.text();
+    console.log(responseText);
+}
+```
 
 [^20.3]
 
