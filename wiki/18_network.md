@@ -44,6 +44,7 @@
     - [Получение ответа в виде json](#получение-ответа-в-виде-json)
       - [Отправка набора данных](#отправка-набора-данных)
       - [Отправка файла json](#отправка-файла-json)
+    - [Загрузка бинарных данных](#загрузка-бинарных-данных)
 - [Глоссарий](#глоссарий)
 - [Источники информации](#источники-информации)
 
@@ -2206,7 +2207,70 @@ fetch("/users.json")
     .then(users => users.forEach(user=> console.log(user.name, " - ", user.age)));
 ```
 
-[^20.3]
+#### Загрузка бинарных данных
+С помощью метода **`blob()`** можно загрузить бинарные данные. Рассмотрим на примере изображений. Допустим, на сервере есть файл *forest.png*
+
+![blob и загрузка бинарных данных в fetch и javascript](../img/fetch5.png)
+
+Пусть сервер node.js отправляет данный файл при обращении по адресу "forest.png":
+```js
+const http = require("http");
+const fs = require("fs");
+
+http.createServer(function(request, response){
+
+    if(request.url == "/forest.png"){
+        fs.readFile("forest.png", (error, data) => response.end(data));
+    }
+    else{
+        fs.readFile("index.html", (error, data) => response.end(data));
+    }
+}).listen(3000, ()=>console.log("Сервер запущен по адресу http://localhost:3000"));
+```
+
+На веб-странице *index.html* для обращения к серверу определим следующий код:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Example</title>
+</head>
+<body>
+    <img />
+    <script>
+        const img = document.querySelector("img");
+        fetch("/forest.png")
+            .then(response => response.blob())
+            .then(data => img.src = URL.createObjectURL(data));
+    </script>
+</body>
+</html>
+```
+
+Для показа изображения на веб-странице определен элемент `<img >`.
+
+Метод **`blob()`** возвращает объект `Promise`, который получает данные ответа в виде объекта **`Blob`**. И во втором методе `then()` получаем этот объект:
+```js
+then(data => img.src = URL.createObjectURL(data));
+```
+
+Здесь нам надо для html-элемента `<img >` в качестве источника изображения установить полученный файл. Для этого вызывается функция **`URL.createObjectURL()`**, в которую передается объект `Blob`. Эта функция создает адрес URL, на который проецируется загруженный файл. Соответственно после выполнения запроса html-элемент `<img >` отобразит загруженное изображение:
+
+![загрузка файлов в fetch и javascript с помощью метода response.blob](../img/fetch6.png)
+
+Аналогичый пример с применением `async`/`await`:
+```js
+const img = document.querySelector("img");
+getImage();
+async function getImage() {
+    const response = await fetch("/forest.png");
+    const imgBlob = await response.blob();
+    img.src = URL.createObjectURL(imgBlob);
+}
+```
+
+Подобным образом можно получать и использовать другие типы файлов, например, аудио и видеофайлы.[^20.3]
 
 ## Глоссарий
 AJAX (*Asynchronous JavaScript And XML*)
