@@ -3924,6 +3924,27 @@ async function calculate(){
 calculate().then(value=> console.log("Результат асинхронной операции:", value));
 ```
 
+Вспомним код функции `showAvatar()` из темы про цепочки промисов:
+```js
+fetch('/article/promise-chaining/user.json')
+  .then(response => response.json())
+  .then(user => fetch(`https://api.github.com/users/${user.name}`))
+  .then(response => response.json())
+  .then(githubUser => new Promise(function(resolve, reject) { // (*)
+    let img = document.createElement('img');
+    img.src = githubUser.avatar_url;
+    img.className = "promise-avatar-example";
+    document.body.append(img);
+
+    setTimeout(() => {
+      img.remove();
+      resolve(githubUser); // (**)
+    }, 3000);
+  }))
+  // срабатывает через 3 секунды
+  .then(githubUser => alert(`Закончили показ ${githubUser.name}`));
+```
+
 Давайте перепишем пример `showAvatar()` из раздела "Цепочка промисов" с помощью `async`/`await`:
 
 1. Нам нужно заменить вызовы `.then` на `await`.
