@@ -41,6 +41,7 @@
   - [Переадресация](#переадресация)
   - [Получение данных из ответа](#получение-данных-из-ответа)
     - [Получение ответа в виде текста](#получение-ответа-в-виде-текста)
+    - [Получение ответа в виде json](#получение-ответа-в-виде-json)
 - [Глоссарий](#глоссарий)
 - [Источники информации](#источники-информации)
 
@@ -2081,6 +2082,50 @@ async function getText() {
     // из объекта ответа извлекаем текст ответа
     const responseText = await response.text();
     console.log(responseText);
+}
+```
+
+#### Получение ответа в виде json
+Пусть сервер отправляет некоторый json-объект:
+```js
+const http = require("http");
+const fs = require("fs");
+
+http.createServer(function(request, response){
+
+    if(request.url == "/user"){
+        const user = {name: "Tom", age: 37};
+        response.end(JSON.stringify(user));
+    }
+    else{
+        fs.readFile("index.html", (error, data) => response.end(data));
+    }
+}).listen(3000, ()=>console.log("Сервер запущен по адресу http://localhost:3000"));
+```
+
+В данном случае сервер при обращении по адресу "/user" отправляет объект user в виде кода json.
+
+Получим этот объект:
+```js
+fetch("/user")
+    .then(response => response.json())
+    .then(user => console.log(user.name, " - ", user.age));
+```
+
+Метод `json()` возвращает объект `Promise`, поэтому во втором методе `then()` можно получить собственно отправленный объект json и обратиться к его свойствам:
+```js
+.then(user => console.log(user.name, "-", user.age));
+```
+
+Тот же пример с применением `async`/`await`:
+```js
+getUser();
+async function getUser() {
+    // получаем объект ответа
+    const response = await fetch("/user");
+    // из объекта ответа извлекаем json
+    const user = await response.json();
+    console.log(user.name, "-", user.age);
 }
 ```
 
