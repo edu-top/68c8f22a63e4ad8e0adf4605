@@ -4064,6 +4064,40 @@ showAvatar();
 
     Как и в случае с асинхронными функциями, такой метод гарантированно возвращает промис, и в его теле можно использовать `await`.
 
+    Различные способы объявления async-методов:
+    ```js
+    class UserManager {
+      // 1. Обычный метод
+      async getUser(id) {
+        let response = await fetch(`/api/users/${id}`);
+        return response.json();
+      }
+
+      // 2. Геттер (возвращает промис!)
+      async get userName() {
+        let user = await this.getUser(1);
+        return user.name;
+      }
+
+      // 3. Сеттер (принимает промис)
+      async set userName(name) {
+        await fetch('/api/user', {
+          method: 'PATCH',
+          body: JSON.stringify({ name })
+        });
+      }
+
+      // 4. Статический метод
+      static async createUser(data) {
+        let response = await fetch('/api/users', {
+          method: 'POST',
+          body: JSON.stringify(data)
+        });
+        return response.json();
+      }
+    }
+    ```
+
 ### Выполнение последовательности асинхронных операций
 Асинхронная функция может содержать множество асинхронных операций, к которым применяется оператор **`await`**. В этом случае все асинхронные операции будут выполняться последовательно:
 ```js
