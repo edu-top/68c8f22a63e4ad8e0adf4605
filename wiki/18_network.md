@@ -42,6 +42,7 @@
   - [Получение данных из ответа](#получение-данных-из-ответа)
     - [Получение ответа в виде текста](#получение-ответа-в-виде-текста)
     - [Получение ответа в виде json](#получение-ответа-в-виде-json)
+      - [Отправка набора данных](#отправка-набора-данных)
 - [Глоссарий](#глоссарий)
 - [Источники информации](#источники-информации)
 
@@ -2126,6 +2127,44 @@ async function getUser() {
     // из объекта ответа извлекаем json
     const user = await response.json();
     console.log(user.name, "-", user.age);
+}
+```
+
+##### Отправка набора данных
+Аналогичым образом можно получать набор объектов в формате json. Допустим, сервер на node.js отправляет массив объектов:
+```js
+const http = require("http");
+const fs = require("fs");
+
+http.createServer(function(request, response){
+
+    if(request.url == "/users.json"){
+        const users = [
+            {name: "Tom", age: 37},
+            {name: "Sam", age: 25},
+            {name: "Bob", age: 41}
+        ];
+        response.end(JSON.stringify(users));
+    }
+    else{
+        fs.readFile("index.html", (error, data) => response.end(data));
+    }
+}).listen(3000, ()=>console.log("Сервер запущен по адресу http://localhost:3000"));
+```
+
+Получим эти данные на веб-странице:
+```js
+fetch("/users.json")
+    .then(response => response.json())
+    .then(users => users.forEach(user=> console.log(user.name, " - ", user.age)));
+
+// аналог с async/await
+getUsers();
+async function getUsers() {
+
+    const response = await fetch("/users.json");
+    const users = await response.json();
+    users.forEach(user=> console.log(user.name, " - ", user.age))
 }
 ```
 
