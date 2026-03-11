@@ -103,7 +103,7 @@
     - [Что код выведет в консоли?](#что-код-выведет-в-консоли)
     - [Что код выведет в консоли?](#что-код-выведет-в-консоли-1)
 - [Практика](#практика)
-  - [Практическая работа. Задержка на промисах](#практическая-работа-задержка-на-промисах)
+  - [Практическая работа. Асинхронное программирование](#практическая-работа-асинхронное-программирование)
     - [Задание](#задание)
 - [Глоссарий](#глоссарий)
 - [Источники информации](#источники-информации)
@@ -5651,38 +5651,246 @@ console.log(7);
 
 ## Практика
 
-### Практическая работа. Задержка на промисах
+### Практическая работа. Асинхронное программирование
 
 #### Задание
-Встроенная функция `setTimeout` использует колбэк-функции.
 
-Необходимо создать альтернативу, использующую промисы.
+Выполнить набор задач, представленных ниже. Результат предоставить в виде файлов исходного кода.
 
-Функция `delay(ms)` должна возвращать промис, который перейдёт в состояние «выполнен» через `ms` миллисекунд, так чтобы мы могли добавить к нему `.then`:
-```js
-function delay(ms) {
-  // ваш код
-}
+1. **Задержка на промисах**
 
-delay(3000).then(() => alert('выполнилось через 3 секунды'));
-```
+    Встроенная функция `setTimeout` использует колбэк-функции.
 
-Ответ предоставить в виде файлов исходного кода.
+    Необходимо создать альтернативу, использующую промисы.
 
-<details>
-<summary>Решение</summary>
+    Функция `delay(ms)` должна возвращать промис, который перейдёт в состояние «выполнен» через `ms` миллисекунд, так чтобы мы могли добавить к нему `.then`:
+    ```js
+    function delay(ms) {
+      // ваш код
+    }
 
-```js
-function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+    delay(3000).then(() => alert('выполнилось через 3 секунды'));
+    ```
 
-delay(3000).then(() => alert('выполнилось через 3 секунды'));
-```
+    Ответ предоставить в виде файлов исходного кода.
 
-Заметьте, что `resolve` вызывается без аргументов. Мы не возвращаем из `delay` ничего, просто гарантируем задержку.
+    <details>
+    <summary>Решение</summary>
 
-</details>
+    ```js
+    function delay(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    delay(3000).then(() => alert('выполнилось через 3 секунды'));
+    ```
+
+    Заметьте, что `resolve` вызывается без аргументов. Мы не возвращаем из `delay` ничего, просто гарантируем задержку.
+
+    </details>
+
+2. **Вызов async-функции из обычной**
+
+    Есть «обычная» функция. Как можно внутри неё получить результат выполнения `async`-функции?
+
+    ```js
+    async function wait() {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      return 10;
+    }
+
+    function f() {
+      // ...что здесь написать?
+      // чтобы вызвать wait() и дождаться результата "10" от async–функции
+      // не забывайте, здесь нельзя использовать "await"
+    }
+    ```
+
+    Заменить комментарий работающим кодом.
+
+    <details>
+    <summary>Решение</summary>
+
+    Это тот случай, когда понимание внутреннего устройства работы `async/await` очень кстати.
+
+    Здесь нужно думать о вызове функции `async`, как о промисе. И просто воспользоваться `.then`:
+    ```js
+    async function wait() {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      return 10;
+    }
+
+    function f() {
+      // покажет 10 через 1 секунду
+      wait().then(result => alert(result));
+    }
+
+    f();
+    ```
+
+    </details>
+
+3. **Рефакторинг функции**
+
+    Переписать пример, представленный ниже, используя `async/await` вместо `.then/catch`:
+    ```js
+    function loadJson(url) {
+      return fetch(url)
+        .then(response => {
+          if (response.status == 200) {
+            return response.json();
+          } else {
+            throw new Error(response.status);
+          }
+        })
+    }
+
+    loadJson('no-such-user.json') // (3)
+      .catch(alert); // Error: 404
+    ```
+
+    <details>
+    <summary>Решение</summary>
+
+    Комментарии к решению под кодом:
+    ```js
+    async function loadJson(url) { // (1)
+      let response = await fetch(url); // (2)
+
+      if (response.status == 200) {
+        let json = await response.json(); // (3)
+        return json;
+      }
+
+      throw new Error(response.status);
+    }
+
+    loadJson('no-such-user.json')
+      .catch(alert); // Error: 404 (4)
+    ```
+
+    Комментарии:
+
+    1. Функция `loadJson` теперь асинхронная.
+
+    2. Все `.then` внутри неё заменены на `await`.
+
+    3. Можно было бы просто вернуть промис во внешний код `return response.json()`, вот так:
+
+        ```js
+        if (response.status == 200) {
+          return response.json(); // (3)
+        }
+        ```
+
+        Тогда внешнему коду пришлось бы получать результат промиса самостоятельно (через `.then` или `await`). В нашем варианте это не обязательно.
+
+    4. Выброшенная из `loadJson` ошибка перехватывается с помощью `.catch`. Здесь нельзя использовать `await loadJson(…)`, так как мы находимся не в теле функции `async`.
+
+    </details>
+
+4. **Рефакторинг кода**
+
+    Переписать пример кода, представленный ниже, используя `async/await` вместо `.then/catch`.
+
+    В функции `demoGithubUser` заменить рекурсию на цикл (используя `async/await`, сделать это несложно).
+
+    ```js
+    class HttpError extends Error {
+      constructor(response) {
+        super(`${response.status} for ${response.url}`);
+        this.name = 'HttpError';
+        this.response = response;
+      }
+    }
+
+    function loadJson(url) {
+      return fetch(url)
+        .then(response => {
+          if (response.status == 200) {
+            return response.json();
+          } else {
+            throw new HttpError(response);
+          }
+        })
+    }
+
+    // Запрашивать логин, пока github не вернёт существующего пользователя.
+    function demoGithubUser() {
+      let name = prompt("Введите логин?", "iliakan");
+
+      return loadJson(`https://api.github.com/users/${name}`)
+        .then(user => {
+          alert(`Полное имя: ${user.name}.`);
+          return user;
+        })
+        .catch(err => {
+          if (err instanceof HttpError && err.response.status == 404) {
+            alert("Такого пользователя не существует, пожалуйста, повторите ввод.");
+            return demoGithubUser();
+          } else {
+            throw err;
+          }
+        });
+    }
+
+    demoGithubUser();
+    ```
+
+    <details>
+    <summary>Решение</summary>
+
+    В этой задаче нет ничего сложного. Нужно заменить `.catch` на `try...catch` внутри `demoGithubUser` и добавить `async/await`, где необходимо:
+    ```js
+    class HttpError extends Error {
+      constructor(response) {
+        super(`${response.status} for ${response.url}`);
+        this.name = 'HttpError';
+        this.response = response;
+      }
+    }
+
+    async function loadJson(url) {
+      let response = await fetch(url);
+      if (response.status == 200) {
+        return response.json();
+      } else {
+        throw new HttpError(response);
+      }
+    }
+
+    // Запрашивать логин, пока github не вернёт существующего пользователя.
+    async function demoGithubUser() {
+
+      let user;
+      while(true) {
+        let name = prompt("Введите логин?", "iliakan");
+
+        try {
+          user = await loadJson(`https://api.github.com/users/${name}`);
+          break; // ошибок не было, выходим из цикла
+        } catch(err) {
+          if (err instanceof HttpError && err.response.status == 404) {
+            // после alert начнётся новая итерация цикла
+            alert("Такого пользователя не существует, пожалуйста, повторите ввод.");
+          } else {
+            // неизвестная ошибка, пробрасываем её
+            throw err;
+          }
+        }
+      }
+
+
+      alert(`Полное имя: ${user.name}.`);
+      return user;
+    }
+
+    demoGithubUser();
+    ```
+
+    </details>
 
 ## Глоссарий
 Асинхронная операция
