@@ -47,6 +47,7 @@
     - [Загрузка бинарных данных](#загрузка-бинарных-данных)
   - [Настройка параметров запроса. Отправка данных](#настройка-параметров-запроса-отправка-данных)
     - [Отправка данных в запросе](#отправка-данных-в-запросе)
+    - [Отправка json](#отправка-json-1)
 - [Долгие опросы (Long polling)](#долгие-опросы-long-polling)
 - [Глоссарий](#глоссарий)
 - [Источники информации](#источники-информации)
@@ -2418,7 +2419,53 @@ response.end(userName);
 
 ![Отправка данных на сервер в функции fetch и javascript на сервер node.js](../img/fetch7.png)
 
-[^20.4]
+#### Отправка json
+Подобным образом можно отправлять более сложные по структуре данные. Например, рассмотрим отправку json. Для этого на строне node.js определим следующий сервер:
+```js
+const http = require("http");
+const fs = require("fs");
+
+http.createServer(async (request, response) => {
+
+    if(request.url == "/user"){
+
+          const buffers = [];
+          for await (const chunk of request) {
+            buffers.push(chunk);
+          }
+
+        const data = Buffer.concat(buffers).toString();
+        const user = JSON.parse(data); // парсим строку в json
+
+        // изменяем данные полученного объекта
+        user.name = user.name + " Smith";
+        user.age += 1;
+        // отправляем измененый объект обратно клиенту
+        response.end(JSON.stringify(user));
+    }
+    else{
+        fs.readFile("index.html", (error, data) => response.end(data));
+    }
+}).listen(3000, ()=>console.log("Сервер запущен по адресу http://localhost:3000"));
+```
+
+В данном случае на сервера ожидаем, что мы получим объект в формате json, который имеет два свойства — `name` и `age`. Для примера сервер меняет значения этих свойств и отправляет измененный объект обратно клиенту.[^20.4]
+
+На веб-странице установим объект json для отправки и получим обратно данные с помощью метода `respose.json()`:
+```js
+fetch("/user", {
+        method: "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({
+            name: "Tom",
+            age: 37
+        })
+    })
+    .then(response => response.json())
+    .then(user => console.log(user.name, "-", user.age));
+```
+
+![Отправка json на сервер node.js в функции fetch и javascript](../img/fetch8.png)
 
 ## Долгие опросы (Long polling)
 
