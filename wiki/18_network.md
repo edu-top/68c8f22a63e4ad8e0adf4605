@@ -2402,7 +2402,7 @@ response.end(userName);
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>METANIT.COM</title>
+    <title>Example</title>
 </head>
 <body>
     <script>
