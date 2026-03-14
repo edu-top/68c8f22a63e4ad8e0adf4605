@@ -20,6 +20,7 @@
     - [TextEncoder](#textencoder)
   - [Blob](#blob)
     - [Blob как URL](#blob-как-url)
+    - [Blob to base64](#blob-to-base64)
 - [Куки](#куки)
   - [Установка параметров куки](#установка-параметров-куки)
     - [Параметр expires](#параметр-expires)
@@ -685,6 +686,44 @@ blob:https://javascript.info/1e67e00e-860d-40a5-89ae-6ab0cbee6273
 В последнем примере мы использовали `Blob` только единожды, для мгновенной загрузки, после мы сразу же вызвали `URL.revokeObjectURL(link.href)`.
 
 В предыдущем примере с кликабельной HTML-ссылкой мы не вызывали URL.`revokeObjectURL(link.href)`, потому что это сделало бы ссылку недействительной. После удаления внутренней ссылки на `Blob`, URL больше не будет работать.
+
+#### Blob to base64
+Альтернатива `URL.createObjectURL` – конвертация `Blob`-объекта в строку с кодировкой base64.
+
+Эта кодировка представляет двоичные данные в виде строки с безопасными для чтения символами в ASCII-кодах от 0 до 64. И что более важно – мы можем использовать эту кодировку для «data-urls».
+
+[data url](https://developer.mozilla.org/ru/docs/Web/HTTP/Basics_of_HTTP/Data_URIs) имеет форму `data:[<mediatype>][;base64],<data>`. Мы можем использовать такой url где угодно наряду с «обычным» url.
+
+Например, смайлик:
+```html
+<img src="data:image/png;base64,R0lGODlhDAAMAKIFAF5LAP/zxAAAANyuAP/gaP///wAAAAAAACH5BAEAAAUALAAAAAAMAAwAAAMlWLPcGjDKFYi9lxKBOaGcF35DhWHamZUW0K4mAbiwWtuf0uxFAgA7">
+```
+
+Браузер декодирует строку и показывает смайлик: <img src="data:image/png;base64,R0lGODlhDAAMAKIFAF5LAP/zxAAAANyuAP/gaP///wAAAAAAACH5BAEAAAUALAAAAAAMAAwAAAMlWLPcGjDKFYi9lxKBOaGcF35DhWHamZUW0K4mAbiwWtuf0uxFAgA7">
+
+Для трансформации `Blob` в base64 мы будем использовать встроенный в браузер объект типа `FileReader`. Он может читать данные из `Blob` в множестве форматов. Далее он рассмотривается более подробно.
+
+Вот пример загрузки `Blob` при помощи `base64`:
+```js
+let link = document.createElement('a');
+link.download = 'hello.txt';
+
+let blob = new Blob(['Hello, world!'], {type: 'text/plain'});
+
+let reader = new FileReader();
+reader.readAsDataURL(blob); // конвертирует Blob в base64 и вызывает onload
+
+reader.onload = function() {
+  link.href = reader.result; // url с данными
+  link.click();
+};
+```
+
+Оба варианта могут быть использованы для создания URL с `Blob`. Но обычно URL.`createObjectURL(blob)` является более быстрым и безопасным.
+
+URL.createObjectURL(blob) | Blob to data url
+-- | --
+• Нужно отзывать объект для освобождения памяти.<br>• Прямой доступ к `Blob`, без «кодирования/декодирования». | • Нет необходимости что-либо отзывать.<br>• Потеря производительности и памяти при декодировании больших Blob-объектов.
 
 ## Куки
 Одну из возможностей сохранения данных в браузере представляет использование куки. Так, каждый раз, когда мы обращаемся к веб-странице в интернете, то веб-сервер вместо с этой страницей присылает связаные с этой страницей куки (при их наличии). И браузер хранит эти данные некоторое время. При последующих обращениях к той же странице или сайту в зависимости от настроек куки обратно посылаются из браузера на сервер.
