@@ -14,6 +14,7 @@
   - [find](#find)
   - [print](#print)
   - [Ограничения встроенных методов](#ограничения-встроенных-методов)
+  - [Кастомное модальное окно](#кастомное-модальное-окно)
 - [Открытие, закрытие и позиционирование окон](#открытие-закрытие-и-позиционирование-окон)
   - [Блокировка попапов](#блокировка-попапов)
   - [Открытие окон](#открытие-окон)
@@ -411,6 +412,75 @@ btn.addEventListener("click", ()=>{
 - Библиотеки вроде SweetAlert2 или Bootstrap Modals — позволяют менять дизайн, анимации и позицию.
 
 Эти методы не блокируют скрипт полностью, позволяя анимации и фоновые задачи.
+
+### Кастомное модальное окно
+Альтернативой для современных интерфейсов служит нативный HTML-элемент `<dialog>`, который позволяет создавать полностью кастомизированные модальные окна без библиотек. Он поддерживается в Chrome 37+, Firefox 52+, Safari 15.4+ и Edge 79+ (для старых браузеров нужен полифилл).
+
+Основные преимущества `<dialog>`:
+- **Нативная модальность**: метод `showModal()` автоматически блокирует взаимодействие с фоном (как `alert`), создавая `backdrop`.
+
+- **Полный контроль стиля**: меняйте размер, позицию, анимации через CSS.
+
+- **Не блокирует JS**: скрипты продолжают работать, можно добавлять анимации и обработчики.
+
+- **Доступность**: встроенная поддержка ARIA-атрибутов и клавиши <kbd>Escape</kbd> для закрытия.
+
+Простой пример подтверждения действия:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    dialog {
+      border: none;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      max-width: 400px;
+    }
+    dialog::backdrop {
+      background: rgba(0,0,0,0.5); /* Полупрозрачный фон */
+    }
+    .btn { padding: 0.5rem 1rem; margin: 0 0.5rem; border: none; border-radius: 6px; cursor: pointer; }
+    .confirm { background: #dc3545; color: white; }
+    .cancel { background: #6c757d; color: white; }
+  </style>
+</head>
+<body>
+  <button onclick="document.getElementById('myDialog').showModal()">Удалить данные?</button>
+
+  <dialog id="myDialog">
+    <h3>Подтвердите удаление</h3>
+    <p>Это действие нельзя отменить. Продолжить?</p>
+    <div>
+      <button class="btn confirm" onclick="handleConfirm()">Да, удалить</button>
+      <button class="btn cancel" onclick="this.closest('dialog').close()">Отмена</button>
+    </div>
+  </dialog>
+
+  <script>
+    function handleConfirm() {
+      // Логика удаления
+      alert('Данные удалены!');
+      document.getElementById('myDialog').close();
+    }
+  </script>
+</body>
+</html>
+```
+
+[Исходный код](../samples/15_bom/dialog.html)
+
+Ключевые методы:
+- `dialog.showModal()` — открывает модальное окно с `backdrop`.
+
+- `dialog.show()` — открывает без блокировки фона (полезно для боковых панелей).
+
+- `dialog.close()` — закрывает окно.
+
+- Автозакрытие по <kbd>Escape</kbd> или клику на `backdrop`.
+
+Библиотеки вроде SweetAlert2 или Bootstrap Modals тоже хороши, но `<dialog>` — это чистый vanilla JS без зависимостей, идеален для легких проектов.
 
 ## Открытие, закрытие и позиционирование окон
 *[PKCE]: Proof Key for Code Exchange
