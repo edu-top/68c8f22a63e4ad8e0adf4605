@@ -3105,7 +3105,7 @@ From <input id="start" type="number" value=1> – To <input id="end" type="numbe
 К примеру, этот код использует событие `onselect`, чтобы отслеживать выделение:
 ```html
 <textarea id="area" style="width:80%;height:60px">
-Выделите что-нибудь в этом тексте, чтобы обновить значения ниже.
+  Выделите что-нибудь в этом тексте, чтобы обновить значения ниже.
 </textarea>
 <br>
 От <input id="from" disabled> – До <input id="to" disabled>
@@ -3135,7 +3135,7 @@ From <input id="start" type="number" value=1> – To <input id="end" type="numbe
 Например:
 ```html
 <textarea id="area" style="width:80%;height:60px">
-Переведите фокус на меня, курсор окажется на 10-й позиции
+  Переведите фокус на меня, курсор окажется на 10-й позиции
 </textarea>
 
 <script>
