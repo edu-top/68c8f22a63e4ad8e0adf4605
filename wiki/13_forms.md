@@ -3158,7 +3158,7 @@ From <input id="start" type="number" value=1> – To <input id="end" type="numbe
 Это довольно сложный метод. В простейшем случае он принимает один аргумент, заменяет содержание выделенной области и снимает выделение.
 
 В этом примере выделенный текст будет обёрнут в `*...*`:
-```js
+```html
 <input id="input" style="width:200px" value="Select here and click the button">
 <button id="button">Обернуть выделение звёздочками  *...*</button>
 
