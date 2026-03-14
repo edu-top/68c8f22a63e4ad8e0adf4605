@@ -50,6 +50,7 @@
     - [Отправка json](#отправка-json-1)
   - [Создание клиента для REST API](#создание-клиента-для-rest-api)
     - [Создание сервера на node.js](#создание-сервера-на-nodejs)
+    - [Определение клиента](#определение-клиента-1)
 - [Долгие опросы (Long polling)](#долгие-опросы-long-polling)
 - [Глоссарий](#глоссарий)
 - [Источники информации](#источники-информации)
@@ -2739,6 +2740,289 @@ else if (request.url === "/api/users" && request.method === "PUT") {
 ```
 
 Таким образом, мы определили простейший API. Теперь добавим код клиента.
+
+#### Определение клиента
+При обращении к корню веб-приложению или по адресу "/index.html", сервер будет отдавать файл *index.html*. Поэтому в одной папке с файлом сервера определим файл *index.html* со следующим кодом:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>METANIT.COM</title>
+    <style>
+    tr{height:30px;}
+    td, th {min-width: 40px;text-align: left;}
+    a {cursor:pointer; padding:5px;text-decoration: underline;color:navy;}
+    input{width:180px;}
+    </style>
+</head>
+<body>
+    <h2>Список пользователей</h2>
+    <form name="userForm">
+        <p>
+            <label for="name">Имя:</label><br>
+            <input name="name" />
+        </p>
+        <p>
+            <label for="age">Возраст:</label><br>
+            <input name="age" type="number" min="1" max="110" />
+        </p>
+        <p>
+            <button type="submit">Сохранить</button>
+            <button type="reset">Сбросить</button>
+        </p>
+    </form>
+    <table>
+        <thead><tr><th>Id</th><th>Имя</th><th>Возраст</th><th></th></tr></thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script>
+        let userId = 0;     // идентификатор пользователя, который редактируется
+        const userForm = document.forms["userForm"];    // форма ввода
+        // Получение всех пользователей
+        async function getUsers() {
+            // отправляет запрос и получаем ответ
+            const response = await fetch("/api/users", {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            // если запрос прошел нормально
+            if (response.ok === true) {
+                // получаем данные
+                const users = await response.json();
+                const rows = document.querySelector("tbody"); 
+                // добавляем полученные элементы в таблицу
+                users.forEach(user => rows.append(row(user)));
+            }
+        }
+        // Получение одного пользователя
+        async function getUser(id) {
+            const response = await fetch("/api/users/" + id, {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            if (response.ok === true) {
+                const user = await response.json();
+                userId = user.id;
+                userForm.elements["name"].value = user.name;
+                userForm.elements["age"].value = user.age;
+            }
+        }
+        // Добавление пользователя
+        async function createUser(userName, userAge) {
+
+            const response = await fetch("api/users", {
+                method: "POST",
+                headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: userName,
+                    age: parseInt(userAge, 10)
+                })
+            });
+            if (response.ok === true) {
+                const user = await response.json();
+                reset();
+                document.querySelector("tbody").append(row(user));
+            }
+        }
+        // Изменение пользователя
+        async function editUser(userId, userName, userAge) {
+            const response = await fetch("api/users", {
+                method: "PUT",
+                headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    id: userId,
+                    name: userName,
+                    age: parseInt(userAge, 10)
+                })
+            });
+            if (response.ok === true) {
+                const user = await response.json();
+                reset();
+                document.querySelector("tr[data-rowid='" + user.id + "']").replaceWith(row(user));
+            }
+        }
+        // Удаление пользователя
+        async function deleteUser(id) {
+            const response = await fetch("/api/users/" + id, {
+                method: "DELETE",
+                headers: { "Accept": "application/json" }
+            });
+            if (response.ok === true) {
+                const user = await response.json();
+                document.querySelector("tr[data-rowid='" + user.id + "']").remove();
+            }
+        }
+
+        // сброс формы и текущего идентификатора пользователя
+        function reset() {
+            userForm.reset();
+            userId = 0;
+        }
+        // создание строки для таблицы
+        function row(user) {
+
+            const tr = document.createElement("tr");
+            tr.setAttribute("data-rowid", user.id);
+
+            const idTd = document.createElement("td");
+            idTd.append(user.id);
+            tr.append(idTd);
+
+            const nameTd = document.createElement("td");
+            nameTd.append(user.name);
+            tr.append(nameTd);
+
+            const ageTd = document.createElement("td");
+            ageTd.append(user.age);
+            tr.append(ageTd);
+
+            const linksTd = document.createElement("td");
+
+            const editLink = document.createElement("a");
+            editLink.setAttribute("data-id", user.id);
+            editLink.append("Изменить");
+            editLink.addEventListener("click", async e => {
+
+                e.preventDefault();
+                await getUser(user.id);
+            });
+            linksTd.append(editLink);
+
+            const removeLink = document.createElement("a");
+            removeLink.setAttribute("data-id", user.id);
+            removeLink.append("Удалить");
+            removeLink.addEventListener("click", async e => {
+
+                e.preventDefault();
+                await deleteUser(user.id);
+            });
+
+            linksTd.append(removeLink);
+            tr.appendChild(linksTd);
+
+            return tr;
+        }
+        // сброс значений формы
+        userForm.addEventListener("reset", e => reset());
+
+        // отправка формы
+        userForm.addEventListener("submit", e => {
+            e.preventDefault();
+            const name = userForm.elements["name"].value;
+            const age = userForm.elements["age"].value;
+
+            if (userId === 0) createUser(name, age);
+            else editUser(userId, name, age);
+        });
+
+        // загрузка пользователей
+        getUsers();
+    </script>
+</body>
+</html>
+```
+
+Основная логика здесь заключена в коде javascript. В самом начале определяются глобальные данные:
+```js
+let userId = 0;     // идентификатор пользователя, который редактируется
+const userForm = document.forms["userForm"];    // форма ввода
+```
+
+Константа `userForm` представляет форму для добавления или редактирования объекта. А с помощью переменной `userId` отслеживаем идентификатор загруженного пользователя. Если он равен 0, то пользователь создается. По умолчанию при загрузке страницы эта переменная равна нулю, так как никакой пользователь не загружен на форму. Если же `userId` НЕ равен 0, то пользователь ранее был загружен с помощью функции `getUser`, и мы собираемся отредактировать этого пользователя.
+
+При загрузке страницы в браузере получаем все объекты из БД с помощью функции `getUsers`:
+```js
+async function getUsers() {
+    // отправляет запрос и получаем ответ
+    const response = await fetch("/api/users", {
+        method: "GET",
+        headers: { "Accept": "application/json" }
+    });
+    // если запрос прошел нормально
+    if (response.ok === true) {
+        // получаем данные
+        const users = await response.json();
+        const rows = document.querySelector("tbody");
+        // добавляем полученные элементы в таблицу
+        users.forEach(user => rows.append(row(user)));
+    }
+}
+```
+
+Для добавления строк в таблицу используется функция `row()`, которая возвращает строку. В этой строке будут определены ссылки для изменения и удаления пользователя.
+
+Ссылка для изменения пользователя с помощью функции `getUser()` получает с сервера выделенного пользователя:
+```js
+async function getUser(id) {
+    const response = await fetch("/api/users/" + id, {
+        method: "GET",
+        headers: { "Accept": "application/json" }
+    });
+    if (response.ok === true) {
+        const user = await response.json();
+        userId = user.id;
+        userForm.elements["name"].value = user.name;
+        userForm.elements["age"].value = user.age;
+    }
+}
+```
+
+И выделенный пользователь добавляется в форму над таблицей.
+
+Если `userId` равен 0, то выполняется функция `createUser`, которая отправляет данные в POST-запросе:
+```js
+async function createUser(userName, userAge) {
+
+    const response = await fetch("api/users", {
+        method: "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({
+            name: userName,
+            age: parseInt(userAge, 10)
+        })
+    });
+    if (response.ok === true) {
+        const user = await response.json();
+        reset();
+        document.querySelector("tbody").append(row(user));
+    }
+}
+```
+
+Если же ранее пользователь был загружен на форму, и в переменной `userId` сохранился его `id`, то выполняется функция `editUser`, которая отправляет PUT-запрос:
+```js
+async function editUser(userId, userName, userAge) {
+    const response = await fetch("api/users", {
+        method: "PUT",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({
+            id: userId,
+            name: userName,
+            age: parseInt(userAge, 10)
+        })
+    });
+    if (response.ok === true) {
+        const user = await response.json();
+        reset();
+        document.querySelector("tr[data-rowid='" + user.id + "']").replaceWith(row(user));
+    }
+}
+```
+
+В конце запустим файл сервера server.js командой:
+```
+node server.js
+```
+
+![сервер node.js с API для функции fetch в JavaScript](../img/fetch9.png)
+
+И обратимся в браузере по адресу "http://localhost:3000" и мы сможем управлять пользователями, которые хранятся в файле json:
+
+![REST и API и функция fetch в JavaScript](../img/fetch9.1.png)
 
 ## Долгие опросы (Long polling)
 
