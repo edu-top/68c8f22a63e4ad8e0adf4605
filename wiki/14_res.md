@@ -31,6 +31,7 @@
   - [Модульная организация кода](#модульная-организация-кода)
   - [Введение в JS-модули](#введение-в-js-модули)
     - [Что такое модуль?](#что-такое-модуль)
+    - [Модули в Node.js](#модули-в-nodejs)
     - [Основные возможности модулей](#основные-возможности-модулей)
       - [Всегда «use strict»](#всегда-use-strict)
       - [Своя область видимости переменных](#своя-область-видимости-переменных)
@@ -951,6 +952,66 @@ export function sayHi(user) {
 
 !!! warning "Модули не работают локально. Только через HTTP(s)"
     Если вы попытаетесь открыть веб-страницу локально, через протокол `file://`, вы обнаружите, что директивы `import`/`export` не работают. Для тестирования модулей используйте локальный веб-сервер, например, [static-server](https://www.npmjs.com/package/static-server#getting-started) или используйте возможности «живого сервера» вашего редактора, например, расширение [Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) для VS Code.
+
+#### Модули в Node.js
+ES-модули (`import`/`export`) — это стандарт браузеров (ECMAScript 2015+). Node.js по умолчанию использует CommonJS (`require()`/`module.exports`) — модульную систему, созданную в 2009 году специально для Node.js.
+
+Эксперименты с поддержкой ES-модулей в Node.js начались с версии 8.5, полноценная поддержка — с версии 12.17, а полная стабильная — c 14.18+. До сих пор модульной системой по умолчанию в Node.js остается CommonJS, поэтому системе приходится явно указать о необходимости использовать ES-модули.
+
+Способы подключения модулей
+
+1. Расширение *.mjs* (рекомендуется для экспериментов)
+
+    ```js
+    // say.mjs
+    export function sayHi(user) {
+      return `Hello, ${user}!`;
+    }
+    ```
+
+    ```js
+    // index.mjs
+    import {sayHi} from './say.mjs';
+    console.log(sayHi('John'));
+    ```
+
+2. Поле `"type": "module"` в *package.json*
+
+    ```json
+    {
+      "type": "module"
+    }
+    ```
+
+    После этого файлы *.js* будут интерпретироваться как ES-модули:
+    ```js
+    // say.js
+    export function sayHi(user) {
+      return `Hello, ${user}!`;
+    }
+
+    // index.js
+    import {sayHi} from './say.js';
+    console.log(sayHi('John'));
+    ```
+
+3. Импорт CommonJS модулей
+
+    ```js
+    // Работает с динамическим import()
+    const fs = await import('fs');
+    const path = await import('path');
+
+    // Или через createRequire
+    import { createRequire } from 'module';
+    const require = createRequire(import.meta.url);
+    const lodash = require('lodash');
+    ```
+
+**Важные отличия от браузера**:
+- Пути к модулям относительны к файлу, а не к HTML (нет baseURL)
+- Node.js не разрешает относительные пути без ./ перед локальными модулями
+- Работает с file:// протоколом локально
 
 #### Основные возможности модулей
 Чем отличаются модули от «обычных» скриптов?
