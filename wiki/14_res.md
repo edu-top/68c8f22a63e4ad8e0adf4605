@@ -916,8 +916,8 @@ export function sayHi(user) {
 // 📁 main.js
 import {sayHi} from './sayHi.js';
 
-alert(sayHi); // function...
-sayHi('John'); // Hello, John!
+alert(sayHi);   // function...
+sayHi('John');  // Hello, John!
 ```
 
 Директива `import` загружает модуль по пути *./sayHi.js* относительно текущего файла и записывает экспортированную функцию `sayHi` в соответствующую переменную.
