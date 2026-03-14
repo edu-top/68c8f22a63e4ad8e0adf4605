@@ -49,6 +49,7 @@
     - [Отправка данных в запросе](#отправка-данных-в-запросе)
     - [Отправка json](#отправка-json-1)
   - [Создание клиента для REST API](#создание-клиента-для-rest-api)
+    - [Создание сервера на node.js](#создание-сервера-на-nodejs)
 - [Долгие опросы (Long polling)](#долгие-опросы-long-polling)
 - [Глоссарий](#глоссарий)
 - [Источники информации](#источники-информации)
@@ -2480,6 +2481,264 @@ fetch("/user", {
 - DELETE
 
 Рассмотрим, как создать свой клиент на javascript для API.[^20.5]
+
+#### Создание сервера на node.js
+Для начала определим сервер, который будет и будет собственно представлять Web API. В качестве примера возьмем Node.js. Для обработки запросов определим следующий файл *server.js*:
+```js
+const http = require("http");
+const fs = require("fs");
+
+// данные, с которыми работает клиент
+const users = [
+    { id:1, name:"Tom", age:24},
+    { id:2, name:"Bob", age:27},
+    { id:3, name:"Alice", age:23}
+]
+// обрабатываем полученные от клиента данные
+function getReqData(req) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const buffers = [];
+            for await (const chunk of req) {
+                buffers.push(chunk);
+            }
+            const data = JSON.parse(Buffer.concat(buffers).toString());
+            resolve(data);
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+http.createServer(async (request, response) => {
+
+     // получение всех пользователей
+     if (request.url === "/api/users" && request.method === "GET") {
+        response.end(JSON.stringify(users));
+    }
+    // получение одного пользователя по id
+     else if (request.url.match(/\/api\/users\/([0-9]+)/) && request.method === "GET") {
+        // получаем id из адреса url
+        const id = request.url.split("/")[3];
+        // получаем пользователя по id
+        const user = users.find((u) => u.id === parseInt(id));
+        // если пользователь найден, отправляем его
+        if(user)
+            response.end(JSON.stringify(user));
+        // если не найден, отправляем статусный код и сообщение об ошибке
+        else{
+            response.writeHead(404, { "Content-Type": "application/json" });
+            response.end(JSON.stringify({ message: "Пользователь не найден" }));
+        }
+    }
+    // удаление пользователя по id
+    else if (request.url.match(/\/api\/users\/([0-9]+)/) && request.method === "DELETE") {
+        // получаем id из адреса url
+        const id = request.url.split("/")[3];
+        // получаем индекс пользователя по id
+        const userIndex = users.findIndex((u) => u.id === parseInt(id));
+        // если пользователь найден, удаляем его из массива и отправляем клиенту
+        if(userIndex > -1) {
+            const user = users.splice(userIndex, 1)[0];
+            response.end(JSON.stringify(user));
+        }
+        // если не найден, отправляем статусный код и сообщение об ошибке
+        else{
+            response.writeHead(404, { "Content-Type": "application/json" });
+            response.end(JSON.stringify({ message: "Пользователь не найден" }));
+        }
+    }
+    // добавление пользователя
+    else if (request.url === "/api/users" && request.method === "POST") {
+        try{
+            // получаем данные пользователя
+            const userData = await getReqData(request);
+            // создаем нового пользователя
+            const user = {name: userData.name, age: userData.age};
+            // находим максимальный id
+            const id = Math.max.apply(Math,users.map(function(u){return u.id;}))
+            // увеличиваем его на единицу
+            user.id = id + 1;
+            // добавляем пользователя в массив
+            users.push(user);
+            response.end(JSON.stringify(user));
+        }
+        catch(error){
+            response.writeHead(400, { "Content-Type": "application/json" });
+            response.end(JSON.stringify({ message: "Некорректный запрос" }));
+        }
+    }
+    // изменение пользователя
+    else if (request.url === "/api/users" && request.method === "PUT") {
+        try{
+            const userData = await getReqData(request);
+            // получаем пользователя по id
+            const user = users.find((u) => u.id === parseInt(userData.id));
+            // если пользователь найден, изменяем его данные и отправляем обратно клиенту
+            if(user) {
+                user.age = userData.age;
+                user.name = userData.name;
+                response.end(JSON.stringify(user));
+            }
+            // если не найден, отправляем статусный код и сообщение об ошибке
+            else{
+                response.writeHead(404, { "Content-Type": "application/json" });
+                response.end(JSON.stringify({ message: "Пользователь не найден" }));
+            }
+        }
+        catch(error){
+            response.writeHead(400, { "Content-Type": "application/json" });
+            response.end(JSON.stringify({ message: "Некорректный запрос" }));
+        }
+    }
+    else if (request.url === "/" || request.url === "/index.html") {
+        fs.readFile("index.html", (error, data) => response.end(data));
+    }
+    else{
+        response.writeHead(404, { "Content-Type": "application/json" });
+        response.end(JSON.stringify({ message: "Ресурс не найден" }));
+    }
+}).listen(3000, ()=>console.log("Сервер запущен по адресу http://localhost:3000"));
+```
+
+Разберем в общих чертах этот код. Вначале идет определение данных, с которыми будет работать клиент:
+```js
+const users = [
+    { id:1, name:"Tom", age:24},
+    { id:2, name:"Bob", age:27},
+    { id:3, name:"Alice", age:23}
+]
+```
+
+Для упрошения данные определены в виде обычного массива объектов, но в реальной ситуации обычно подобные данные извлекаются из какой-нибудь базы данных.
+
+Далее определена функция `getReqData()`, которая извлекает из запроса присланные от клиента данные и конвертирует их в формат json (предполагается, что клиент будет присылать данные в формате json):
+```js
+function getReqData(req) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const buffers = [];
+            for await (const chunk of req) {
+                buffers.push(chunk);
+            }
+            const data = JSON.parse(Buffer.concat(buffers).toString());
+            resolve(data);
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+```
+
+Причем результат функции определен в виде промиса. Если данные успешно распарсены, то передаем через промис распарсенный объект. Если же произошла ошибка, то передаем сообщение об ошибке.
+
+Далее для каждого типа запросов определен определенный сценарий.
+
+Когда приложение получает запрос типа GET по адресу "api/users", то срабатывает следующий код:
+```js
+if (request.url === "/api/users" && request.method === "GET") {
+    response.end(JSON.stringify(users));
+}
+```
+
+Здесь просто отправляем выше определенный массив `users`.
+
+Когда клиент обращается к приложению для получения одного объекта по `id` в запрос типа GET по адресу "api/users/", то срабатывает следующий код:
+```js
+else if (request.url.match(/\/api\/users\/([0-9]+)/) && request.method === "GET") {
+    // получаем id из адреса url
+    const id = request.url.split("/")[3];
+    // получаем пользователя по id
+    const user = users.find((u) => u.id === parseInt(id));
+    // если пользователь найден, отправляем его
+    if(user)
+        response.end(JSON.stringify(user));
+    // если не найден, отправляем статусный код и сообщение об ошибке
+    else{
+        response.writeHead(404, { "Content-Type": "application/json" });
+        response.end(JSON.stringify({ message: "Пользователь не найден" }));
+    }
+}
+```
+
+В этом случае нам надо найти нужного пользователя по `id` в массиве, а если он не был найден, возвратить статусный код 404 с некоторым сообщением в формате JSON.
+
+При получении DELETE-запроса по адресу "/api/users/:id" находим индекс объекта в массива. И если объект найден, то удаляем его из массива и отправляем клиенту:
+```js
+// удаление пользователя по id
+else if (request.url.match(/\/api\/users\/([0-9]+)/) && request.method === "DELETE") {
+    // получаем id из адреса url
+    const id = request.url.split("/")[3];
+    // получаем индекс пользователя по id
+    const userIndex = users.findIndex((u) => u.id === parseInt(id));
+    // если пользователь найден, удаляем его из массива и отправляем клиенту
+    if(userIndex > -1) {
+        const user = users.splice(userIndex, 1)[0];
+        response.end(JSON.stringify(user));
+    }
+    // если не найден, отправляем статусный код и сообщение об ошибке
+    else{
+        response.writeHead(404, { "Content-Type": "application/json" });
+        response.end(JSON.stringify({ message: "Пользователь не найден" }));
+    }
+}
+```
+
+Если объект не найден, возвращаем статусный код 404.
+
+При получении запроса с методом POST по адресу "/api/users" используем функцию `getReqData()` для извлечения данных из запроса:
+```js
+else if (request.url === "/api/users" && request.method === "POST") {
+    try{
+        // получаем данные пользователя
+        const userData = await getReqData(request);
+        // создаем нового пользователя
+        const user = {name: userData.name, age: userData.age};
+        // находим максимальный id
+        const id = Math.max.apply(Math,users.map(function(u){return u.id;}))
+        // увеличиваем его на единицу
+        user.id = id + 1;
+        // добавляем пользователя в массив
+        users.push(user);
+        response.end(JSON.stringify(user));
+    }
+    catch(error){
+        response.writeHead(400, { "Content-Type": "application/json" });
+        response.end(JSON.stringify({ message: "Некорректный запрос" }));
+    }
+}
+```
+
+Поскольку при выполнении функции промис может передавать ошибку (например, в результате парсинга в JSON), оборачиваем весь код в `try..catch`. После получения данных нам надо создать новый объект и добавить его в массив объектов.
+
+Если приложению приходит PUT-запрос, то также с помощью функции `getReqData()` получаем отправленные клиентом данные. Если объект найден в массиве, то изменяем его, иначе отправляем статусный код 404:
+```js
+// изменение пользователя
+else if (request.url === "/api/users" && request.method === "PUT") {
+    try{
+        const userData = await getReqData(request);
+        // получаем пользователя по id
+        const user = users.find((u) => u.id === parseInt(userData.id));
+        // если пользователь найден, изменяем его данные и отправляем обратно клиенту
+        if(user) {
+            user.age = userData.age;
+            user.name = userData.name;
+            response.end(JSON.stringify(user));
+        }
+        // если не найден, отправляем статусный код и сообщение об ошибке
+        else{
+            response.writeHead(404, { "Content-Type": "application/json" });
+            response.end(JSON.stringify({ message: "Пользователь не найден" }));
+        }
+    }
+    catch(error){
+        response.writeHead(400, { "Content-Type": "application/json" });
+        response.end(JSON.stringify({ message: "Некорректный запрос" }));
+    }
+}
+```
+
+Таким образом, мы определили простейший API. Теперь добавим код клиента.
 
 ## Долгие опросы (Long polling)
 
