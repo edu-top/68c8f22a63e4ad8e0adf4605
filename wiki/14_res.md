@@ -31,8 +31,6 @@
   - [Модульная организация кода](#модульная-организация-кода)
   - [Введение в JS-модули](#введение-в-js-модули)
     - [Что такое модуль?](#что-такое-модуль)
-    - [Модули в Node.js](#модули-в-nodejs)
-      - [Импорт CommonJS модулей](#импорт-commonjs-модулей)
     - [Основные возможности модулей](#основные-возможности-модулей)
       - [Всегда «use strict»](#всегда-use-strict)
       - [Своя область видимости переменных](#своя-область-видимости-переменных)
@@ -73,6 +71,8 @@
   - [Динамическая загрузка модулей](#динамическая-загрузка-модулей)
     - [Динамические импорты](#динамические-импорты)
     - [Выражение import()](#выражение-import)
+  - [Модули в Node.js](#модули-в-nodejs)
+    - [Импорт CommonJS модулей](#импорт-commonjs-модулей)
     - [Заключение](#заключение-1)
 - [Практика](#практика)
   - [Практическая работа. Предварительная загрузка изображений](#практическая-работа-предварительная-загрузка-изображений)
@@ -953,135 +953,6 @@ export function sayHi(user) {
 
 !!! warning "Модули не работают локально. Только через HTTP(s)"
     Если вы попытаетесь открыть веб-страницу локально, через протокол `file://`, вы обнаружите, что директивы `import`/`export` не работают. Для тестирования модулей используйте локальный веб-сервер, например, [static-server](https://www.npmjs.com/package/static-server#getting-started) или используйте возможности «живого сервера» вашего редактора, например, расширение [Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) для VS Code.
-
-#### Модули в Node.js
-ES-модули (`import`/`export`) — это стандарт браузеров (ECMAScript 2015+).
-
-Node.js по умолчанию использует CommonJS (`require()`/`module.exports`) — модульную систему, созданную в 2009 году специально для Node.js.
-
-Эксперименты с поддержкой ES-модулей в Node.js начались с версии 8.5, полноценная поддержка — с версии 12.17, а полная стабильная — c 14.18+. До сих пор модульной системой по умолчанию в Node.js остается CommonJS, поэтому приходится явно указать о необходимости использовать ES-модули.
-
-Способы подключения модулей
-
-1. Расширение *.mjs* (рекомендуется для экспериментов)
-
-    ```js
-    // say.mjs
-    export function sayHi(user) {
-      return `Hello, ${user}!`;
-    }
-    ```
-
-    ```js
-    // index.mjs
-    import {sayHi} from './say.mjs';
-    console.log(sayHi('John'));
-    ```
-
-2. Поле `"type": "module"` в *package.json*
-
-    ```json
-    {
-      "type": "module"
-    }
-    ```
-
-    После этого файлы *.js* будут интерпретироваться как ES-модули:
-    ```js
-    // say.js
-    export function sayHi(user) {
-      return `Hello, ${user}!`;
-    }
-
-    // index.js
-    import {sayHi} from './say.js';
-    console.log(sayHi('John'));
-    ```
-
-**Важные отличия от браузера**:
-- Пути к модулям относительны к файлу, а не к HTML (нет baseURL)
-- Node.js не разрешает относительные пути без ./ перед локальными модулями
-- Работает с file:// протоколом локально
-
-##### Импорт CommonJS модулей
-
-Node.js по умолчанию CommonJS уже 17 лет (с 2009 года), а ES-модули появились только в 2015-м. За это время экосистема npm выросла до 2+ млн пакетов, большинство из которых написаны на `require()`/`module.exports`. Таким образом, ~70-80% всех npm-пакетов до сих пор используют CommonJS!
-
-Без импорта CommonJS теряется доступ к:
-
-- Встроенным модулям Node.js (`fs`, `path`, `http`, `crypto`)
-
-- Популярным библиотекам (`lodash`, `express`, `moment`, `chalk`)
-
-- Любым legacy-пакетами из npm
-
-```js
-// Работает с динамическим import()
-const fs = await import('fs');
-const path = await import('path');
-
-// Или через createRequire
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const lodash = require('lodash');
-```
-
-Способы импорта
-
-1. Динамический `import()` (рекомендуется)
-
-    ```js
-    // ✅ Работает с любым CommonJS модулем
-    const fs = await import('fs');
-    const path = await import('path');
-    const express = await import('express');
-
-    const data = await fs.promises.readFile('file.txt', 'utf8');
-    ```
-
-2. `createRequire` для синхронного импорта
-
-    ```js
-    import { createRequire } from 'module';
-    const require = createRequire(import.meta.url);
-
-    const lodash = require('lodash');  // ✅ Синхронно!
-    const config = require('./config.json');
-    ```
-
-Практический пример:
-```js
-// app.mjs (ES модуль)
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-
-import express from 'express';     // ESM версия
-const _ = require('lodash');       // CommonJS версия
-
-const app = express();
-app.get('/', (req, res) => {
-  res.send(_.capitalize('hello world'));
-});
-```
-
-!!! warning "🚨 Только динамический импорт для CommonJS"
-
-    ```js
-    // ❌ НЕ РАБОТАЕТ статически
-    import fs from 'fs';
-
-    // ✅ Только так
-    const fs = await import('fs');
-    ```
-
-!!! tip "Проверка типа модуля"
-
-    ```js
-    const mod = await import('lodash');
-    console.log(mod.__esModule);  // false = CommonJS
-    ```
-
-**Вывод**: Импорт CommonJS — это мост между современными ES-модулями и огромной экосистемой Node.js, которая пока живёт на `require()`. Без него разработка на Node.js была бы невозможна!
 
 #### Основные возможности модулей
 Чем отличаются модули от «обычных» скриптов?
@@ -2421,6 +2292,135 @@ export default function() {
     Хотя `import()` и выглядит похоже на вызов функции, на самом деле это специальный синтаксис, так же, как, например, `super()`.
 
     Так что мы не можем скопировать `import` в другую переменную или вызвать при помощи `.call/apply`. Это не функция.
+
+### Модули в Node.js
+ES-модули (`import`/`export`) — это стандарт браузеров (ECMAScript 2015+).
+
+Node.js по умолчанию использует CommonJS (`require()`/`module.exports`) — модульную систему, созданную в 2009 году специально для Node.js.
+
+Эксперименты с поддержкой ES-модулей в Node.js начались с версии 8.5, полноценная поддержка — с версии 12.17, а полная стабильная — c 14.18+. До сих пор модульной системой по умолчанию в Node.js остается CommonJS, поэтому приходится явно указать о необходимости использовать ES-модули.
+
+Способы подключения модулей
+
+1. Расширение *.mjs* (рекомендуется для экспериментов)
+
+    ```js
+    // say.mjs
+    export function sayHi(user) {
+      return `Hello, ${user}!`;
+    }
+    ```
+
+    ```js
+    // index.mjs
+    import {sayHi} from './say.mjs';
+    console.log(sayHi('John'));
+    ```
+
+2. Поле `"type": "module"` в *package.json*
+
+    ```json
+    {
+      "type": "module"
+    }
+    ```
+
+    После этого файлы *.js* будут интерпретироваться как ES-модули:
+    ```js
+    // say.js
+    export function sayHi(user) {
+      return `Hello, ${user}!`;
+    }
+
+    // index.js
+    import {sayHi} from './say.js';
+    console.log(sayHi('John'));
+    ```
+
+**Важные отличия от браузера**:
+- Пути к модулям относительны к файлу, а не к HTML (нет baseURL)
+- Node.js не разрешает относительные пути без ./ перед локальными модулями
+- Работает с file:// протоколом локально
+
+#### Импорт CommonJS модулей
+
+Node.js по умолчанию CommonJS уже 17 лет (с 2009 года), а ES-модули появились только в 2015-м. За это время экосистема npm выросла до 2+ млн пакетов, большинство из которых написаны на `require()`/`module.exports`. Таким образом, ~70-80% всех npm-пакетов до сих пор используют CommonJS!
+
+Без импорта CommonJS теряется доступ к:
+
+- Встроенным модулям Node.js (`fs`, `path`, `http`, `crypto`)
+
+- Популярным библиотекам (`lodash`, `express`, `moment`, `chalk`)
+
+- Любым legacy-пакетами из npm
+
+```js
+// Работает с динамическим import()
+const fs = await import('fs');
+const path = await import('path');
+
+// Или через createRequire
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const lodash = require('lodash');
+```
+
+Способы импорта
+
+1. Динамический `import()` (рекомендуется)
+
+    ```js
+    // ✅ Работает с любым CommonJS модулем
+    const fs = await import('fs');
+    const path = await import('path');
+    const express = await import('express');
+
+    const data = await fs.promises.readFile('file.txt', 'utf8');
+    ```
+
+2. `createRequire` для синхронного импорта
+
+    ```js
+    import { createRequire } from 'module';
+    const require = createRequire(import.meta.url);
+
+    const lodash = require('lodash');  // ✅ Синхронно!
+    const config = require('./config.json');
+    ```
+
+Практический пример:
+```js
+// app.mjs (ES модуль)
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
+import express from 'express';     // ESM версия
+const _ = require('lodash');       // CommonJS версия
+
+const app = express();
+app.get('/', (req, res) => {
+  res.send(_.capitalize('hello world'));
+});
+```
+
+!!! warning "🚨 Только динамический импорт для CommonJS"
+
+    ```js
+    // ❌ НЕ РАБОТАЕТ статически
+    import fs from 'fs';
+
+    // ✅ Только так
+    const fs = await import('fs');
+    ```
+
+!!! tip "Проверка типа модуля"
+
+    ```js
+    const mod = await import('lodash');
+    console.log(mod.__esModule);  // false = CommonJS
+    ```
+
+**Вывод**: Импорт CommonJS — это мост между современными ES-модулями и огромной экосистемой Node.js, которая пока живёт на `require()`. Без него разработка на Node.js была бы невозможна!
 
 #### Заключение
 Вот все варианты `export`, которые мы разобрали:
