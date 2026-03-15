@@ -24,6 +24,7 @@
     - [Изображение в Blob](#изображение-в-blob)
     - [Из Blob в ArrayBuffer](#из-blob-в-arraybuffer)
     - [Итого](#итого-1)
+- [File и FileReader](#file-и-filereader)
 - [Куки](#куки)
   - [Установка параметров куки](#установка-параметров-куки)
     - [Параметр expires](#параметр-expires)
@@ -800,6 +801,47 @@ fileReader.onload = function(event) {
 - Мы можем создать `Blob` из типизированного массива, используя конструктор new `Blob(...)`.
 - Мы можем обратно создать `ArrayBuffer` из `Blob`, используя `FileReader`, а затем создать его представление для низкоуровневых операций.
 
+## File и FileReader
+Объект [File](https://www.w3.org/TR/FileAPI/#dfn-file) наследуется от объекта `Blob` и обладает возможностями по взаимодействию с файловой системой.
+
+Есть два способа его получить.
+
+Во-первых, есть конструктор, похожий на `Blob`:
+```js
+new File(fileParts, fileName, [options])
+```
+
+- **`fileParts`** – массив значений `Blob`/`BufferSource`/строки.
+- **`fileName`** – имя файла, строка.
+- **`options`** – необязательный объект со свойством:
+  - **`lastModified`** – дата последнего изменения в формате таймстамп (целое число).
+
+Во-вторых, чаще всего мы получаем файл из `<input type="file">` или через перетаскивание с помощью мыши, или из других интерфейсов браузера. В этом случае файл получает эту информацию из ОС.
+
+Так как `File` наследует от `Blob`, у объектов `File` есть те же свойства плюс:
+
+- `name` – имя файла,
+- `lastModified` – таймстамп для даты последнего изменения.
+
+В этом примере мы получаем объект `File` из `<input type="file">`:
+```html
+<input type="file" onchange="showFile(this)">
+
+<script>
+function showFile(input) {
+  let file = input.files[0];
+
+  alert(`File name: ${file.name}`); // например, my.png
+  alert(`Last modified: ${file.lastModified}`); // например, 1552830408824
+}
+</script>
+```
+
+!!! info "На заметку:"
+    Через `<input>` можно выбрать несколько файлов, поэтому `input.files` – псевдомассив выбранных файлов. Здесь у нас только один файл, поэтому мы просто берём `input.files[0]`.
+
+[^file]
+
 ## Куки
 Одну из возможностей сохранения данных в браузере представляет использование куки. Так, каждый раз, когда мы обращаемся к веб-странице в интернете, то веб-сервер вместо с этой страницей присылает связаные с этой страницей куки (при их наличии). И браузер хранит эти данные некоторое время. При последующих обращениях к той же странице или сайту в зависимости от настроек куки обратно посылаются из браузера на сервер.
 
@@ -1117,3 +1159,4 @@ FileAPI
 [^arraybuffer-binary-arrays]: [ArrayBuffer, бинарные массивы](https://learn.javascript.ru/arraybuffer-binary-arrays)
 [^text-decoder]: [TextDecoder и TextEncoder](https://learn.javascript.ru/text-decoder)
 [^blob]: [Blob](https://learn.javascript.ru/blob)
+[^file]: [File и FileReader](https://learn.javascript.ru/file)
