@@ -36,6 +36,7 @@
     - [Заголовки ответа](#заголовки-ответа)
     - [Заголовки запроса](#заголовки-запроса)
     - [POST-запросы](#post-запросы)
+    - [Отправка изображения](#отправка-изображения)
     - [Определение ресурса на севере](#определение-ресурса-на-севере-1)
     - [Вызов функции fetch()](#вызов-функции-fetch)
     - [fetch с async/await](#fetch-с-asyncawait)
@@ -1892,6 +1893,57 @@ alert(result.message);
 Заметим, что так как тело запроса `body` – строка, то заголовок `Content-Type` по умолчанию будет `text/plain;charset=UTF-8`.
 
 Но, так как мы посылаем JSON, то используем параметр `headers` для отправки вместо этого `application/json`, правильный `Content-Type` для JSON.[^fetch]
+
+#### Отправка изображения
+Мы можем отправить бинарные данные при помощи `fetch`, используя объекты `Blob` или `BufferSource`.
+
+В этом примере есть элемент `<canvas>`, на котором мы можем рисовать движением мыши. При нажатии на кнопку «Отправить» изображение отправляется на сервер:
+```html
+<body style="margin:0">
+  <canvas id="canvasElem" width="100" height="80" style="border:1px solid"></canvas>
+
+  <input type="button" value="Отправить" onclick="submit()">
+
+  <script>
+    canvasElem.onmousemove = function(e) {
+      let ctx = canvasElem.getContext('2d');
+      ctx.lineTo(e.clientX, e.clientY);
+      ctx.stroke();
+    };
+
+    async function submit() {
+      let blob = await new Promise(resolve => canvasElem.toBlob(resolve, 'image/png'));
+      let response = await fetch('/article/fetch/post/image', {
+        method: 'POST',
+        body: blob
+      });
+
+      // сервер ответит подтверждением и размером изображения
+      let result = await response.json();
+      alert(result.message);
+    }
+
+  </script>
+</body>
+```
+
+![Send image](../img/send-image.png)
+
+Заметим, что здесь нам не нужно вручную устанавливать заголовок `Content-Type`, потому что объект `Blob` имеет встроенный тип (`image/png`, заданный в `toBlob`). При отправке объектов `Blob` он автоматически становится значением `Content-Type`.
+
+Функция `submit()` может быть переписана без `async`/`await`, например, так:
+```js
+function submit() {
+  canvasElem.toBlob(function(blob) {
+    fetch('/article/fetch/post/image', {
+      method: 'POST',
+      body: blob
+    })
+      .then(response => response.json())
+      .then(result => alert(JSON.stringify(result, null, 2)))
+  }, 'image/png');
+}
+```
 
 #### Определение ресурса на севере
 Рассмотрим простейший пример. Итак, прежде всего нам потребуется некоторый сетевой ресурс, к которому мы будем обращаться. Для эмуляции сетевого ресурса используем локальный веб-сервер. Веб-сервер может быть любым. В данном случае воспользуемся самым простым вариантом — Node.js, поэтому перед созданием приложения необходимо [установить Node.js](https://metanit.com/web/nodejs/1.1.php). Но опять же вместо node.js это может быть любая другая технология сервера — php, asp.net, python и т.д. либо какой-то определенный веб-сервер типа Apache или IIS.
