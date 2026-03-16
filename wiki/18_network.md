@@ -60,6 +60,7 @@
 - [Server-Sent Events](#server-sent-events)
   - [События EventSource](#события-eventsource)
   - [Прием данных](#прием-данных-1)
+  - [Закрытие соединения](#закрытие-соединения)
 - [Долгие опросы (Long polling)](#долгие-опросы-long-polling)
 - [Глоссарий](#глоссарий)
 - [Источники информации](#источники-информации)
@@ -3316,6 +3317,12 @@ const evtSource = new EventSource("/events");
 evtSource.onmessage = (event) => {
     console.log(event.data);    // выводим отправленные данные на консоль
 };
+```
+
+### Закрытие соединения
+Для закрытия соединения применяется метод **`close()`**:
+```js
+evtSource.close();
 ```
 
 ## Долгие опросы (Long polling)
