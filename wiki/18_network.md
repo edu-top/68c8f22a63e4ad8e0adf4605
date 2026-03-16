@@ -61,6 +61,7 @@
   - [События EventSource](#события-eventsource)
   - [Прием данных](#прием-данных-1)
   - [Закрытие соединения](#закрытие-соединения)
+  - [Пример взаимодействия между клиентов и сервером с Server-Sent Events](#пример-взаимодействия-между-клиентов-и-сервером-с-server-sent-events)
 - [Долгие опросы (Long polling)](#долгие-опросы-long-polling)
 - [Глоссарий](#глоссарий)
 - [Источники информации](#источники-информации)
@@ -3324,6 +3325,165 @@ evtSource.onmessage = (event) => {
 ```js
 evtSource.close();
 ```
+
+### Пример взаимодействия между клиентов и сервером с Server-Sent Events
+Рассмотрим небольшой пример взаимодействия между клиентом и сервером с помощью Server-Sent Events. В качестве клиента будет выступать код JavaScript на веб-странице. А в качестве сервера будем использовать Node.js.
+
+Сначала определим код сервере. Для этого создадим файл *server.js* со следующим кодом:
+```js
+const http = require("http");
+const fs = require("fs");
+
+// данные для отправки клиенту
+const messages = ["Привет", "Как дела?", "Что делаешь?", "Ты че спишь?", "Ну пока"];
+http.createServer(function(request, response){
+
+    if(request.url == "/events"){   // если запрос SSE
+        if (request.headers.accept && request.headers.accept === "text/event-stream") {
+            sendEvent(response);
+        }
+        else{
+            response.writeHead(400);
+            response.end("Bad Request");
+        }
+    }
+    else{   // в остальных случаях отправляем страницу index.html
+        fs.readFile("index.html", (_, data) => response.end(data));
+    }
+}).listen(3000, ()=>console.log("Сервер запущен по адресу http://localhost:3000"));
+
+// отправляем сообщение клиенту
+function sendEvent(response) {
+    // формируем заголовки
+    response.writeHead(200, {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        "Connection": "keep-alive"
+    });
+    const id = (new Date()).toLocaleTimeString();  // определяем идентификатор последнего события
+    // раз в 5 секунд отправляем одно сообщение
+    setInterval(() => { createServerSendEvent(response, id); }, 5000);
+}
+// отправляем данные клиенту
+function createServerSendEvent(response, id) {
+    // генерируем случайное число - индекс для массива messages
+    const index = Math.floor(Math.random() * messages.length);
+    const message = messages[index];
+    response.write("id: " + id + "\n");
+    response.write("data: " + message + "\n\n");
+}
+```
+
+Вкратце пройдемся по коду. Сначала подключаются пакеты с функциональностью, которую мы собираемся использовать:
+```js
+const http = require("http");   // для обработки входящих запросов
+const fs = require("fs");       // для чтения с жесткого диска файла index.html
+```
+
+Далее идентифицирется определение набора данных, которые будут отправляться клиенту — набор строк с важными сообщениями для клиента:
+```js
+const messages = ["Привет", "Как дела?", "Что делаешь?", "Ты че спишь?", "Ну пока"];
+```
+
+Для создания сервера применяется функция **`http.createServer()`**. В эту функцию передается функция-обработчик, которая вызывается каждый раз, когда к серверу приходит запрос. Эта функция имеет два параметра: `request` (содержит данные запроса) и `response` (управляет отправкой ответа).
+
+В функции-обработчике с помощью свойства `request.url` мы можем узнать, к какому ресурсу на сервере пришел запрос. Так, в данном случае, если пришел запрос по пути "/events", то мы будем взаимодействовать с клиентом с помощью Server-Sent Events:
+```js
+if(request.url == "/events"){   // если запрос SSE
+    if (request.headers.accept && request.headers.accept === "text/event-stream") {
+        sendEvent(response);
+    }
+    else{
+        response.writeHead(400);
+        response.end("Bad Request");
+    }
+}
+```
+
+И тут важно, чтобы в запросе были установлен заголовок "Accept": он должен иметь значение "text/event-stream". Если это так, то для отправки данных клиенту выполняем функцию `sendEvent()`, в которую передаем объект ответа `response`. Если же заголовки не установлены, то отправляем в ответ ошибку 400.
+
+В функции `sendEvent` формируем заголовки ответа, получаем текущее время, которое будет выступать в качестве идентификатора события, и запускаем таймер с отправкой клиенту данных каждые 5 секунд.
+
+```js
+function sendEvent(response) {
+    // формируем заголовки
+    response.writeHead(200, {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        "Connection": "keep-alive"
+    });
+    const id = (new Date()).toLocaleTimeString();  // определяем идентификатор последнего события
+    // раз в 5 секунд отправляем одно сообщение
+    setInterval(() => { createServerSendEvent(response, id); }, 5000);
+}
+```
+
+Собственно отправка данных производится в функции `createServerSendEvent`:
+```js
+function createServerSendEvent(response, id) {
+    // генерируем случайное число - индекс для массива messages
+    const index = Math.floor(Math.random() * messages.length);
+    const message = messages[index];
+    response.write("id: " + id + "\n");
+    response.write("data: " + message + "\n\n");
+}
+```
+
+Здесь получаем случайное число, которое находится в диапазоне от 0 до `messages.length` и которое будет служить в качестве индекса, и по этому индексу выбирает некоторое сообщение. Далее формируем ответ. Устанавливаем идентификатор последнего события
+```js
+response.write("id: " + id + "\n");
+```
+
+И устанавливаем собственно данные:
+```js
+response.write("data: " + message + "\n\n");
+```
+
+Если запрос пришел на сервер по какому-то другому пути, то отправляем файл *index.html*, который мы дальше определим:
+```js
+else{
+    fs.readFile("index.html", (_, data) => response.end(data));
+}
+```
+
+Для считывания файлов применяется встроенная функция **`fs.readFile()`**. Первый параметр функции — адрес файла (в данном случае предполагается, что файл *index.html* находится в одной папке с файлом сервера *server.js*). Второй параметр — функция, которая вызывается после считывания файла и получет его содержимое через свой второй параметр `data`. Затем считанное содежимое также может быть отпавлено с помощью функции `response.end(data)`.
+
+В конце с помощью функции **`listen()`** запускаем веб-сервер на 3000 порту. То есть сервер будет запускаться по адресу http://localhost:3000/
+
+Теперь в папке сервера определим простенький файл *index.html* со следующим кодом:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Example</title>
+</head>
+<body>
+<ul id="list"></ul>
+    <script>
+        const source = new EventSource("/events");
+        const list = document.getElementById("list")
+        source.addEventListener("message", (e) => {
+            const listItem = document.createElement("li");
+            listItem.textContent += e.data;
+            list.appendChild(listItem);
+        });
+    </script>
+</body>
+</html>
+```
+
+Здесь при получении данных от сервера добавляем их в список на веб-странице.
+
+Теперь в консоли перейдем к папке сервера с помощью команды `cd` и запустим сервер с помощью команды `node server.js`
+```
+C:\app>node server.js
+Сервер запущен по адресу http://localhost:3000
+```
+
+После запуска сервера мы можем перейти в браузере по адресу http://localhost:3000, нам отобразится страница, в javascript-коде которой будет происходить получение данных от сервера и их вывод на веб-страницу:
+
+![Server-Sent Events и EventSource в javascript](../img/sse.png)
 
 ## Долгие опросы (Long polling)
 
