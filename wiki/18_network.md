@@ -34,6 +34,7 @@
 - [Fetch API](#fetch-api)
   - [Метод fetch](#метод-fetch)
     - [Заголовки ответа](#заголовки-ответа)
+    - [Заголовки запроса](#заголовки-запроса)
     - [Определение ресурса на севере](#определение-ресурса-на-севере-1)
     - [Вызов функции fetch()](#вызов-функции-fetch)
     - [fetch с async/await](#fetch-с-asyncawait)
@@ -1820,6 +1821,41 @@ for (let [key, value] of response.headers) {
   alert(`${key} = ${value}`);
 }
 ```
+
+#### Заголовки запроса
+Для установки заголовка запроса в `fetch` мы можем использовать опцию `headers`. Она содержит объект с исходящими заголовками, например:
+```js
+let response = fetch(protectedUrl, {
+  headers: {
+    Authentication: 'secret'
+  }
+});
+```
+
+Есть список [запрещённых HTTP-заголовков](https://fetch.spec.whatwg.org/#forbidden-header-name), которые мы не можем установить:
+
+- `Accept-Charset, Accept-Encoding`
+- `Access-Control-Request-Headers`
+- `Access-Control-Request-Method`
+- `Connection`
+- `Content-Length`
+- `Cookie`, `Cookie2`
+- `Date`
+- `DNT`
+- `Expect`
+- `Host`
+- `Keep-Alive`
+- `Origin`
+- `Referer`
+- `TE`
+- `Trailer`
+- `Transfer-Encoding`
+- `Upgrade`
+- `Via`
+- `Proxy-*`
+* `Sec-*`
+
+Эти заголовки обеспечивают достоверность данных и корректную работу протокола HTTP, поэтому они контролируются исключительно браузером.[^fetch]
 
 #### Определение ресурса на севере
 Рассмотрим простейший пример. Итак, прежде всего нам потребуется некоторый сетевой ресурс, к которому мы будем обращаться. Для эмуляции сетевого ресурса используем локальный веб-сервер. Веб-сервер может быть любым. В данном случае воспользуемся самым простым вариантом — Node.js, поэтому перед созданием приложения необходимо [установить Node.js](https://metanit.com/web/nodejs/1.1.php). Но опять же вместо node.js это может быть любая другая технология сервера — php, asp.net, python и т.д. либо какой-то определенный веб-сервер типа Apache или IIS.
