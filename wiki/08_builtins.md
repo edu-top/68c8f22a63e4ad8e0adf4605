@@ -101,6 +101,7 @@
     - [Слабые ссылки](#слабые-ссылки-1)
 - [Локализация](#локализация)
   - [Введение в Internationalization API](#введение-в-internationalization-api)
+  - [Локализация списков и Intl.ListFormat](#локализация-списков-и-intllistformat)
 - [Итераторы](#итераторы)
   - [Получение итератора](#получение-итератора-1)
   - [Метод next итераторов](#метод-next-итераторов)
@@ -2718,6 +2719,68 @@ console.log(Intl.NumberFormat.supportedLocalesOf(["de", "bo"])); // немецк
 
 Как видно из вывода тибетский у меня не поддерживается.[^18.5]
 
+### Локализация списков и Intl.ListFormat
+Объект **`Intl.ListFormat`** позволяет форматировать списки в соответствии с некоторыми локализационными настройками. Его конструктор может принимать два параметра:
+```js
+Intl.ListFormat([locales[, options]])
+```
+
+Параметр **`locales`** представляет код языка в формате BCP 47 или набор языковых кодов.
+
+Параметр **`options`** представляет дополнительный набор опций:
+
+- **`localeMatcher`**: алгоритм поиска соответствий. Может принимать два значения: `"lookup"` и `"best fit"`. Значение по умолчанию — `"best fit"`.
+
+- **`style`**: длина форматируемой строки. Возможные значения: `"long"` (например, `A, B, and C`), `"short"` или `"narrow"` (например, `A, B,C`). Значение по умолчанию — `"long"`.
+
+- **`type`**: формат выходной строки. Возможные значения: `"conjunction"` (предпоследний и последний элементы в списке соединяются союзом "и" ("and") — `A, B и C`), `"disjunction"` (предпоследний и последний элементы в списке соединяются союзом "или" ("or") — `A, B или C`), `"unit"` (применяется для списков с числовыми значениями и добавляет к ним единицы измерения). Значение по умолчанию — `"conjunction"`.
+
+Для форматирования списка данный объект предоставляет метод **`format()`, в который передается форматируемый список. Метод возвращает отформатированный локализованный список в виде строки.**[^18.1]
+
+Рассмотрим несколько примеров. Добавим союз "И":
+```js
+const people = ["Tom", "Bob", "Sam"];
+const andList = new Intl.ListFormat("ru").format(people); // , { style:"long", type: "conjunction" }
+console.log(andList);   // Tom, Bob и Sam
+```
+
+В данном случае используется локализация с учетом русскоязычной культуры и для этого в качестве параметра `locales` в конструктор `Intl.ListFormat` передаем код языка `ru`. В итоге из массива `["Tom", "Bob", "Sam"]` строку `Tom, Bob и Sam`. В данном случае для второго параметра — `options` использовались настройки по умолчанию. Однако мы можем их задать и явным образом:
+```js
+const people = ["Tom", "Bob", "Sam"];
+const andList = new Intl.ListFormat("ru" , { style:"long", type: "conjunction" }).format(people);
+console.log(andList);   // Tom, Bob и Sam
+```
+
+В этом случае мы получим тот же самый результат, так как опция `type: "conjunction"` предполагает использование союза "и".
+
+Теперь используем союз "или":
+```js
+const people = ["Tom", "Bob", "Sam"];
+const orList = new Intl.ListFormat("ru", { style:"short", type: "disjunction" }).format(people);
+console.log(orList);// Tom, Bob или Sam
+```
+
+При этом мы не ограничены одной языковой культурой. Так, локализуем список в ряд других языков:
+```js
+const people = ["Tom", "Bob", "Sam"];
+
+// английский язык
+const enList = new Intl.ListFormat("en" , { style:"long", type: "conjunction" }).format(people);
+console.log(enList);    // Tom, Bob, and Sam
+
+// немецкий язык
+const deList = new Intl.ListFormat("de" , { style:"long", type: "conjunction" }).format(people);
+console.log(deList);    // Tom, Bob und Sam
+
+// французский язык
+const frList = new Intl.ListFormat("fr" , { style:"long", type: "conjunction" }).format(people);
+console.log(frList);    // Tom, Bob et Sam
+
+// китайский язык
+const zhList = new Intl.ListFormat("zh" , { style:"long", type: "conjunction" }).format(people);
+console.log(zhList);    // Tom、Bob和Sam
+```
+
 ## Итераторы
 <dfn title="итераторы">Итераторы</dfn> представляют абстракцию для перебора наборов данных и применяются для организации последовательного доступа к элементам наборов данных — массивам, объектам `Set`, `Map`, строкам и т.д. Так, благодаря итераторам мы можем перебрать набор данных (например, массив) с помощью цикла **`for-of`**:
 ```js
@@ -3501,3 +3564,4 @@ Error: Something wrong
 [^6.6]: [Группы в регулярных выражениях](https://metanit.com/web/javascript/6.6.php)
 [^6.3]: [Регулярные выражения в методах String](https://metanit.com/web/javascript/6.3.php)
 [^18.5]: [Введение в Internationalization API](https://metanit.com/web/javascript/18.5.php)
+[^18.1]: [Локализация списков и Intl.ListFormat](https://metanit.com/web/javascript/18.1.php)
