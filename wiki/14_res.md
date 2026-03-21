@@ -1081,7 +1081,81 @@ export let user = "John";
 </script>
 ```
 
+Каждый модульный скрипт создаёт собственную изолированную область видимости. Переменные не "протекают" в глобальную область, в отличие от обычных скриптов.
+```html
+<!-- ✅ Обычные скрипты делят глобальную область -->
+<script>
+  let user = "John";  // попадает в window.user
+</script>
+<script>
+  alert(user);        // "John" ✅
+</script>
+
+<!-- ❌ Модули изолированы друг от друга -->
+<script type="module">
+  let user = "John";
+</script>
+<script type="module">
+  alert(user);        // ReferenceError ❌
+</script>
+```
+
 Если нам нужно сделать глобальную переменную уровня всей страницы, можно явно присвоить её объекту `window`, тогда получить значение переменной можно обратившись к `window.user`. Но это должно быть исключением, требующим веской причины.
+
+Исключение: явное добавление в `window`:
+```html
+<script type="module">
+  // Только если действительно нужно!
+  window.user = "John";
+</script>
+
+<script type="module">
+  alert(window.user);   // "John" ✅
+</script>
+```
+
+Правильные альтернативы глобальным переменным
+
+1. Импорт/экспорт (рекомендуется)
+
+    ```html
+    <!-- module1.js -->
+    export let user = "John";
+
+    // index.html
+    <script type="module">
+      import { user } from './module1.js';
+      console.log(user); // "John"
+    </script>
+    ```
+
+2. Один главный модуль
+
+    ```html
+    <script type="module">
+      // Главный модуль импортирует всё остальное
+      import { fn1 } from './utils.js';
+      import { fn2 } from './api.js';
+
+      let appState = { user: "John" }; // здесь храним состояние
+    </script>
+    ```
+
+4. Кастомные события (Custom Events) для коммуникации
+
+    ```js
+    // Модуль 1
+    window.dispatchEvent(new CustomEvent('userUpdated', {
+      detail: { user: "John" }
+    }));
+
+    // Модуль 2
+    window.addEventListener('userUpdated', (e) => {
+      console.log(e.detail.user); // "John"
+    });
+    ```
+
+Важно понимать, что глобальные **`window.*`** — антипаттерн. Рекомендуется использовать модульную систему или события!
 
 ##### Код в модуле выполняется только один раз при импорте
 Если один и тот же модуль используется в нескольких местах, то его код выполнится только один раз, после чего экспортируемая функциональность передаётся всем импортёрам.
