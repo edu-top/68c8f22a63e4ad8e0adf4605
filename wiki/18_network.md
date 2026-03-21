@@ -56,6 +56,7 @@
     - [Отправка данных в запросе](#отправка-данных-в-запросе)
     - [Отправка json](#отправка-json-1)
   - [FormData](#formdata)
+    - [Отправка простой формы](#отправка-простой-формы)
   - [Создание клиента для REST API](#создание-клиента-для-rest-api)
     - [Создание сервера на node.js](#создание-сервера-на-nodejs)
     - [Определение клиента](#определение-клиента-1)
@@ -2853,6 +2854,37 @@ let formData = new FormData([form]);
 Он будет соответствующим образом закодирован и отправлен с заголовком `Content-Type: multipart/form-data`.
 
 То есть, для сервера это выглядит как обычная отправка формы.[^formdata]
+
+#### Отправка простой формы
+Давайте сначала отправим простую форму.
+
+Как вы видите, код очень компактный:
+```html
+<form id="formElem">
+  <input type="text" name="name" value="John">
+  <input type="text" name="surname" value="Smith">
+  <input type="submit">
+</form>
+
+<script>
+  formElem.onsubmit = async (e) => {
+    e.preventDefault();
+
+    let response = await fetch('/article/formdata/post/user', {
+      method: 'POST',
+      body: new FormData(formElem)
+    });
+
+    let result = await response.json();
+
+    alert(result.message);
+  };
+</script>
+```
+
+![Formdata](../img/formdata_01.png)
+
+В этом примере серверный код не представлен, он за рамками этой статьи, он принимает POST-запрос с данными формы и отвечает сообщением «Пользователь сохранён».
 
 ### Создание клиента для REST API
 Используя **Fetch API** в JavaScript, можно реализовать полноценный клиент для Web API в стиле REST для взаимодействия с пользователем. Архитектура REST предполагает применение следующих методов или типов запросов HTTP для взаимодействия с сервером:
