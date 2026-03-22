@@ -59,6 +59,7 @@
     - [Отправка простой формы](#отправка-простой-формы)
     - [Методы объекта FormData](#методы-объекта-formdata)
     - [Отправка формы с файлом](#отправка-формы-с-файлом)
+    - [Отправка формы с Blob-данными](#отправка-формы-с-blob-данными)
   - [Создание клиента для REST API](#создание-клиента-для-rest-api)
     - [Создание сервера на node.js](#создание-сервера-на-nodejs)
     - [Определение клиента](#определение-клиента-1)
@@ -2944,6 +2945,57 @@ for(let [name, value] of formData) {
 ```
 
 ![Formdata](../img/formdata_02.png)
+
+#### Отправка формы с Blob-данными
+Ранее в разделе Fetch мы видели, что очень легко отправить динамически сгенерированные бинарные данные в формате `Blob`. Мы можем явно передать её в параметр `body` запроса `fetch`.
+
+Но на практике бывает удобнее отправлять изображение не отдельно, а в составе формы, добавив дополнительные поля для имени и другие метаданные.
+
+Кроме того, серверы часто настроены на приём именно форм, а не просто бинарных данных.
+
+В примере ниже посылается изображение из `<canvas>` и ещё несколько полей, как форма, используя `FormData`:
+```html
+<body style="margin:0">
+  <canvas id="canvasElem" width="100" height="80" style="border:1px solid"></canvas>
+
+  <input type="button" value="Отправить" onclick="submit()">
+
+  <script>
+    canvasElem.onmousemove = function(e) {
+      let ctx = canvasElem.getContext('2d');
+      ctx.lineTo(e.clientX, e.clientY);
+      ctx.stroke();
+    };
+
+    async function submit() {
+      let imageBlob = await new Promise(resolve => canvasElem.toBlob(resolve, 'image/png'));
+
+      let formData = new FormData();
+      formData.append("firstName", "John");
+      formData.append("image", imageBlob, "image.png");
+
+      let response = await fetch('/article/formdata/post/image-form', {
+        method: 'POST',
+        body: formData
+      });
+      let result = await response.json();
+      alert(result.message);
+    }
+
+  </script>
+</body>
+```
+
+![Formdata](../img/formdata_03.png)
+
+Пожалуйста, обратите внимание на то, как добавляется изображение `Blob`:
+```js
+formData.append("image", imageBlob, "image.png");
+```
+
+Это как если бы в форме был элемент `<input type="file" name="image">` и пользователь прикрепил бы файл с именем `"image.png"` (3-й аргумент) и данными `imageBlob` (2-й аргумент) из своей файловой системы.
+
+Сервер прочитает и данные и файл, точно так же, как если бы это была обычная отправка формы.[^formdata]
 
 ### Создание клиента для REST API
 Используя **Fetch API** в JavaScript, можно реализовать полноценный клиент для Web API в стиле REST для взаимодействия с пользователем. Архитектура REST предполагает применение следующих методов или типов запросов HTTP для взаимодействия с сервером:
