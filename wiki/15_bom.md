@@ -52,11 +52,12 @@
 - [История браузера. History API](#история-браузера-history-api)
   - [Событие popstate](#событие-popstate)
   - [Перемещение по одностраничному сайту](#перемещение-по-одностраничному-сайту)
-    - [Наивная реализация](#наивная-реализация)
-    - [Исправленная версия](#исправленная-версия)
 - [Объект location](#объект-location)
   - [Управление адресом](#управление-адресом)
 - [Объект navigator](#объект-navigator)
+- [Использование браузерного API](#использование-браузерного-api)
+    - [Наивная реализация](#наивная-реализация)
+    - [Исправленная версия](#исправленная-версия)
 - [Планирование вызовов](#планирование-вызовов)
   - [Функция setTimeout](#функция-settimeout)
     - [Параметры таймера](#параметры-таймера)
@@ -1904,156 +1905,6 @@ window.addEventListener("popstate", (event) => {
 ```
 
 ### Перемещение по одностраничному сайту
-
-#### Наивная реализация
-В качестве отправной точки можно использовать hash-based навигацию, позволяющую реализовать простейшую навигацию для одностраничного приложения. Определим простейший одностраничный сайт в виде следующей веб-страницы ***index.html***:
-```html
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <title>SPA</title>
-</head>
-<body>
-<nav><a href="#home">Home</a> | <a href="#about">About</a> | <a href="#contacts">Contacts</a></nav>
-<h1 id="content"></h1>
-<script>
-// Контейнер, в который загружаем контент
-const contentElement = document.getElementById("content");
-// Объект, который содержит содержимое для различных страниц
-const pages = {
-    home: { content: "Home Page", url: "#home"},
-    about: { content: "About Page", url: "#about"  },
-    contacts: { content: "Contact Page", url: "#contacts"}
-};
-// Обработчик нажатия на ссылки
-function handleClick(event){
-    // получаем адрес перехода
-    const url = event.target.getAttribute("href");
-    // получаем имя страницы, которая совпадает с адресом перехода
-    const pageName = url.split("#").pop();
-    // получаем страницу из объекта pages
-    const page = pages[pageName];
-
-    contentElement.textContent = page.content;
-}
-const links = document.getElementsByTagName("a");
-for (let i = 0; i < links.length; i++) {
-    links[i].addEventListener("click", handleClick, true);
-}
-// по умолчанию загружаем Home Page
-contentElement.textContent = pages.home.content;
-</script>
-</body>
-</html>
-```
-
-Итак, изначально на странице у нас три ссылки, нажимая на которые, мы будем переходить на условные страницы:
-```html
-<nav><a href="#home">Home</a> | <a href="#about">About</a> | <a href="#contacts">Contacts</a></nav>
-```
-
-Для простоты предположим, что контекст условных страниц будет состоять из одного заголовка и будет загружаться в соответствующий элемент на странице:
-```html
-<h1 id="content"></h1>
-```
-
-В коде JavaScript мы будем ссылаться на этот элемент через константу `contentElement`
-
-В коде JavaScript определяем код условных страниц в виде объекта pages:
-```js
-const pages = {
-    home: { content: "Home Page", url: "#home" },
-    about: { content: "About Page", url: "#about" },
-    contacts: { content: "Contact Page", url: "#contacts" }
-};
-```
-
-Каждый объект однотипен: содержит свойство `content`, которое представляет содержимое условной страницы, и свойство `url` — адрес страницы. Но тут важная условность — для простоты названия этих страниц — `home`/`about`/`contacts` совпадают с адресами ссылок. Можно было бы отвязать названия, но это привело бы к увеличению логики в сугубо демонстрационном примере.
-
-Для обработки нажатия ссылок определяется функция `handleClick`, в которую передается объект события. И из этого объекта события через `event.target` мы можем получить нажатую ссылку и ее данные. Так, в начале получаем адрес ссылки и название страницы (которое равно адресу без начального слеша):
-```js
-// получаем адрес перехода
-const url = event.target.getAttribute("href");
-// получаем имя страницы, которая совпадает с адресом перехода
-const pageName = url.split("#").pop();
-// получаем страницу из объекта pages
-const page = pages[pageName];
-```
-
-Получив нужную страницу, смотрим, какая ссылка нажата. При запросе адреса устанавливаем в качестве заголовка содержимое (свойство `content`) текущей страницы:
-```js
-contentElement.textContent = page.content;
-```
-
-Данное наивное решение хотя и отличается простотой реализации, но в то же время имеет несколько существенных недостатков. Основные проблемы:
-
-1. **Кнопки браузера сломаны**: при навигации по кнопкам происходит смена URL, но содержимое страницы никак не меняется.
-
-    Home → About → "Назад" → [остается About, должно быть Home]
-
-    **Причина**: Нет `hashchange` обработчика для восстановления состояния.
-
-    2. **Нет автоматического роутинга**
-
-    Прямая ссылка site.com/#about → всегда показывает Home
-
-    **Причина**: JS не реагирует на изменения хэша из адресной строки.
-
-3. **`event.preventDefault()` отсутствует**
-
-    ```js
-    function handleClick(event){
-        // ❌ Браузер прыгает к якорю #home!
-        contentElement.textContent = page.content;
-        // return event.preventDefault(); ← ОТСУТСТВУЕТ
-    }
-    ```
-
-    **Результат**: страница дёргается к несуществующим якорям.
-
-4. **Уродливые URL** (`#about`)
-
-   - ❌ `site.com/#about` — выглядит как якорь, не страница
-   - ❌ Плохо для SEO
-   - ❌ Неловко для шаринга
-
-5. **Нет обработки <kbd>F5</kbd>/прямых ссылок**
-
-   1. Пользователь: "Посмотри #about"
-   2. Друг открывает → видит Home 😞
-
-#### Исправленная версия
-
-Для исправления необходимо внести следующие минимальные дополнения:
-```js
-// ✅ 1. preventDefault()
-function handleClick(event){
-    event.preventDefault(); // ОСТАВЛЯЕМ!
-    const pageName = event.target.href.split("#").pop();
-    contentElement.textContent = pages[pageName].content;
-}
-
-// ✅ 2. hashchange для кнопок браузера
-window.addEventListener('hashchange', () => {
-    const pageName = location.hash.split("#").pop() || 'home';
-    contentElement.textContent = pages[pageName]?.content || pages.home.content;
-});
-
-// ✅ 3. Инициализация по текущему хэшу
-const pageName = location.hash.split("#").pop() || 'home';
-contentElement.textContent = pages[pageName]?.content || pages.home.content;
-```
-
-Для удобства лучше написать отдельную универсальную функцию маршрутизации:
-```js
-function route() {
-    const pageName = location.hash.slice(1) || 'home';
-    const page = pages[pageName] || pages.home;
-    contentElement.textContent = page.content;
-}
-```
-
 В качестве примера применения History API определим простейший одностраничный сайт в виде следующей веб-страницы ***index.html***:
 ```html
 <!DOCTYPE html>
@@ -2442,6 +2293,159 @@ console.log(navigator.platform);    // MacIntel
 console.log(navigator.languages);   // список поддерживаемых языков
 console.log(navigator.plugins);     // список поддерживаемых плагинов
 ```
+
+## Использование браузерного API
+В качестве примера применения инструментов браузерного API рассмотрим навигацию по одностраничному приложению.
+
+#### Наивная реализация
+В качестве отправной точки можно использовать hash-based навигацию, позволяющую реализовать простейшую навигацию для одностраничного приложения. Определим простейший одностраничный сайт в виде следующей веб-страницы ***index.html***:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>SPA</title>
+</head>
+<body>
+  <nav><a href="#home">Home</a> | <a href="#about">About</a> | <a href="#contacts">Contacts</a></nav>
+  <h1 id="content"></h1>
+  <script>
+    // Контейнер, в который загружаем контент
+    const contentElement = document.getElementById("content");
+    // Объект, который содержит содержимое для различных страниц
+    const pages = {
+        home: { content: "Home Page", url: "#home"},
+        about: { content: "About Page", url: "#about"  },
+        contacts: { content: "Contact Page", url: "#contacts"}
+    };
+    // Обработчик нажатия на ссылки
+    function handleClick(event){
+        // получаем адрес перехода
+        const url = event.target.getAttribute("href");
+        // получаем имя страницы, которая совпадает с адресом перехода
+        const pageName = url.split("#").pop();
+        // получаем страницу из объекта pages
+        const page = pages[pageName];
+
+        contentElement.textContent = page.content;
+    }
+    const links = document.getElementsByTagName("a");
+    for (let i = 0; i < links.length; i++) {
+        links[i].addEventListener("click", handleClick, true);
+    }
+    // по умолчанию загружаем Home Page
+    contentElement.textContent = pages.home.content;
+  </script>
+</body>
+</html>
+```
+
+Итак, изначально на странице у нас три ссылки, нажимая на которые, мы будем переходить на условные страницы:
+```html
+<nav><a href="#home">Home</a> | <a href="#about">About</a> | <a href="#contacts">Contacts</a></nav>
+```
+
+Для простоты предположим, что контекст условных страниц будет состоять из одного заголовка и будет загружаться в соответствующий элемент на странице:
+```html
+<h1 id="content"></h1>
+```
+
+В коде JavaScript мы будем ссылаться на этот элемент через константу `contentElement`
+
+В коде JavaScript определяем код условных страниц в виде объекта pages:
+```js
+const pages = {
+    home: { content: "Home Page", url: "#home" },
+    about: { content: "About Page", url: "#about" },
+    contacts: { content: "Contact Page", url: "#contacts" }
+};
+```
+
+Каждый объект однотипен: содержит свойство `content`, которое представляет содержимое условной страницы, и свойство `url` — адрес страницы. Но тут важная условность — для простоты названия этих страниц — `home`/`about`/`contacts` совпадают с адресами ссылок. Можно было бы отвязать названия, но это привело бы к увеличению логики в сугубо демонстрационном примере.
+
+Для обработки нажатия ссылок определяется функция `handleClick`, в которую передается объект события. И из этого объекта события через `event.target` мы можем получить нажатую ссылку и ее данные. Так, в начале получаем адрес ссылки и название страницы (которое равно адресу без начального слеша):
+```js
+// получаем адрес перехода
+const url = event.target.getAttribute("href");
+// получаем имя страницы, которая совпадает с адресом перехода
+const pageName = url.split("#").pop();
+// получаем страницу из объекта pages
+const page = pages[pageName];
+```
+
+Получив нужную страницу, смотрим, какая ссылка нажата. При запросе адреса устанавливаем в качестве заголовка содержимое (свойство `content`) текущей страницы:
+```js
+contentElement.textContent = page.content;
+```
+
+Данное наивное решение хотя и отличается простотой реализации, но в то же время имеет несколько существенных недостатков. Основные проблемы:
+
+1. **Кнопки браузера сломаны**: при навигации по кнопкам происходит смена URL, но содержимое страницы никак не меняется.
+
+    Home → About → "Назад" → [остается About, должно быть Home]
+
+    **Причина**: Нет `hashchange` обработчика для восстановления состояния.
+
+2. **Нет автоматического роутинга**
+
+    Прямая ссылка *site.com/#about* → всегда показывает Home
+
+    **Причина**: JS не реагирует на изменения хэша из адресной строки.
+
+3. **`event.preventDefault()` отсутствует**
+
+    ```js
+    function handleClick(event){
+        // ❌ Браузер прыгает к якорю #home!
+        contentElement.textContent = page.content;
+        // return event.preventDefault(); ← ОТСУТСТВУЕТ
+    }
+    ```
+
+    **Результат**: страница дёргается к несуществующим якорям.
+
+4. **Уродливые URL** (`#about`)
+
+   - ❌ `site.com/#about` — выглядит как якорь, не страница
+   - ❌ Плохо для SEO
+   - ❌ Неловко для шаринга
+
+5. **Нет обработки <kbd>F5</kbd>/прямых ссылок**
+
+   1. Пользователь: "Посмотри #about"
+   2. Друг открывает → видит Home 😞
+
+#### Исправленная версия
+
+Для исправления необходимо внести следующие минимальные дополнения:
+```js
+// ✅ 1. preventDefault()
+function handleClick(event){
+    event.preventDefault(); // ОСТАВЛЯЕМ!
+    const pageName = event.target.href.split("#").pop();
+    contentElement.textContent = pages[pageName].content;
+}
+
+// ✅ 2. hashchange для кнопок браузера
+window.addEventListener('hashchange', () => {
+    const pageName = location.hash.split("#").pop() || 'home';
+    contentElement.textContent = pages[pageName]?.content || pages.home.content;
+});
+
+// ✅ 3. Инициализация по текущему хэшу
+const pageName = location.hash.split("#").pop() || 'home';
+contentElement.textContent = pages[pageName]?.content || pages.home.content;
+```
+
+Для удобства лучше написать отдельную универсальную функцию маршрутизации:
+```js
+function route() {
+    const pageName = location.hash.slice(1) || 'home';
+    const page = pages[pageName] || pages.home;
+    contentElement.textContent = page.content;
+}
+```
+
 
 ## Планирование вызовов
 Мы можем вызвать функцию не в данный момент, а позже, через заданный интервал времени. Это называется «планирование вызова».
