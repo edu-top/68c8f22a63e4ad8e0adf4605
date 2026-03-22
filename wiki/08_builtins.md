@@ -106,6 +106,7 @@
     - [Форматирование даты](#форматирование-даты)
     - [Форматирование времени](#форматирование-времени)
     - [Объединение даты и времени](#объединение-даты-и-времени)
+    - [Остальные настройки](#остальные-настройки)
 - [Итераторы](#итераторы)
   - [Получение итератора](#получение-итератора-1)
   - [Метод next итераторов](#метод-next-итераторов)
@@ -2946,6 +2947,25 @@ console.log(fullTime);      // 20:42:08 GMT+11:00
 const now = new Date();
 const shortDateTime = new Intl.DateTimeFormat("ru", {dateStyle: "short", timeStyle: "short"}).format(now);
 console.log(shortDateTime);     // 12.09.2021, 20:43
+```
+
+#### Остальные настройки
+При необходимости мы можем использовать остальные настройки. Например, если необходимо применить арабскую систему чисел, то мы можем настроить вывод чисел с помощью параметра `numberingSystem`:
+```js
+const now = new Date();
+const arDateTime1 = new Intl.DateTimeFormat("ar", {dateStyle: "short", timeStyle: "short"}).format(now);
+console.log(arDateTime1);       // 12‏/9‏/2021 8:51 م
+const arDateTime2 = new Intl.DateTimeFormat("ar", {dateStyle: "short", timeStyle: "short", numberingSystem: "arab"}).format(now);
+console.log(arDateTime2);       // م١٢  ١٢‏/٩‏/٢٠٢١ ٨:٥٠
+```
+
+Если приложение рассчитано на среду, где действует другой календарь, то можно задать параметр `calendar`:
+```js
+const now = new Date();
+const persianDateTime = new Intl.DateTimeFormat("fa", {dateStyle: "long", numberingSystem: "arab", calendar: "persian"}).format(now);
+console.log(persianDateTime);       // ٢١ شهریور ١٤٠٠
+const zhDateTime = new Intl.DateTimeFormat("zh", {dateStyle: "long", calendar: "chinese"}).format(now);
+console.log(zhDateTime);            // 2021辛丑年八月初六
 ```
 
 ## Итераторы
