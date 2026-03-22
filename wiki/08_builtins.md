@@ -110,6 +110,7 @@
     - [Методы Date](#методы-date)
   - [Локализация названий и Intl.DisplayNames](#локализация-названий-и-intldisplaynames)
     - [Получение название региона](#получение-название-региона)
+    - [Получение название письменности](#получение-название-письменности)
 - [Итераторы](#итераторы)
   - [Получение итератора](#получение-итератора-1)
   - [Метод next итераторов](#метод-next-итераторов)
@@ -3045,6 +3046,16 @@ const GermanyInGerman = new Intl.DisplayNames("de", {type: "region"}).of("DE");
 console.log(GermanyInEnglish);  // Germany
 console.log(GermanyInRussian);  // Германия
 console.log(GermanyInGerman);   // Deutschland
+```
+
+#### Получение название письменности
+Для получения названия письменного скрипта применяется значение `type: "script"`. Для получения названия письменности в метод **`of()`** передается четырехбуквенный код [ISO-15924](https://unicode.org/iso15924/iso15924-codes.html). Например:
+```js
+const CyrlInEnglish = new Intl.DisplayNames("en", {type: "script"}).of("Cyrl");
+const CyrlInRussian = new Intl.DisplayNames("ru", {type: "script"}).of("Cyrl");
+
+console.log(CyrlInEnglish); // Cyrillic
+console.log(CyrlInRussian); // кириллица
 ```
 
 ## Итераторы
