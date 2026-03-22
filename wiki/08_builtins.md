@@ -104,6 +104,7 @@
   - [Локализация списков и Intl.ListFormat](#локализация-списков-и-intllistformat)
   - [Локализация дат и времени](#локализация-дат-и-времени)
     - [Форматирование даты](#форматирование-даты)
+    - [Форматирование времени](#форматирование-времени)
 - [Итераторы](#итераторы)
   - [Получение итератора](#получение-итератора-1)
   - [Метод next итераторов](#метод-next-итераторов)
@@ -2922,6 +2923,20 @@ const longDate = new Intl.DateTimeFormat("ru", {dateStyle: "long"}).format(now);
 console.log(longDate);      // 12 сентября 2021 г.
 const fullDate = new Intl.DateTimeFormat("ru", {dateStyle: "full"}).format(now);
 console.log(fullDate);      // воскресенье, 12 сентября 2021 г.
+```
+
+#### Форматирование времени
+По умолчанию метод `format()` не выводит время. С помощью параметра **`timeStyle`** настроим вывод времени на примере русскоязычной культуры:
+```js
+const now = new Date();
+const shortTime = new Intl.DateTimeFormat("ru", {timeStyle: "short"}).format(now);
+console.log(shortTime);     // 20:42
+const mediumTime = new Intl.DateTimeFormat("ru", {timeStyle: "medium"}).format(now);
+console.log(mediumTime);    // 20:42:08
+const longTime = new Intl.DateTimeFormat("ru", {timeStyle: "long"}).format(now);
+console.log(longTime);      // 20:42:08 GMT+11
+const fullTime = new Intl.DateTimeFormat("ru", {timeStyle: "full"}).format(now);
+console.log(fullTime);      // 20:42:08 GMT+11:00
 ```
 
 ## Итераторы
