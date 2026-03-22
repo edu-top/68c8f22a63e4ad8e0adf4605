@@ -107,6 +107,7 @@
     - [Форматирование времени](#форматирование-времени)
     - [Объединение даты и времени](#объединение-даты-и-времени)
     - [Остальные настройки](#остальные-настройки)
+    - [Методы Date](#методы-date)
 - [Итераторы](#итераторы)
   - [Получение итератора](#получение-итератора-1)
   - [Метод next итераторов](#метод-next-итераторов)
@@ -2966,6 +2967,27 @@ const persianDateTime = new Intl.DateTimeFormat("fa", {dateStyle: "long", number
 console.log(persianDateTime);       // ٢١ شهریور ١٤٠٠
 const zhDateTime = new Intl.DateTimeFormat("zh", {dateStyle: "long", calendar: "chinese"}).format(now);
 console.log(zhDateTime);            // 2021辛丑年八月初六
+```
+
+#### Методы Date
+Следует отметить, что тип `Date` также предоставляет ряд методов для локализации даты и времени:
+
+- `toLocaleString()`
+
+- `toLocaleDateString()`
+
+- `toLocaleTimeString()`
+
+В качестве параметра эти методы принимают локаль, в которую надо локализовать дату и время:
+```js
+const now = new Date();
+console.log(now.toLocaleString("en"));      // 11/16/2023, 9:17:25 PM
+console.log(now.toLocaleTimeString("en"));  // 9:17:25 PM
+console.log(now.toLocaleDateString("en"));  // 11/16/2023
+
+console.log(now.toLocaleString("ru"));      // 16.11.2023, 21:17:25
+console.log(now.toLocaleTimeString("ru"));  // 21:17:25
+console.log(now.toLocaleDateString("ru"));  // 16.11.2023
 ```
 
 ## Итераторы
