@@ -105,6 +105,7 @@
   - [Локализация дат и времени](#локализация-дат-и-времени)
     - [Форматирование даты](#форматирование-даты)
     - [Форматирование времени](#форматирование-времени)
+    - [Объединение даты и времени](#объединение-даты-и-времени)
 - [Итераторы](#итераторы)
   - [Получение итератора](#получение-итератора-1)
   - [Метод next итераторов](#метод-next-итераторов)
@@ -2937,6 +2938,14 @@ const longTime = new Intl.DateTimeFormat("ru", {timeStyle: "long"}).format(now);
 console.log(longTime);      // 20:42:08 GMT+11
 const fullTime = new Intl.DateTimeFormat("ru", {timeStyle: "full"}).format(now);
 console.log(fullTime);      // 20:42:08 GMT+11:00
+```
+
+#### Объединение даты и времени
+Если мы используем только настройку `dateStyle`, то выводится возвращается только дата. Если применяется настройка `timeStyle`, то возвращается только время. Чтобы возвратить и дату, и время, необходимо установить обе настройки:
+```js
+const now = new Date();
+const shortDateTime = new Intl.DateTimeFormat("ru", {dateStyle: "short", timeStyle: "short"}).format(now);
+console.log(shortDateTime);     // 12.09.2021, 20:43
 ```
 
 ## Итераторы
