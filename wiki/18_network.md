@@ -58,6 +58,7 @@
   - [FormData](#formdata)
     - [Отправка простой формы](#отправка-простой-формы)
     - [Методы объекта FormData](#методы-объекта-formdata)
+    - [Отправка формы с файлом](#отправка-формы-с-файлом)
   - [Создание клиента для REST API](#создание-клиента-для-rest-api)
     - [Создание сервера на node.js](#создание-сервера-на-nodejs)
     - [Определение клиента](#определение-клиента-1)
@@ -2914,6 +2915,35 @@ for(let [name, value] of formData) {
   alert(`${name} = ${value}`); // key1=value1, потом key2=value2
 }
 ```
+
+#### Отправка формы с файлом
+Объекты `FormData` всегда отсылаются с заголовком `Content-Type: multipart/form-data`, этот способ кодировки позволяет отсылать файлы. Таким образом, поля `<input type="file">` тоже отправляются, как это и происходит в случае обычной формы.
+
+Пример такой формы:
+```html
+<form id="formElem">
+  <input type="text" name="firstName" value="John">
+  Картинка: <input type="file" name="picture" accept="image/*">
+  <input type="submit">
+</form>
+
+<script>
+  formElem.onsubmit = async (e) => {
+    e.preventDefault();
+
+    let response = await fetch('/article/formdata/post/user-avatar', {
+      method: 'POST',
+      body: new FormData(formElem)
+    });
+
+    let result = await response.json();
+
+    alert(result.message);
+  };
+</script>
+```
+
+![Formdata](../img/formdata_02.png)
 
 ### Создание клиента для REST API
 Используя **Fetch API** в JavaScript, можно реализовать полноценный клиент для Web API в стиле REST для взаимодействия с пользователем. Архитектура REST предполагает применение следующих методов или типов запросов HTTP для взаимодействия с сервером:
