@@ -1249,6 +1249,41 @@ sayHi(); // Ready to serve, Pete!
 </script>
 ```
 
+В веб-браузере `import.meta.url` возвращает URL модуля: для внешнего скрипта — прямую ссылку на JS-файл, для встроенного в HTML — URL страницы. Например:
+```html
+<!-- Внешний модуль -->
+<script type="module" src="module.js"></script>
+<!-- В module.js -->
+console.log(import.meta.url); // "https://example.com/module.js"
+
+<!-- Встроенный модуль -->
+<script type="module">
+  console.log(import.meta.url); // "https://example.com/page.html"
+</script>
+```
+
+Это полезно для динамических импортов, разрешения путей или работы с URL-параметрами (например, `new URL('./file.txt', import.meta.url)`).
+
+В Node.js (с версии 12+) `import.meta.url` даёт полный путь к файлу модуля как строку URL (file://). Для получения пути как строки используйте `fileURLToPath(import.meta.url)` из модуля `url`:
+```js
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+console.log(__filename); // "/path/to/module.js"
+```
+
+Node.js также поддерживает `import.meta.dirname` и `import.meta.filename` экспериментально (с флагом `--experimental-import-meta-resolve`).
+​
+Другие возможности
+- **URL-параметры**: работают с query- или hash-параметрами модуля (например, `module.js?worker`).
+​
+- **Расширения**: хост-окружения (бандлеры вроде Vite, Webpack) добавляют свойства, например, `import.meta.env` для переменных окружения.
+
+- **Статус**: стандартизировано в ECMAScript 2026, поддержка в браузерах >95% (Chrome 64+, Firefox 62+).
+
 ##### В модуле «this» не определён
 Это незначительная особенность, но для полноты картины нам нужно упомянуть об этом.
 
