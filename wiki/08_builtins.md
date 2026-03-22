@@ -111,6 +111,7 @@
   - [Локализация названий и Intl.DisplayNames](#локализация-названий-и-intldisplaynames)
     - [Получение название региона](#получение-название-региона)
     - [Получение название письменности](#получение-название-письменности)
+    - [Получение название языка](#получение-название-языка)
 - [Итераторы](#итераторы)
   - [Получение итератора](#получение-итератора-1)
   - [Метод next итераторов](#метод-next-итераторов)
@@ -3056,6 +3057,30 @@ const CyrlInRussian = new Intl.DisplayNames("ru", {type: "script"}).of("Cyrl");
 
 console.log(CyrlInEnglish); // Cyrillic
 console.log(CyrlInRussian); // кириллица
+```
+
+#### Получение название языка
+Для получения названия языка применяется значение `type: "language"`, а в метод **`of()`** передается код языка в формате `languageCode[-scriptCode][-regionCode](-variant)`, где компонент `languageCode` представляет двухбуквенный код языка в формате ISO 639-1 или трехбуквенный код в формате ISO 639-2. Необязательные компоненты `scriptCode` и `regionCode` — выше рассмотренные коды письменности и региона соответственно.
+
+Например:
+```js
+const enRussian = new Intl.DisplayNames("en", {type: "language"}).of("ru");
+const ruRussian = new Intl.DisplayNames("ru", {type: "language"}).of("ru");
+const deRussian = new Intl.DisplayNames("de", {type: "language"}).of("ru");
+
+console.log(enRussian); // Russian
+console.log(ruRussian); // русский
+console.log(deRussian); // Russisch
+```
+
+Используем код языка вместе с кодом региона:
+```js
+const ruLang = new Intl.DisplayNames("ru", {type: "language"});
+const enUS = ruLang.of("en-US");
+const enGB = ruLang.of("en-GB");
+
+console.log(enUS);  // американский английский
+console.log(enGB);  // британский английский
 ```
 
 ## Итераторы
