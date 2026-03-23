@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>SPA</title>
+</head>
+<body>
+  <nav><a href="/home">Home</a> | <a href="/about">About</a> | <a href="/contacts">Contacts</a></nav>
+  <h1 id="content"></h1>
+  <script>
+
+    // Контейнер, в который загружаем контент
+    const contentElement = document.getElementById("content");
+
+    // Объект, который содержит содержимое для различных страниц
+    const pages = {
+        home: { content: "Home Page", title: "Home", url: "/home"},
+        about: { content: "About Page", title: "About", url: "/about"  },
+        contacts: { content: "Contact Page", title: "Contact", url: "/contacts"}
+    };
+
+    // Универсальная функция роутинга
+    function route(url, forced) {
+        // получаем имя страницы, которая совпадает с адресом перехода
+        const pageName = url.split("/").pop() || 'home';
+        // получаем страницу из объекта pages
+        const page = pages[pageName] || pages.home;
+        // если текущий адрес совпадает с запрошенным, то игнорируем переход
+        if (history.state?.url == url && !forced) return;
+        // устанавливаем содержимое
+        contentElement.textContent = page.content;
+        // меняем адресную строку (добавляем в историю)
+        window.history.pushState(
+            page,       // объект state
+            page.title, // заголовок страницы
+            url         // URL
+            );
+        // если браузер не устанавливает заголовок
+        document.title = page.title;
+    }
+
+    // Обработчик нажатия на ссылки
+    function handleClick(event){
+        // получаем адрес перехода
+        const url = event.target.getAttribute('href');
+        route(url); // обновляем контент
+        return event.preventDefault(); // предотвращение перехода
+    }
+
+    // Установка обработчиков
+    const links = document.getElementsByTagName("a");
+    for (let i = 0; i < links.length; i++) {
+        links[i].addEventListener("click", handleClick, true);
+    }
+
+    // Установка обработчика для извлечения состояния в History API
+    window.addEventListener("popstate", (event) => {
+        if(!event.state) return;  // игнорируем, если состояния нет
+
+        contentElement.textContent = event.state.content;   // получаем старое состояние
+    });
+
+    // Инициализация (по умолчанию)
+    route(window.location.pathname, true);
+
+  </script>
+</body>
+</html>
