@@ -2341,6 +2341,8 @@ console.log(navigator.plugins);     // список поддерживаемых
 </html>
 ```
 
+[Исходный код](../samples/15_bom/spa/index1.html)
+
 Итак, изначально на странице у нас три ссылки, нажимая на которые, мы будем переходить на условные страницы:
 ```html
 <nav><a href="#home">Home</a> | <a href="#about">About</a> | <a href="#contacts">Contacts</a></nav>
