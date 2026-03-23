@@ -115,6 +115,7 @@
     - [Получение название валюты](#получение-название-валюты)
   - [Форматирование чисел и Intl.NumberFormat](#форматирование-чисел-и-intlnumberformat)
     - [Форматирование процентов](#форматирование-процентов)
+      - [Вывод дробной части](#вывод-дробной-части)
 - [Практическая работа. Обработка признаков объекта](#практическая-работа-обработка-признаков-объекта)
   - [Задание](#задание)
   - [Методика расчета](#методика-расчета)
@@ -3209,6 +3210,18 @@ const tr = new Intl.NumberFormat("tr", {style: "percent"}).format(value);
 console.log(en);    // 85%
 console.log(ru);    // 85 %
 console.log(tr);    // %85
+```
+
+##### Вывод дробной части
+Однако в примере выше мы видим, что теряется дробная часть. Чтобы исправить положение, мы можем использовать параметр `minimumFractionDigits`, который задает количество знаков в дробной части:
+```js
+const value = 0.851;
+
+const en = new Intl.NumberFormat("en", {style: "percent", minimumFractionDigits: 2}).format(value);
+const ru = new Intl.NumberFormat("ru", {style: "percent", minimumFractionDigits: 2}).format(value);
+
+console.log(en);    // 85.10%
+console.log(ru);    // 85,10 %
 ```
 
 ## Практическая работа. Обработка признаков объекта
