@@ -114,6 +114,7 @@
     - [Получение название языка](#получение-название-языка)
     - [Получение название валюты](#получение-название-валюты)
   - [Форматирование чисел и Intl.NumberFormat](#форматирование-чисел-и-intlnumberformat)
+    - [Форматирование процентов](#форматирование-процентов)
 - [Практическая работа. Обработка признаков объекта](#практическая-работа-обработка-признаков-объекта)
   - [Задание](#задание)
   - [Методика расчета](#методика-расчета)
@@ -3194,6 +3195,20 @@ const ru = new Intl.NumberFormat("ru", {style: "decimal"}).format(amount);
 // const ru = new Intl.NumberFormat("ru").format(amount);
 
 console.log(ru);    // 5 500,67
+```
+
+#### Форматирование процентов
+В разных культурах может отличаться написание процентов. Для локализации процентов применяется значение
+```js
+const value = 0.851;
+
+const en = new Intl.NumberFormat("en", {style: "percent"}).format(value);
+const ru = new Intl.NumberFormat("ru", {style: "percent"}).format(value);
+const tr = new Intl.NumberFormat("tr", {style: "percent"}).format(value);
+
+console.log(en);    // 85%
+console.log(ru);    // 85 %
+console.log(tr);    // %85
 ```
 
 ## Практическая работа. Обработка признаков объекта
