@@ -4,7 +4,7 @@ const app = express();
 
 // Все SPA-маршруты → index.html
 app.get(['/home', '/about', '/contacts', '/'], (req, res) => {
-    res.sendFile(path.join(__dirname, 'index3.html'));
+    res.sendFile(path.join(__dirname, 'index5.html'));
 });
 
 // Статические файлы (CSS, JS, изображения)
