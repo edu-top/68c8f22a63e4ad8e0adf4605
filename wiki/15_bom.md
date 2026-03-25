@@ -2976,7 +2976,7 @@ const timerId = createTimer();
 // bigData НЕ удалится — таймер держит замыкание!
 ```
 
-Размер утечки памяти (memory leak):
+Размер утечки памяти (*memory leak*):
 1. Функция-таймер: ~1КБ
 2. Замыкание (переменные): 1МБ+
 3. `setInterval` держит ВСЁ лексическое окружение
@@ -3019,13 +3019,13 @@ function createSafeTimer() {
 
     ```js
     // Плохо
-    let clockState = {hours: 0, users: heavyObject};
+    let clockState = { hours: 0, users: heavyObject };
     setInterval(() => console.log(clockState), 1000);
 
     // Хорошо
     const id = setInterval(() => {
-    const now = new Date(); // Локальные переменные!
-    console.log(now.toLocaleTimeString());
+      const now = new Date(); // Локальные переменные!
+      console.log(now.toLocaleTimeString());
     }, 1000);
     ```
 
