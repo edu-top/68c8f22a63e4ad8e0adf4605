@@ -119,6 +119,7 @@
     - [Форматирование валюты](#форматирование-валюты)
     - [Форматирование единиц измерения](#форматирование-единиц-измерения)
     - [Метод toLocaleString типа Number](#метод-tolocalestring-типа-number)
+  - [Int.Collator и сравнение строк](#intcollator-и-сравнение-строк)
 - [Практическая работа. Обработка признаков объекта](#практическая-работа-обработка-признаков-объекта)
   - [Задание](#задание)
   - [Методика расчета](#методика-расчета)
@@ -3314,6 +3315,35 @@ console.log(num.toLocaleString("de"));  // 1.007,56
 console.log(num.toLocaleString("ru"));  // 1 007,56
 ```
 
+### Int.Collator и сравнение строк
+Для сравнения строк с учетом языка применяется тип **`Collator`**. Для этого тип `Collator` предоставляет метод **`compare()`**, который в качестве параметров принимает две строки:
+```js
+collator.compare(string1, string2)
+```
+
+Метод `compare` возвращает одно из трех числовых значений:
+
+- **`1`**, если первая строка "больше", чем вторая (первая строка расположена после второй строки в лексикографическом порядке).
+
+- **`-1`**, если вторая строка "больше" первой (первая строка располагается до второй строки)
+
+- **`0`**, если обе строки равны
+
+Пример сравнения:
+```js
+const collator = new Intl.Collator("ru-RU");
+console.log(collator.compare("б", "А"));    // 1
+console.log(collator.compare("б", "Б"));    // -1
+console.log(collator.compare("б", "В"));    // -1
+console.log(collator.compare("б", "б"));    // 0
+
+console.log(collator.compare("мир", "миг"));   // 1
+console.log(collator.compare("мир", "миф"));    // -1
+console.log(collator.compare("мир", "мир"));    // 0
+```
+
+[^18.6]
+
 ## Практическая работа. Обработка признаков объекта
 Создать сервис `ML` для обработки данных в виде статического объекта.
 
@@ -3432,3 +3462,4 @@ console.log(num.toLocaleString("ru"));  // 1 007,56
 [^18.2]: [Локализация дат и времени](https://metanit.com/web/javascript/18.2.php)
 [^18.3]: [Локализация названий и Intl.DisplayNames](https://metanit.com/web/javascript/18.3.php)
 [^18.4]: [Форматирование чисел и Intl.NumberFormat](https://metanit.com/web/javascript/18.4.php)
+[^18.6]: [Int.Collator и сравнение строк](https://metanit.com/web/javascript/18.6.php)
