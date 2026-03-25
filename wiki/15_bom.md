@@ -3044,9 +3044,9 @@ function createSafeTimer() {
 
     ```js
     function safeClock() {
-    return setInterval(() => {
-        // Локальные переменные только!
-    }, 1000);
+      return setInterval(() => {
+          // Локальные переменные только!
+      }, 1000);
     }
 
     const clockId = safeClock();
@@ -3060,8 +3060,8 @@ function createSafeTimer() {
     const dataCache = new WeakMap();
 
     setInterval(() => {
-    const heavy = getHeavyData();
-    dataCache.set(someKey, heavy); // Автоочистка!
+      const heavy = getHeavyData();
+      dataCache.set(someKey, heavy); // Автоочистка!
     }, 5000);
     ```
 
@@ -3069,9 +3069,9 @@ function createSafeTimer() {
 
     ```js
     function gameLoop() {
-    // Локальные переменные, нет утечек
-    updateGame();
-    requestAnimationFrame(gameLoop);
+      // Локальные переменные, нет утечек
+      updateGame();
+      requestAnimationFrame(gameLoop);
     }
     ```
 
@@ -3200,10 +3200,10 @@ function gameLoop(currentTime) {
     ```js
     let last = performance.now();
     setInterval(() => {
-    const now = performance.now();
-    const delta = now - last; // Фактическое время
-    update(delta);
-    last = now;
+      const now = performance.now();
+      const delta = now - last; // Фактическое время
+      update(delta);
+      last = now;
     }, 16);
     ```
 
@@ -3212,8 +3212,8 @@ function gameLoop(currentTime) {
     ```js
     // Работает только в видимой вкладке, точный 60fps
     function loop(time) {
-    update(time);
-    requestAnimationFrame(loop);
+      update(time);
+      requestAnimationFrame(loop);
     }
     ```
 
@@ -3221,11 +3221,11 @@ function gameLoop(currentTime) {
 
     ```js
     function preciseInterval(callback, interval) {
-    let expected = Date.now() + interval;
-    setTimeout(() => {
+      let expected = Date.now() + interval;
+      setTimeout(() => {
         callback();
         preciseInterval(callback, interval);
-    }, Math.max(0, expected - Date.now()));
+      }, Math.max(0, expected - Date.now()));
     }
     ```
 
@@ -3233,10 +3233,10 @@ function gameLoop(currentTime) {
 
 | Задача        | Таймер                | Точность |
 | ------------- | --------------------- | -------- |
-| Игры/анимация | `requestAnimationFrame` | 60fps 🔴   |
-| Часы/UI       | `setInterval`           | ~100мс 🟡  |
-| API polling   | `setInterval`           | 1сек+ 🟢   |
-| Однократная   | `setTimeout`            | 4-1000мс |
+| Игры/анимация | `requestAnimationFrame` | 🔴 60fps    |
+| Часы/UI       | `setInterval`           | 🟡 ~100мс   |
+| API polling   | `setInterval`           | 🟢 1сек+    |
+| Однократная   | `setTimeout`            | 4–1000мс |
 
 **Правило**: Не полагайтесь на точность `setTimeout(0)`. Для игр — `requestAnimationFrame`. Для часов — дельта времени. Фоновые вкладки всегда лагают!
 
