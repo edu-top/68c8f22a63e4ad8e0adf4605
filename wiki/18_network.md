@@ -72,6 +72,7 @@
       - [Использование скриптов](#использование-скриптов)
     - [Простые запросы](#простые-запросы)
     - [CORS для простых запросов](#cors-для-простых-запросов)
+    - [Заголовки ответа](#заголовки-ответа-1)
 - [Web Socket API](#web-socket-api)
   - [Управление жизненным циклом соединения](#управление-жизненным-циклом-соединения)
   - [Отправка данных на сервер](#отправка-данных-на-сервер)
@@ -3965,6 +3966,34 @@ Origin: https://javascript.info
 Content-Type:text/html; charset=UTF-8
 Access-Control-Allow-Origin: https://javascript.info
 ```
+
+#### Заголовки ответа
+По умолчанию при запросе к другому источнику JavaScript может получить доступ только к так называемым «простым» заголовкам ответа:
+
+- `Cache-Control`
+- `Content-Language`
+- `Content-Length`
+- `Content-Type`
+- `Expires`
+- `Last-Modified`
+- `Pragma`
+
+При доступе к любому другому заголовку ответа будет ошибка.
+
+Чтобы разрешить JavaScript доступ к любому другому заголовку ответа, сервер должен указать заголовок `Access-Control-Expose-Headers`. Он содержит список, через запятую, заголовков, которые не являются простыми, но доступ к которым разрешён.
+
+Например:
+```js
+200 OK
+Content-Type:text/html; charset=UTF-8
+Content-Length: 12345
+Content-Encoding: gzip
+API-Key: 2c9de507f2c54aa1
+Access-Control-Allow-Origin: https://javascript.info
+Access-Control-Expose-Headers: Content-Encoding,API-Key
+```
+
+При таком заголовке `Access-Control-Expose-Headers`, скрипту разрешено получить заголовки `Content-Encoding` и `API-Key` ответа.
 
 ## Web Socket API
 <dfn title="Web Socket API">Web Socket API</dfn> позволяет организовать соединение между клиентом и сервером, благодаря которому клиент и сервер могут отправлять данные друг другу в любое время.[^22.1]
