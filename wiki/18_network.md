@@ -62,6 +62,7 @@
     - [Отправка формы с Blob-данными](#отправка-формы-с-blob-данными)
     - [Итого](#итого-1)
   - [Fetch: ход загрузки](#fetch-ход-загрузки)
+  - [Fetch: прерывание запроса](#fetch-прерывание-запроса)
   - [Создание клиента для REST API](#создание-клиента-для-rest-api)
     - [Создание сервера на node.js](#создание-сервера-на-nodejs)
     - [Определение клиента](#определение-клиента-1)
@@ -3136,6 +3137,122 @@ alert(commits[0].author.login);
 
 На всякий случай повторимся, что здесь мы рассмотрели, как отслеживать процесс получения данных с сервера, а не их отправки на сервер. Для отслеживания отправки у `fetch` пока нет способа.[^fetch-progress]
 
+### Fetch: прерывание запроса
+Как мы знаем, метод `fetch` возвращает промис. А в JavaScript в целом нет понятия «отмены» промиса. Как же прервать запрос `fetch`?
+
+Для таких целей существует специальный встроенный объект: `AbortController`, который можно использовать для отмены не только `fetch`, но и других асинхронных задач.
+
+Использовать его достаточно просто:
+
+1. Шаг 1: создаём контроллер:
+
+    ```js
+    let controller = new AbortController();
+    ```
+
+    Контроллер `controller` – чрезвычайно простой объект.
+
+    - Он имеет единственный метод `abort()` и единственное свойство `signal`.
+    - При вызове `abort()`:
+    - генерируется событие с именем `abort` на объекте `controller.signal`
+    - свойство `controller.signal.aborted` становится равным `true`.
+
+    Все, кто хочет узнать о вызове `abort()`, ставят обработчики на `controller.signal`, чтобы отслеживать его.
+
+    Вот так (пока без `fetch`):
+    ```js
+    let controller = new AbortController();
+    let signal = controller.signal;
+
+    // срабатывает при вызове controller.abort()
+    signal.addEventListener('abort', () => alert("отмена!"));
+
+    controller.abort(); // отмена!
+
+    alert(signal.aborted); // true
+    ```
+
+2. Шаг 2: передайте свойство `signal` опцией в метод `fetch`:
+
+    ```js
+    let controller = new AbortController();
+    fetch(url, {
+    signal: controller.signal
+    });
+    ```
+
+    Метод `fetch` умеет работать с `AbortController`, он слушает событие `abort` на `signal`.
+
+3. Шаг 3: чтобы прервать выполнение `fetch`, вызовите `controller.abort()`:
+
+    ```js
+    controller.abort();
+    ```
+
+    Вот и всё: `fetch` получает событие из `signal` и прерывает запрос.
+
+Когда `fetch` отменяется, его промис завершается с ошибкой `AbortError`, поэтому мы должны обработать её, например, в `try..catch`:
+```js
+// прервать через 1 секунду
+let controller = new AbortController();
+setTimeout(() => controller.abort(), 1000);
+
+try {
+  let response = await fetch('/article/fetch-abort/demo/hang', {
+    signal: controller.signal
+  });
+} catch(err) {
+  if (err.name == 'AbortError') { // обработать ошибку от вызова abort()
+    alert("Прервано!");
+  } else {
+    throw err;
+  }
+}
+```
+
+**`AbortController` – масштабируемый, он позволяет отменить несколько вызовов `fetch` одновременно.**
+
+Например, здесь мы запрашиваем много URL параллельно, и контроллер прерывает их все:
+```js
+let urls = [...]; // список URL для параллельных fetch
+
+let controller = new AbortController();
+
+let fetchJobs = urls.map(url => fetch(url, {
+  signal: controller.signal
+}));
+
+let results = await Promise.all(fetchJobs);
+
+// если откуда-то вызвать controller.abort(),
+// то это прервёт все вызовы fetch
+```
+
+Если у нас есть собственные асинхронные задачи, отличные от `fetch`, мы можем использовать один `AbortController` для их остановки вместе с `fetch`.
+
+Нужно лишь слушать его событие `abort`:
+```js
+let urls = [...];
+let controller = new AbortController();
+
+let ourJob = new Promise((resolve, reject) => { // наша задача
+  ...
+  controller.signal.addEventListener('abort', reject);
+});
+
+let fetchJobs = urls.map(url => fetch(url, { // запросы fetch
+  signal: controller.signal
+}));
+
+// ожидать выполнения нашей задачи и всех запросов
+let results = await Promise.all([...fetchJobs, ourJob]);
+
+// вызов откуда-нибудь ещё:
+// controller.abort() прервёт все вызовы fetch и наши задачи
+```
+
+Так что `AbortController` существует не только для `fetch`, это универсальный объект для отмены асинхронных задач, в `fetch` встроена интеграция с ним.[^fetch-abort]
+
 ### Создание клиента для REST API
 Используя **Fetch API** в JavaScript, можно реализовать полноценный клиент для Web API в стиле REST для взаимодействия с пользователем. Архитектура REST предполагает применение следующих методов или типов запросов HTTP для взаимодействия с сервером:
 
@@ -4170,3 +4287,4 @@ Web Socket API
 [^fetch]: [Fetch](https://learn.javascript.ru/fetch)
 [^formdata]: [FormData](https://learn.javascript.ru/formdata)
 [^fetch-progress]: [Fetch: ход загрузки](https://learn.javascript.ru/fetch-progress)
+[^fetch-abort]: [Fetch: прерывание запроса](https://learn.javascript.ru/fetch-abort)
