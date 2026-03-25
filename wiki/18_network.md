@@ -66,6 +66,7 @@
   - [Создание клиента для REST API](#создание-клиента-для-rest-api)
     - [Создание сервера на node.js](#создание-сервера-на-nodejs)
     - [Определение клиента](#определение-клиента-1)
+  - [Fetch: запросы на другие сайты](#fetch-запросы-на-другие-сайты)
 - [Web Socket API](#web-socket-api)
   - [Управление жизненным циклом соединения](#управление-жизненным-циклом-соединения)
   - [Отправка данных на сервер](#отправка-данных-на-сервер)
@@ -3807,6 +3808,26 @@ node server.js
 
 ![REST и API и функция fetch в JavaScript](../img/fetch9.1.png)
 
+### Fetch: запросы на другие сайты
+Если мы сделаем запрос `fetch` на другой веб-сайт, он, вероятно, завершится неудачей.
+
+Например, давайте попробуем запросить http://example.com:
+```js
+try {
+  await fetch('http://example.com');
+} catch(err) {
+  alert(err); // Failed to fetch
+}
+```
+
+Вызов `fetch` не удался, как и ожидалось.
+
+Ключевым понятием здесь является *источник* (origin) – комбинация домен/порт/протокол.
+
+Запросы на другой источник – отправленные на другой домен (или даже поддомен), или протокол, или порт – требуют специальных заголовков от удалённой стороны.
+
+Эта политика называется «CORS»: Cross-Origin Resource Sharing («совместное использование ресурсов между разными источниками»).[^fetch-crossorigin]
+
 ## Web Socket API
 <dfn title="Web Socket API">Web Socket API</dfn> позволяет организовать соединение между клиентом и сервером, благодаря которому клиент и сервер могут отправлять данные друг другу в любое время.[^22.1]
 
@@ -4288,3 +4309,4 @@ Web Socket API
 [^formdata]: [FormData](https://learn.javascript.ru/formdata)
 [^fetch-progress]: [Fetch: ход загрузки](https://learn.javascript.ru/fetch-progress)
 [^fetch-abort]: [Fetch: прерывание запроса](https://learn.javascript.ru/fetch-abort)
+[^fetch-crossorigin]: [Fetch: запросы на другие сайты](https://learn.javascript.ru/fetch-crossorigin)
