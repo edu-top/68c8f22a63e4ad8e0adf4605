@@ -116,6 +116,7 @@
   - [Форматирование чисел и Intl.NumberFormat](#форматирование-чисел-и-intlnumberformat)
     - [Форматирование процентов](#форматирование-процентов)
       - [Вывод дробной части](#вывод-дробной-части)
+    - [Форматирование валюты](#форматирование-валюты)
 - [Практическая работа. Обработка признаков объекта](#практическая-работа-обработка-признаков-объекта)
   - [Задание](#задание)
   - [Методика расчета](#методика-расчета)
@@ -3222,6 +3223,46 @@ const ru = new Intl.NumberFormat("ru", {style: "percent", minimumFractionDigits:
 
 console.log(en);    // 85.10%
 console.log(ru);    // 85,10 %
+```
+
+#### Форматирование валюты
+Для форматирования валюты применяется параметр `style: "currency"`, при этом также надо указать параметр `currency`, которому передается код валюты:
+```js
+const value = 85.1;
+
+const en = new Intl.NumberFormat("en", {style: "currency", currency: "USD"}).format(value);
+const ru = new Intl.NumberFormat("ru", {style: "currency", currency: "USD"}).format(value);
+const tr = new Intl.NumberFormat("tr", {style: "currency", currency: "USD"}).format(value);
+
+console.log(en);    // $85.10
+console.log(ru);    // 85,10 $
+console.log(tr);    // $85,10
+```
+
+Вывод нескольких валют:
+```js
+const value = 85.1;
+
+const usd = new Intl.NumberFormat("ru", {style: "currency", currency: "USD"}).format(value);
+const euro = new Intl.NumberFormat("ru", {style: "currency", currency: "EUR"}).format(value);
+const rub = new Intl.NumberFormat("ru", {style: "currency", currency: "RUB"}).format(value);
+
+console.log(usd);   // 85,10 $
+console.log(euro);  // 85,10 €
+console.log(rub);   // 85,10 ₽
+```
+
+По умолчанию выводится символ валюты, однако значение `currencyDisplay: "name"` позволяет вывести локализованное название валюты:
+```js
+const value = 85;
+
+const usd = new Intl.NumberFormat("ru", {style: "currency", currency: "USD", currencyDisplay: "name", minimumFractionDigits: 0}).format(value);
+const euro = new Intl.NumberFormat("ru", {style: "currency", currency: "EUR", currencyDisplay: "name"}).format(value);
+const rub = new Intl.NumberFormat("ru", {style: "currency", currency: "RUB", currencyDisplay: "name"}).format(value);
+
+console.log(usd);   // 85 долларов США
+console.log(euro);  // 85,00 евро
+console.log(rub);   // 85,00 российского рубля
 ```
 
 ## Практическая работа. Обработка признаков объекта
