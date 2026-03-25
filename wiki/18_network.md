@@ -74,6 +74,7 @@
     - [CORS для простых запросов](#cors-для-простых-запросов)
     - [Заголовки ответа](#заголовки-ответа-1)
     - [«Непростые» запросы](#непростые-запросы)
+      - [Шаг 1 (предзапрос)](#шаг-1-предзапрос)
 - [Web Socket API](#web-socket-api)
   - [Управление жизненным циклом соединения](#управление-жизненным-циклом-соединения)
   - [Отправка данных на сервер](#отправка-данных-на-сервер)
@@ -4042,6 +4043,23 @@ let response = await fetch('https://site.com/service.json', {
 - Метод `PATCH`
 - `Content-Type` не один из: `application/x-www-form-urlencoded`, `multipart/form-data`, `text/plain`.
 - Содержит «непростой» заголовок `API-Key`.
+
+##### Шаг 1 (предзапрос)
+Перед тем, как послать такой запрос, браузер самостоятельно генерирует и посылает предзапрос, который выглядит следующим образом:
+```js
+OPTIONS /service.json
+Host: site.com
+Origin: https://javascript.info
+Access-Control-Request-Method: PATCH
+Access-Control-Request-Headers: Content-Type,API-Key
+```
+
+- Метод: `OPTIONS`.
+- Путь – точно такой же, как в основном запросе: `/service.json`.
+- Особые заголовки:
+    - `Origin` – источник.
+    - `Access-Control-Request-Method` – запрашиваемый метод.
+    - `Access-Control-Request-Headers` – разделённый запятыми список «непростых» заголовков запроса.
 
 ## Web Socket API
 <dfn title="Web Socket API">Web Socket API</dfn> позволяет организовать соединение между клиентом и сервером, благодаря которому клиент и сервер могут отправлять данные друг другу в любое время.[^22.1]
