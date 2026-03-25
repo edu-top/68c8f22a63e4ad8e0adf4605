@@ -117,6 +117,7 @@
     - [Форматирование процентов](#форматирование-процентов)
       - [Вывод дробной части](#вывод-дробной-части)
     - [Форматирование валюты](#форматирование-валюты)
+    - [Форматирование единиц измерения](#форматирование-единиц-измерения)
 - [Практическая работа. Обработка признаков объекта](#практическая-работа-обработка-признаков-объекта)
   - [Задание](#задание)
   - [Методика расчета](#методика-расчета)
@@ -3263,6 +3264,44 @@ const rub = new Intl.NumberFormat("ru", {style: "currency", currency: "RUB", cur
 console.log(usd);   // 85 долларов США
 console.log(euro);  // 85,00 евро
 console.log(rub);   // 85,00 российского рубля
+```
+
+#### Форматирование единиц измерения
+Для форматирования единиц измерения применяется значение `style: "unit"`. При этом также необходимо указать название единицы измерения с помощью параметра `unit`:
+```js
+const value = 85;
+
+const en = new Intl.NumberFormat("en", {style: "unit", unit: "liter"}).format(value);
+const ru = new Intl.NumberFormat("ru", {style: "unit", unit: "liter"}).format(value);
+const zh = new Intl.NumberFormat("zh", {style: "unit", unit: "liter"}).format(value);
+
+console.log(en);    // 85 L
+console.log(ru);    // 85 л
+console.log(zh);    // 85升
+```
+
+По умолчанию применяет сокращенная форма наименования валюты. С помощью значения `unitDisplay: "long"` можно задать вывод полного наименования:
+```js
+const value = 85;
+
+const longLiter = new Intl.NumberFormat("ru", {style: "unit", unit: "liter", unitDisplay: "long"}).format(value);
+const shortLiter = new Intl.NumberFormat("ru", {style: "unit", unit: "liter", unitDisplay: "short"}).format(value);
+
+console.log(longLiter);     // 85 литров
+console.log(shortLiter);    // 85 л
+```
+
+Еще несколько примеров с форматированием разных единиц измерения:
+```js
+const value = 85;
+
+const kilobyte = new Intl.NumberFormat("ru", {style: "unit", unit: "kilobyte", unitDisplay: "long"}).format(value);
+const meter = new Intl.NumberFormat("ru", {style: "unit", unit: "meter", unitDisplay: "long"}).format(value);
+const gram = new Intl.NumberFormat("ru", {style: "unit", unit: "gram", unitDisplay: "long"}).format(value);
+
+console.log(kilobyte);  // 85 килобайт
+console.log(meter);     // 85 метров
+console.log(gram);      // 85 грамм
 ```
 
 ## Практическая работа. Обработка признаков объекта
