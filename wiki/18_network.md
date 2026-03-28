@@ -1831,7 +1831,7 @@ setTimeout(() => { // прячем через три секунды
     Если мы уже получили ответ с `response.text()`, тогда `response.json()` не сработает, так как данные уже были обработаны.
 
     ```js
-    let text = await response.text(); // тело ответа обработано
+    let text = await response.text();   // тело ответа обработано
     let parsed = await response.json(); // ошибка (данные уже были обработаны)
     ```
 
