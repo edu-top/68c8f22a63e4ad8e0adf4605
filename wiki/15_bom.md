@@ -1191,8 +1191,8 @@ window.onblur = () => window.focus();
 
 А эти – разные источники:
 
-- `http://www.site.com` (другой домен: `www.` важен)
-- `http://`**`site.org`** (другой домен: `.org` важен)
+- `http://`**`www`**`.site.com` (другой домен: `www.` важен)
+- `http://site.`**`org`** (другой домен: `.org` важен)
 - **`https://`**`site.com` (другой протокол: `https`)
 - `http://site.com:`**`8080`** (другой порт: `8080`)
 
