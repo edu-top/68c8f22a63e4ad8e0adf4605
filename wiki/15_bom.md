@@ -1309,7 +1309,7 @@ document.domain = 'site.com';
 <script>
   let oldDoc = iframe.contentDocument;
 
-  // каждый 100 мс проверяем, не изменился ли документ
+  // каждые 100 мс проверяем, не изменился ли документ
   let timer = setInterval(() => {
     let newDoc = iframe.contentDocument;
     if (newDoc == oldDoc) return;
