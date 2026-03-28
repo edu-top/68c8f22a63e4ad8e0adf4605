@@ -1493,7 +1493,7 @@ sayHello();
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>DevPM Vault</title>
+    <title>Example</title>
 </head>
 <body>
 <script type="module" src="main.js"></script>
@@ -1514,15 +1514,15 @@ http.createServer(function(request, response){
 
     // получаем путь после слеша
     let filePath = request.url.substring(1);
-    if(filePath == "") filePath = "index.html";
+    if (filePath == "") filePath = "index.html";
     fs.readFile(filePath, function(error, data){
 
-        if(error){
+        if (error){
             response.statusCode = 404;
             response.end("Resourse not found!");
         }
-        else{
-            if(filePath.endsWith(".js")) response.setHeader("Content-Type", "text/javascript");
+        else {
+            if (filePath.endsWith(".js")) response.setHeader("Content-Type", "text/javascript");
             response.end(data);
         }
     });
