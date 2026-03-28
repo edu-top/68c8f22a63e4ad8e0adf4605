@@ -1354,7 +1354,7 @@ iframe.onload = () => {
 | ------------- | -------------------- | ------------------------------ |
 | `iframe`-доступ | `iframe.contentWindow` | `postMessage`                    |
 | AJAX          | без CORS             | Fetch с CORS                   |
-| `Window`-доступ | window.parent        | `BroadcastChannel`, `SharedWorker` |
+| `Window`-доступ | `window.parent`        | `BroadcastChannel`, `SharedWorker` |
 
 **Вывод**: `document.domain` — устаревший хак для legacy-кода. Для новых проектов следует использовать `postMessage`, CORS, или `window.postMessage`.
 
