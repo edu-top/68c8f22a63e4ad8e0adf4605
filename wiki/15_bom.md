@@ -1324,20 +1324,20 @@ document.domain = 'site.com';
 ### Коллекция window.frames
 Другой способ получить объект `window` из `<iframe>` – забрать его из именованной коллекции `window.frames`:
 
-- По номеру: `window.frames[0]` – объект `window` для первого фрейма в документе.
-- По имени: `window.frames.iframeName` – объект `window` для фрейма со свойством `name="iframeName"`.
+- по номеру: `window.frames[0]` – объект `window` для первого фрейма в документе;
+- по имени: `window.frames.iframeName` – объект `window` для фрейма со свойством `name="iframeName"`.
 
 Например:
 ```html
 <iframe src="/" style="height:80px" name="win" id="iframe"></iframe>
 
 <script>
-  alert(iframe.contentWindow == frames[0]); // true
-  alert(iframe.contentWindow == frames.win); // true
+  alert(iframe.contentWindow == frames[0]);   // true
+  alert(iframe.contentWindow == frames.win);  // true
 </script>
 ```
 
-Ифрейм может иметь другие ифреймы внутри. Таким образом, объекты `window` создают иерархию.
+Айфрейм может иметь другие айфреймы внутри. Таким образом, объекты `window` создают иерархию.
 
 Навигация по ним выглядит так:
 
