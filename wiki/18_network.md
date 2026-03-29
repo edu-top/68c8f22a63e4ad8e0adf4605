@@ -2,6 +2,7 @@
 
 # Работа с сетью
 
+- [Объекты URL](#объекты-url)
 - [AJAX-запросы и XMLHttpRequest](#ajax-запросы-и-xmlhttprequest)
   - [Объект XMLHttpRequest](#объект-xmlhttprequest)
     - [Методы XMLHttpRequest](#методы-xmlhttprequest)
@@ -104,6 +105,11 @@
 - [Долгие опросы (Long polling)](#долгие-опросы-long-polling)
 - [Глоссарий](#глоссарий)
 - [Источники информации](#источники-информации)
+
+## Объекты URL
+Встроенный класс [`URL`](https://url.spec.whatwg.org/#api) предоставляет удобный интерфейс для создания и разбора URL-адресов.
+
+Нет сетевых методов, которые требуют именно объект `URL`, обычные строки вполне подходят. Так что, технически, мы не обязаны использовать `URL`. Но иногда он может быть весьма удобным.[^url]
 
 ## AJAX-запросы и XMLHttpRequest
 *[AJAX]: Asynchronous JavaScript And XML
@@ -4951,3 +4957,4 @@ Web Socket API
 [^fetch-abort]: [Fetch: прерывание запроса](https://learn.javascript.ru/fetch-abort)
 [^fetch-crossorigin]: [Fetch: запросы на другие сайты](https://learn.javascript.ru/fetch-crossorigin)
 [^fetch-api]: [Fetch API](https://learn.javascript.ru/fetch-api)
+[^url]: [Объекты URL](https://learn.javascript.ru/url)
