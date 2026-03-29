@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fetch</title>
+</head>
+<body>
+    <button onclick="getUser('text')">Text</button>
+    <button onclick="getUser('json')">JSON</button>
+    <button onclick="getUser('xml')">XML</button>
+    <button onclick="getUser('blob')">BLOB</button>
+    <script>
+        async function getResponse(response, format) {
+            switch(format) {
+                case "text":
+                    return response.text();
+                case "json":
+                    return response.json();
+                case "blob":
+                    return response.blob();
+                default:
+                    return null;
+            }
+        }
+        async function getUser(format) {
+            const url = `/user/${format}`;
+            const response = await fetch(url);
+            console.log(response.headers.get('Content-Type'));
+            for (let [key, value] of response.headers)
+                console.log(`${key} = ${value}`);
+            const user = await getResponse(response, format);
+            // console.log(user);
+
+            if (format == "blob") {
+                // создаём <img>
+                let img = document.createElement('img');
+                img.style = 'position:fixed;top:100px;left:100px;width:100px';
+                document.body.append(img);
+
+                // выводим на экран
+                img.src = URL.createObjectURL(user);
+            }
+        }
+        async function getBlob() {
+            let response = await fetch('/blob');
+
+            let blob = await response.blob(); // скачиваем как Blob-объект
+
+        }
+    </script>
+</body>
+</html>
