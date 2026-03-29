@@ -3,6 +3,7 @@
 # Работа с сетью
 
 - [Объекты URL](#объекты-url)
+  - [Создание URL](#создание-url)
 - [AJAX-запросы и XMLHttpRequest](#ajax-запросы-и-xmlhttprequest)
   - [Объект XMLHttpRequest](#объект-xmlhttprequest)
     - [Методы XMLHttpRequest](#методы-xmlhttprequest)
@@ -110,6 +111,65 @@
 Встроенный класс [`URL`](https://url.spec.whatwg.org/#api) предоставляет удобный интерфейс для создания и разбора URL-адресов.
 
 Нет сетевых методов, которые требуют именно объект `URL`, обычные строки вполне подходят. Так что, технически, мы не обязаны использовать `URL`. Но иногда он может быть весьма удобным.[^url]
+
+### Создание URL
+Синтаксис создания нового объекта `URL`:
+```js
+new URL(url, [base])
+```
+
+- **`url`** – полный URL-адрес или только путь, если указан второй параметр,
+- **`base`** – необязательный «базовый» URL: если указан и аргумент `url` содержит только путь, то адрес будет создан относительно него (пример ниже).
+
+Например:
+```js
+let url = new URL('https://javascript.info/profile/admin');
+```
+
+Эти два URL одинаковы:
+```js
+let url1 = new URL('https://javascript.info/profile/admin');
+let url2 = new URL('/profile/admin', 'https://javascript.info');
+
+alert(url1); // https://javascript.info/profile/admin
+alert(url2); // https://javascript.info/profile/admin
+```
+
+Можно легко создать новый URL по пути относительно существующего URL-адреса:
+```js
+let url = new URL('https://javascript.info/profile/admin');
+let newUrl = new URL('tester', url);
+
+alert(newUrl); // https://javascript.info/profile/tester
+```
+
+Объект `URL` даёт доступ к компонентам URL, поэтому это отличный способ «разобрать» URL-адрес, например:
+```js
+let url = new URL('https://javascript.info/url');
+
+alert(url.protocol); // https:
+alert(url.host);     // javascript.info
+alert(url.pathname); // /url
+```
+
+Вот шпаргалка по компонентам URL:
+
+<figure>
+
+![URL object](../svg/url-object.svg)
+
+</figure>
+
+- `href` это полный URL-адрес, то же самое, что `url.toString()`
+- `protocol` – протокол, заканчивается символом двоеточия `:`
+- `search` строка параметров, начинается с вопросительного знака `?`
+- `hash` начинается с символа `#`
+- также есть свойства `user` и `password`, если используется HTTP-аутентификация: `http://login:password@site.com` (не нарисованы сверху, так как редко используются).
+
+!!! info "Можно передавать объекты `URL` в сетевые методы (и большинство других) вместо строк"
+    Мы можем использовать объект `URL` в методах `fetch` или `XMLHttpRequest` и почти во всех других, где ожидается URL-строка.
+
+    Вообще, объект `URL` можно передавать почти куда угодно вместо строки, так как большинство методов сконвертируют объект в строку, при этом он станет строкой с полным URL-адресом.
 
 ## AJAX-запросы и XMLHttpRequest
 *[AJAX]: Asynchronous JavaScript And XML
