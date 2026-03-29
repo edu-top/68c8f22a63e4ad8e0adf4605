@@ -82,6 +82,7 @@
     - [Итого](#итого-2)
     - [Задачи](#задачи-1)
       - [Почему нам нужен Origin?](#почему-нам-нужен-origin)
+  - [Fetch API](#fetch-api-1)
 - [Web Socket API](#web-socket-api)
   - [Управление жизненным циклом соединения](#управление-жизненным-циклом-соединения)
   - [Отправка данных на сервер](#отправка-данных-на-сервер)
@@ -4257,6 +4258,48 @@ Referer: http://javascript.info/some/url
 
 </details>
 
+### Fetch API
+На данный момент мы уже многое знаем про `fetch`.
+
+Давайте рассмотрим оставшуюся часть API, чтобы охватить все возможности.
+
+!!! info "На заметку:"
+    Заметим: большинство этих возможностей используются редко. Вы можете пропустить эту главу и, несмотря на это, нормально использовать `fetch`.
+
+    Тем не менее, полезно знать, что вообще может `fetch`, чтобы, когда появится необходимость, вернуться и прочитать конкретные детали.
+
+Нижеследующий список – это все возможные опции для `fetch` с соответствующими значениями по умолчанию (в комментариях указаны альтернативные значения):
+```js
+let promise = fetch(url, {
+  method: "GET", // POST, PUT, DELETE, etc.
+  headers: {
+    // значение этого заголовка обычно ставится автоматически,
+    // в зависимости от тела запроса
+    "Content-Type": "text/plain;charset=UTF-8"
+  },
+  body: undefined, // string, FormData, Blob, BufferSource или URLSearchParams
+  referrer: "about:client", // или "" для того, чтобы не послать заголовок Referer,
+  // или URL с текущего источника
+  referrerPolicy: "strict-origin-when-cross-origin", // no-referrer-when-downgrade, no-referrer, origin, same-origin...
+  mode: "cors", // same-origin, no-cors
+  credentials: "same-origin", // omit, include
+  cache: "default", // no-store, reload, no-cache, force-cache или only-if-cached
+  redirect: "follow", // manual, error
+  integrity: "", // контрольная сумма, например "sha256-abcdef1234567890"
+  keepalive: false, // true
+  signal: undefined, // AbortController, чтобы прервать запрос
+  window: window // null
+});
+```
+
+Довольно-таки внушительный список, не так ли?
+
+В разделе Fetch мы разобрали параметры `method`, `headers` и `body`.
+
+Опция `signal` разъяснена в разделе "Fetch: прерывание запроса".
+
+Теперь давайте пройдёмся по оставшимся возможностям.[^fetch-api]
+
 ## Web Socket API
 <dfn title="Web Socket API">Web Socket API</dfn> позволяет организовать соединение между клиентом и сервером, благодаря которому клиент и сервер могут отправлять данные друг другу в любое время.[^22.1]
 
@@ -4739,3 +4782,4 @@ Web Socket API
 [^fetch-progress]: [Fetch: ход загрузки](https://learn.javascript.ru/fetch-progress)
 [^fetch-abort]: [Fetch: прерывание запроса](https://learn.javascript.ru/fetch-abort)
 [^fetch-crossorigin]: [Fetch: запросы на другие сайты](https://learn.javascript.ru/fetch-crossorigin)
+[^fetch-api]: [Fetch API](https://learn.javascript.ru/fetch-api)
