@@ -7,6 +7,7 @@
     - [Контекст рендеринга](#контекст-рендеринга)
     - [Рисование прямоугольников](#рисование-прямоугольников)
   - [Настройка рисования](#настройка-рисования)
+    - [Толщина линий](#толщина-линий)
 - [JavaScript анимации](#javascript-анимации)
 - [JavaScript в CSS](#javascript-в-css)
 - [Источники информации](#источники-информации)
@@ -197,6 +198,21 @@ context.strokeRect (230, 10, 100, 100);     // прямоугольник без
 ```
 
 ![установка цвета для canvas в javascript](../img/canvas8.png)
+
+#### Толщина линий
+Свойство `lineWidth` позволяет установить толщину линии:
+```js
+const canvas = document.getElementById("canvas");
+const context = canvas.getContext("2d");
+
+context.fillStyle = "#c7ecee";     // устанавливаем цвет заполнения фигуры
+context.fillRect (10, 10, 100, 100);
+context.strokeStyle = "#22a6b3";     // устанавливаем цвет контура фигуры
+context.lineWidth = 4.5;             // устанавливаем толщину линии
+context.strokeRect (10, 10, 100, 100);
+```
+
+![установка ширины линии для canvas в javascript](../img/canvas9.png)
 
 [^21.9]
 
