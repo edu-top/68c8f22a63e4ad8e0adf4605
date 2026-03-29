@@ -8,6 +8,7 @@
     - [Рисование прямоугольников](#рисование-прямоугольников)
   - [Настройка рисования](#настройка-рисования)
     - [Толщина линий](#толщина-линий)
+    - [setLineDash](#setlinedash)
 - [JavaScript анимации](#javascript-анимации)
 - [JavaScript в CSS](#javascript-в-css)
 - [Источники информации](#источники-информации)
@@ -213,6 +214,27 @@ context.strokeRect (10, 10, 100, 100);
 ```
 
 ![установка ширины линии для canvas в javascript](../img/canvas9.png)
+
+#### setLineDash
+Метод `setLineDash()` в качестве параметра принимает массив чисел, которые устанавливают расстояния между линиями. Например:
+```js
+const canvas = document.getElementById("canvas");
+const context = canvas.getContext("2d");
+
+context.strokeStyle = "red";
+context.setLineDash([15,5]);
+context.strokeRect(10, 10, 100, 100);
+
+context.strokeStyle = "blue";
+context.setLineDash([2,5,6]);
+context.strokeRect(130, 10, 100, 100);
+
+context.strokeStyle = "green";
+context.setLineDash([2]);
+context.strokeRect(250, 10, 100, 100);
+```
+
+![установка расстояний между линиями на canvas с помощью свойства setLineDash в javascript](../img/canvas10.png)
 
 [^21.9]
 
