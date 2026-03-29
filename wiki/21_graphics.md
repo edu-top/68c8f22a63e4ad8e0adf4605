@@ -9,6 +9,7 @@
   - [Настройка рисования](#настройка-рисования)
     - [Толщина линий](#толщина-линий)
     - [setLineDash](#setlinedash)
+    - [Тип соединения линий](#тип-соединения-линий)
 - [JavaScript анимации](#javascript-анимации)
 - [JavaScript в CSS](#javascript-в-css)
 - [Источники информации](#источники-информации)
@@ -235,6 +236,32 @@ context.strokeRect(250, 10, 100, 100);
 ```
 
 ![установка расстояний между линиями на canvas с помощью свойства setLineDash в javascript](../img/canvas10.png)
+
+#### Тип соединения линий
+Свойство `lineJoin` отвечает за тип соединения линий в фигуре. Оно может принимать следующие значения:
+
+- `miter`: прямые соединения, которые образуют прямые углы. Это значение по умолчанию
+
+- `round`: закругленные соединения
+
+- `bevel`: конические соединения
+
+```js
+const canvas = document.getElementById("canvas");
+const context = canvas.getContext("2d");
+
+context.strokeStyle = "red";
+
+context.lineWidth = 10;
+context.lineJoin = "miter";
+context.strokeRect(10, 10, 100, 100);
+context.lineJoin = "bevel";
+context.strokeRect(130, 10, 100, 100);
+context.lineJoin = "round";
+context.strokeRect(250, 10, 100, 100);
+```
+
+![Соединение линий на canvas и свойство lineJoin в JavaScript](../img/canvas11.png)
 
 [^21.9]
 
