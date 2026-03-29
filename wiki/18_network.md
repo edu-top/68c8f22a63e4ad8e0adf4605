@@ -5,6 +5,7 @@
 - [Объекты URL](#объекты-url)
   - [Создание URL](#создание-url)
   - [SearchParams «?…»](#searchparams-)
+  - [Кодирование](#кодирование)
 - [AJAX-запросы и XMLHttpRequest](#ajax-запросы-и-xmlhttprequest)
   - [Объект XMLHttpRequest](#объект-xmlhttprequest)
     - [Методы XMLHttpRequest](#методы-xmlhttprequest)
@@ -212,6 +213,23 @@ for(let [name, value] of url.searchParams) {
   alert(`${name}=${value}`); // q=test me!, далее tbs=qdr:y
 }
 ```
+
+### Кодирование
+Существует стандарт [RFC3986](https://datatracker.ietf.org/doc/html/rfc3986), который определяет список разрешённых и запрещённых символов в URL.
+
+Запрещённые символы, например, нелатинские буквы и пробелы, должны быть закодированы – заменены соответствующими кодами UTF-8 с префиксом `%`, например: `%20` (исторически сложилось так, что пробел в URL-адресе можно также кодировать символом `+`, но это исключение).
+
+К счастью, объекты `URL` делают всё это автоматически. Мы просто указываем параметры в обычном, незакодированном, виде, а затем конвертируем `URL` в строку:
+```js
+let url = new URL('https://ru.wikipedia.org/wiki/Тест');
+
+url.searchParams.set('key', 'ъ');
+alert(url); //https://ru.wikipedia.org/wiki/%D0%A2%D0%B5%D1%81%D1%82?key=%D1%8A
+```
+
+Как видно, слово `Тест` в пути URL-адреса и буква `ъ` в параметре закодированы.
+
+URL стал длиннее, так как каждая кириллическая буква представляется двумя байтами в кодировке UTF-8.
 
 ## AJAX-запросы и XMLHttpRequest
 *[AJAX]: Asynchronous JavaScript And XML
