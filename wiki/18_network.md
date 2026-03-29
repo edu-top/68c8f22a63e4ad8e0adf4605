@@ -4,6 +4,7 @@
 
 - [Объекты URL](#объекты-url)
   - [Создание URL](#создание-url)
+  - [SearchParams «?…»](#searchparams-)
 - [AJAX-запросы и XMLHttpRequest](#ajax-запросы-и-xmlhttprequest)
   - [Объект XMLHttpRequest](#объект-xmlhttprequest)
     - [Методы XMLHttpRequest](#методы-xmlhttprequest)
@@ -170,6 +171,47 @@ alert(url.pathname); // /url
     Мы можем использовать объект `URL` в методах `fetch` или `XMLHttpRequest` и почти во всех других, где ожидается URL-строка.
 
     Вообще, объект `URL` можно передавать почти куда угодно вместо строки, так как большинство методов сконвертируют объект в строку, при этом он станет строкой с полным URL-адресом.
+
+### SearchParams «?…»
+Допустим, мы хотим создать URL-адрес с заданными параметрами, например, `https://google.com/search?query=JavaScript`.
+
+Мы можем указать их в строке:
+```js
+new URL('https://google.com/search?query=JavaScript')
+```
+
+…Но параметры должны быть правильно закодированы, чтобы они могли содержать не-латинские буквы, пробелы и т.п. (об этом подробнее далее).
+
+Так что для этого есть свойство `url.searchParams` – объект типа [URLSearchParams](https://url.spec.whatwg.org/#urlsearchparams).
+
+Он предоставляет удобные методы для работы с параметрами:
+
+- **`append(name, value)`** – добавить параметр по имени,
+- **`delete(name)`** – удалить параметр по имени,
+- **`get(name)`** – получить параметр по имени,
+- **`getAll(name)`** – получить все параметры с одинаковым именем `name` (такое возможно, например: `?user=John&user=Pete`),
+- **`has(name)`** – проверить наличие параметра по имени,
+- **`set(name, value)`** – задать/заменить параметр,
+- **`sort()`** – отсортировать параметры по имени, используется редко,
+- …и является перебираемым, аналогично `Map`.
+
+Пример добавления параметров, содержащих пробелы и знаки препинания:
+```js
+let url = new URL('https://google.com/search');
+url.searchParams.set('q', 'test me!'); // добавим параметр, содержащий пробел и !
+
+alert(url); // https://google.com/search?q=test+me%21
+
+url.searchParams.set('tbs', 'qdr:y'); // параметр с двоеточием :
+
+// параметры автоматически кодируются
+alert(url); // https://google.com/search?query=test+me%21&tbs=qdr%3Ay
+
+// перебрать параметры (в исходном виде)
+for(let [name, value] of url.searchParams) {
+  alert(`${name}=${value}`); // q=test me!, далее tbs=qdr:y
+}
+```
 
 ## AJAX-запросы и XMLHttpRequest
 *[AJAX]: Asynchronous JavaScript And XML
