@@ -1919,7 +1919,7 @@ export {welcome as simpleMessage, hello, sayHello as printMessage, Messenger}
 компонент as псевдоним
 ```
 
-Так, для константы `welcome` определен псевдним `simpleMessage`, а для функции `sayHello` определен псевдним `printMessage()`.
+Так, для константы `welcome` определен псевдоним `simpleMessage`, а для функции `sayHello` определен псевдним `printMessage()`.
 
 В этом случае при импорте модуля *message.js* данные компоненты будут доступны через свои псевдонимы:
 ```js
