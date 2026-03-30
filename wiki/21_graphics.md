@@ -11,6 +11,7 @@
     - [setLineDash](#setlinedash)
     - [Тип соединения линий](#тип-соединения-линий)
     - [Прозрачность](#прозрачность)
+  - [Фоновые изображения](#фоновые-изображения)
 - [JavaScript анимации](#javascript-анимации)
 - [JavaScript в CSS](#javascript-в-css)
 - [Источники информации](#источники-информации)
@@ -282,6 +283,65 @@ context.fillRect(100, 100, 100, 100);
 
 ![Установка прозрачности на canvas в JavaScript](../img/canvas12.png)
 
+### Фоновые изображения
+Вместо конкретного цвета для заливки фигур, например, прямоугольников, мы можем использовать изображения. Для этого у контекста элемент canvas имеется функция **`createPattern()`**, которая принимает два параметра: изображение, которое будет использоваться в качестве фона, и принцип повторения изображения. Последний параметр играет роль в том случае, если размер изображения у нас меньше, чем размер фигуры на `canvas`. Этот параметр может принимать следующие значения:
+
+- `repeat`: изображение повторяется для заполнения всего пространства фигуры
+
+- `repeat-x`: изображение повторяется только по горизонтали
+
+- `repeat-y`: изображение повторяется только по вертикали
+
+- `no-repeat`: изображение не повторяется
+
+Нарисуем прямоугольник и выведем в нем изображение:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>METANIT.COM</title>
+</head>
+<body>
+    <canvas id="canvas" width="400" height="250"></canvas>
+    <script>
+        const canvas = document.getElementById("canvas");
+        const context = canvas.getContext("2d");
+        const img = new Image();
+        img.src = "forest.png";
+
+        img.onload = function() {
+            const pattern = context.createPattern(img, "repeat");
+            context.fillStyle = pattern;
+            context.fillRect(10, 10, 200, 200);
+            context.strokeRect(10, 10, 200, 200);
+        };
+    </script>
+</body>
+</html>
+```
+
+Чтобы использовать изображение, нам надо создать элемент `Image` и установить источник изображения — локальный файл или ресурс в сети:
+```js
+const img = new Image();
+img.src = "forest.png";
+```
+
+В данном случае предполагается, что в одной папке с файлом html у меня находится файл изображения *forest.png*. Однако загрузка изображения может занять некоторое время, особенно если файл изображения берется из сети интернет. Поэтому, чтобы быть уверенными, что изображение уже загрузилось, все действия по его использованию производятся в методе `img.onload`, который вызывается при завершении загрузки изображения:
+```js
+img.onload = function() {
+
+    const pattern = context.createPattern(img, "repeat");
+    context.fillStyle = pattern;
+    context.fillRect(10, 10, 200, 200);
+    context.strokeRect(10, 10, 200, 200);
+};
+```
+
+Метод `createPattern()` возвращает объект, который устанавливается в качестве стиля заполнения фигуры: `context.fillStyle = pattern;`. Отрисовка прямоугольника остается той же.[^21.2]
+
+![Изображение как фон в canvas в JavaScript](../img/canvas37.png)
+
 ## JavaScript анимации
 
 ## JavaScript в CSS
@@ -289,3 +349,4 @@ context.fillRect(100, 100, 100, 100);
 ## Источники информации
 [^21.1]: [Canvas и его контекст. Рисование прямоугольников](https://metanit.com/web/javascript/21.1.php)
 [^21.9]: [Настройка рисования](https://metanit.com/web/javascript/21.9.php)
+[^21.2]: [Фоновые изображения](https://metanit.com/web/javascript/21.2.php)
