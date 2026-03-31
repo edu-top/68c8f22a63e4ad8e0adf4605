@@ -2109,7 +2109,7 @@ let welcome = "Welcome";
 const hello = "Hello";
 
 function sayHello() {
-  console.log("Hello цщкдв");
+  console.log("Hello world");
 }
 
 class Messenger {
@@ -2131,7 +2131,39 @@ const telegram = new MessageModule.Messenger();
 telegram.send(MessageModule.welcome);
 ```
 
-В данном случае весь экспортированный список компонентов будет сопоставляться с названием `MessageModule`, которое фактически будет представлять модуль. И далее через этот идентификатор можно обратиться к конкреному компоненту, используя имя компонента: `MessageModule.sayHello();`.[^19.4]
+В данном случае весь экспортированный список компонентов будет сопоставляться с названием `MessageModule`, которое фактически будет представлять модуль. И далее через этот идентификатор можно обратиться к конкретному компоненту, используя имя компонента: `MessageModule.sayHello();`.[^19.4]
+
+Альтернативные подходы:
+
+1. Деструктуризация при импорте
+
+    ```js
+    import MessageModule, { sayHello as sayHi } from "./message.js";
+
+    // Использование как объекта и отдельных именованных импортов
+    MessageModule.sayGoodbye();
+    sayHi();  // Hello, World!
+    ```
+
+2. Переименование при импорте
+
+    ```js
+    import Utils, { Messenger as ChatBot, EmailSender } from "./message.js";
+
+    const bot = new Utils.ChatBot("MyBot");
+    bot.send(Utils.welcome);
+    ```
+
+3. Импорт как namespace (ES6+)
+
+    ```js
+    import * as Messages from "./message.js";
+
+    Messages.default.sayHello();
+    const bot = new Messages.default.Messenger("Bot");
+    ```
+
+Этот подход особенно удобен для библиотек компонентов, утилит и наборов связанных функций, где логично группировать функционал под одним импортом.
 
 #### Имя «default»
 В некоторых ситуациях для обозначения экспорта по умолчанию в качестве имени используется `default`.
