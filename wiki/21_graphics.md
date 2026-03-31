@@ -14,6 +14,7 @@
   - [Фоновые изображения](#фоновые-изображения)
   - [Создание градиента](#создание-градиента)
     - [Линейный градиент](#линейный-градиент)
+    - [Радиальный градиент](#радиальный-градиент)
 - [JavaScript анимации](#javascript-анимации)
 - [JavaScript в CSS](#javascript-в-css)
 - [Источники информации](#источники-информации)
@@ -410,6 +411,36 @@ const gradient = context.createLinearGradient(50, 30, 150, 30);
 ```
 
 ![Вертикальный линейный градиент на canvas в JavaScript](../img/canvas35.png)
+
+#### Радиальный градиент
+Радиальный градиент создается с помощью метода `createRadialGradient(x0, y0, r0, x1, y1, r1)`, который принимает следующие параметры:
+
+- `x0` и `y0`: координаты центра первой окружности
+
+- `r0`: радиус первой окружности
+
+- `x1` и `y1`: координаты центра второй окружности
+
+- `r1`: радиус второй окружности
+
+Например:
+```js
+const gradient = context.createRadialGradient(120,100,100,120,100,30);
+```
+
+И также для радиального градиента нам надо задать опорные цветовые точки с помощью метода `addColorStop()`
+```js
+const canvas = document.getElementById("canvas");
+const context = canvas.getContext("2d");
+const gradient = context.createRadialGradient(120,100,100,120,100,30);
+gradient.addColorStop(0, "blue");
+gradient.addColorStop(1, "white");
+context.fillStyle = gradient;
+context.fillRect(50, 30, 150, 150);
+context.strokeRect(50, 30, 150, 150);
+```
+
+![Радиальный градиент на canvas в JavaScript](../img/canvas36.png)
 
 ## JavaScript анимации
 
