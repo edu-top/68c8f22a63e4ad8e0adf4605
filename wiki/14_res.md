@@ -2524,7 +2524,7 @@ module.default();
 ```
 Main module starts
 Main module ends
-Hello METANIT.COM
+Hello world
 Hello Work!
 ```
 

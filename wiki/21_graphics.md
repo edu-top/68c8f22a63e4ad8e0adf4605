@@ -15,6 +15,7 @@
   - [Создание градиента](#создание-градиента)
     - [Линейный градиент](#линейный-градиент)
     - [Радиальный градиент](#радиальный-градиент)
+  - [Рисование текста](#рисование-текста)
 - [JavaScript анимации](#javascript-анимации)
 - [JavaScript в CSS](#javascript-в-css)
 - [Источники информации](#источники-информации)
@@ -442,6 +443,60 @@ context.strokeRect(50, 30, 150, 150);
 
 ![Радиальный градиент на canvas в JavaScript](../img/canvas36.png)
 
+### Рисование текста
+Наряду с геометрическими фигурами и изображениями `canvas` позволяет выводить текст. Доля этого вначале надо установить у контекста `canvas` свойство **`font`**:
+```js
+const canvas = document.getElementById("canvas");
+const context = canvas.getContext("2d");
+context.font = "22px Verdana";
+```
+
+Свойство `font` в качестве значения принимает определение шрифта. В данном случае это шрифт Verdana высотой 22 пикселя. В качестве шрифтов используются стандартные шрифты.[^21.4]
+
+Для вывода текста применяются два метода:
+
+- `fillText(text, x, y)`: принимает три параметра: выводимый текст (параметр `text`) и координаты точки, с которой выводится текст (параметры `x` и `y`).
+
+- `strokeText(text, x, y)`: принимает аналогичные параметры.
+
+Разница между двумя метода состоит в том, что `fillText()` использует цвет заполнения фигуры (из свойства `fillStyle`) и заполняет им символы текста. Метод `strokeText()` использует цвет контура фигуры (задается через свойство `strokeStyle`) и отрисосывает контур символов.
+
+Например, выведем некоторый текст с помощью метода **`fillText()`**:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Example</title>
+</head>
+<body>
+    <canvas id="canvas" width="400" height="250"></canvas>
+    <script>
+        const canvas = document.getElementById("canvas");
+        const context = canvas.getContext("2d");
+        context.font = "30px Verdana";
+        context.fillStyle = "navy";     // устанавливаем цвет текста
+        context.fillText("Hello METANIT.COM", 20, 50);
+    </script>
+</body>
+</html>
+```
+
+![Вывод текста на canvas с помощью метода fillText в JavaScript](../img/canvas29.png)
+
+Метод `fillText(text, x, y)` принимает три параметра: выводимый текст и `x` и `y` координаты точки, с которой выводится текст.
+
+Вывод аналогичного текста с помощью метода **`strokeText()`**:
+```js
+const canvas = document.getElementById("canvas");
+const context = canvas.getContext("2d");
+context.font = "30px Verdana";
+context.strokeStyle = "navy";     // устанавливаем цвет текста
+context.strokeText("Hello METANIT.COM", 20, 50);
+```
+
+![Вывод текста на canvas с помощью метода strokeText в JavaScript](../img/canvas30.png)
+
 ## JavaScript анимации
 
 ## JavaScript в CSS
@@ -451,3 +506,4 @@ context.strokeRect(50, 30, 150, 150);
 [^21.9]: [Настройка рисования](https://metanit.com/web/javascript/21.9.php)
 [^21.2]: [Фоновые изображения](https://metanit.com/web/javascript/21.2.php)
 [^21.3]: [Создание градиента](https://metanit.com/web/javascript/21.3.php)
+[^21.4]: [Рисование текста](https://metanit.com/web/javascript/21.4.php)
