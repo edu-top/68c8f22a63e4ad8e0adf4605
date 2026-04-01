@@ -17,6 +17,7 @@
     - [Радиальный градиент](#радиальный-градиент)
   - [Рисование текста](#рисование-текста)
     - [Свойство textAlign](#свойство-textalign)
+    - [Свойство textBaseline](#свойство-textbaseline)
 - [JavaScript анимации](#javascript-анимации)
 - [JavaScript в CSS](#javascript-в-css)
 - [Источники информации](#источники-информации)
@@ -528,6 +529,39 @@ context.fillText("End Text", 120, 150);
 ```
 
 ![textAlign в canvas в JavaScript](../img/canvas31.png)
+
+#### Свойство textBaseline
+Свойство **`textBaseline`** задает выравнивание текста по базовой линии. Оно может принимать следующие значения:
+
+- `top`
+
+- `middle`
+
+- `bottom`
+
+- `alphabetic`
+
+- `hanging`
+
+- `ideographic`
+
+```js
+const canvas = document.getElementById("canvas");
+const context = canvas.getContext("2d");
+context.font = "22px Verdana";
+context.textBaseline="top";
+context.fillText("Top",10,100);
+context.textBaseline="bottom";
+context.fillText("Bottom",45,100);
+context.textBaseline="middle";
+context.fillText("Middle",130,100);
+context.textBaseline="alphabetic";
+context.fillText("Alphabetic",205,100);
+context.textBaseline="hanging";
+context.fillText("Hanging",320,100);
+```
+
+![textBaseline в canvas в JavaScript](../img/canvas32.png)
 
 ## JavaScript анимации
 
