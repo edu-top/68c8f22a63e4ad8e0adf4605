@@ -18,6 +18,7 @@
   - [Рисование текста](#рисование-текста)
     - [Свойство textAlign](#свойство-textalign)
     - [Свойство textBaseline](#свойство-textbaseline)
+    - [Определение ширины текста](#определение-ширины-текста)
 - [JavaScript анимации](#javascript-анимации)
 - [JavaScript в CSS](#javascript-в-css)
 - [Источники информации](#источники-информации)
@@ -562,6 +563,16 @@ context.fillText("Hanging",320,100);
 ```
 
 ![textBaseline в canvas в JavaScript](../img/canvas32.png)
+
+#### Определение ширины текста
+С помощью метода **`measureText()`** можно определить ширину текста на `canvas`:
+```js
+const canvas = document.getElementById("canvas");
+const context = canvas.getContext("2d");
+context.font = "18px Verdana";
+const text = context.measureText("Hello JavaScript");
+console.log(text.width);
+```
 
 ## JavaScript анимации
 
