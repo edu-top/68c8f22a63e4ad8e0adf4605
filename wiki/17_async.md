@@ -399,6 +399,35 @@ loadScript('/my/script.js', function(error, script) {
 
 **Таким образом, одна и та же функция `callback` используется и для информирования об ошибке, и для передачи результатов.**
 
+Преимущества error-first callback:
+- **единообразие**: всегда знаешь, где искать ошибку (первый аргумент);
+- **простота**: не нужно передавать флаги успеха/ошибки;
+- **традиция Node.js**: стандарт де-факто для асинхронного кода.
+
+Главный недостаток — "пирамида смерти". При вложенных вызовах код становится нечитаемым:
+```js
+loadScript('1.js', function(error1, script1) {
+  if (error1) {
+    handleError(error1);
+  } else {
+    loadScript('2.js', function(error2, script2) {
+      if (error2) {
+        handleError(error2);
+      } else {
+        loadScript('3.js', function(error3, script3) {
+          if (error3) {
+            handleError(error3);
+          } else {
+            // Наконец-то все загружено!
+            useScripts(script1, script2, script3);
+          }
+        });
+      }
+    });
+  }
+});
+```
+
 ### Колбэк в колбэке
 Как нам загрузить два скрипта один за другим: сначала первый, а за ним второй?
 
