@@ -16,6 +16,7 @@
     - [Линейный градиент](#линейный-градиент)
     - [Радиальный градиент](#радиальный-градиент)
   - [Рисование текста](#рисование-текста)
+    - [Свойство textAlign](#свойство-textalign)
 - [JavaScript анимации](#javascript-анимации)
 - [JavaScript в CSS](#javascript-в-css)
 - [Источники информации](#источники-информации)
@@ -496,6 +497,37 @@ context.strokeText("Hello METANIT.COM", 20, 50);
 ```
 
 ![Вывод текста на canvas с помощью метода strokeText в JavaScript](../img/canvas30.png)
+
+#### Свойство textAlign
+Свойство **`textAlign`** позволяет выровнить текст относительно одной из сторон. Это свойство может принимать следующие значения:
+
+- `left`: текст начинается с указанной позиции
+
+- `right`: текст завершается до указанной позиции
+
+- `center`: текст располагается по центру относительно указанной позиции
+
+- `start`: значение по умолчанию, текст начинается с указанной позиции
+
+- `end`: текст завершается до указанной позиции
+
+```js
+var canvas = document.getElementById("myCanvas"),
+    context = canvas.getContext("2d");
+context.font = "22px Verdana";
+context.textAlign = "right";
+context.fillText("Right Text", 120, 30);
+context.textAlign = "left";
+context.fillText("Left Text", 120, 60);
+context.textAlign = "center";
+context.fillText("Center Text", 120, 90);
+context.textAlign = "start";
+context.fillText("Start Text", 120, 120);
+context.textAlign = "end";
+context.fillText("End Text", 120, 150);
+```
+
+![textAlign в canvas в JavaScript](../img/canvas31.png)
 
 ## JavaScript анимации
 
