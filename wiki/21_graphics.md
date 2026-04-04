@@ -24,6 +24,7 @@
     - [Отображение пути](#отображение-пути)
     - [Замыкание пути](#замыкание-пути)
     - [Объекты Path2D](#объекты-path2d)
+    - [Метод rect](#метод-rect)
 - [JavaScript анимации](#javascript-анимации)
 - [JavaScript в CSS](#javascript-в-css)
 - [Источники информации](#источники-информации)
@@ -688,6 +689,39 @@ context.stroke(path2);
 Здесь создаются два пути, каждый из которых представляет треугольник. Для отрисовки каждого пути вызывается метод `context.stroke()`, в который передается путь.
 
 ![рисование путей на canvas с помощью Path2D в JavaScript](../img/canvas24.png)
+
+#### Метод rect
+Метод **`rect()`** создает прямоугольник. Он имеет следующее определение:
+```js
+rect(x, y, width, height)
+```
+
+Где `x` и `y` — это координаты верхнего левого угла прямоугольника относительно `canvas`, а `width` и `height` — соответственно ширина и высота прямоугольника. Нарисуем, к примеру, следующий прямоугольник:
+```js
+const canvas = document.getElementById("canvas");
+const context = canvas.getContext("2d");
+
+context.beginPath();
+context.rect(30, 20, 100, 90);
+context.closePath();
+context.stroke();
+```
+
+![Рисование прямоугольника на canvas в JavaScript](../img/canvas15.png)
+
+Стоит отметить, что такой же прямоугольник мы могли бы создать из линий:
+```js
+const canvas = document.getElementById("canvas");
+const context = canvas.getContext("2d");
+
+context.beginPath();
+context.moveTo(30, 20);
+context.lineTo(130, 20);
+context.lineTo(130, 110);
+context.lineTo(30, 110);
+context.closePath();
+context.stroke();
+```
 
 ## JavaScript анимации
 
