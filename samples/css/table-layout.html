@@ -5,8 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Table layout</title>
     <style>
+        body {
+            margin: 0;
+        }
         table {
             border-spacing: 10px;
+            min-height: 100vh;
             width: 100%;
         }
         td, th {
@@ -22,7 +26,7 @@
             color: white;
         }
         th {
-            background-color: bisque;
+            background-color: chartreuse;
         }
         p {
             font-size: 16px;
@@ -30,10 +34,12 @@
         }
         .sidebar, tbody > tr > td:first-child, tbody > tr > td:last-child {
             background-color: coral;
+            vertical-align: top;
             width: 300px;
         }
         tbody > tr > td:nth-child(2) {
-            background-color: chartreuse;
+            background-color: bisque;
+            vertical-align: top;
         }
         tbody > tr > td {
             height: 500px;
@@ -57,14 +63,6 @@
                     <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Accusantium illo quae cupiditate velit tempora odio sunt error harum eveniet. Repellendus id ab odio quibusdam neque, alias perspiciatis quam cupiditate optio.</p>
                     <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Accusantium illo quae cupiditate velit tempora odio sunt error harum eveniet. Repellendus id ab odio quibusdam neque, alias perspiciatis quam cupiditate optio.</p>
                     <h2>Подзаголовок 2</h2>
-                    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Accusantium illo quae cupiditate velit tempora odio sunt error harum eveniet. Repellendus id ab odio quibusdam neque, alias perspiciatis quam cupiditate optio.</p>
-                    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Accusantium illo quae cupiditate velit tempora odio sunt error harum eveniet. Repellendus id ab odio quibusdam neque, alias perspiciatis quam cupiditate optio.</p>
-                    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Accusantium illo quae cupiditate velit tempora odio sunt error harum eveniet. Repellendus id ab odio quibusdam neque, alias perspiciatis quam cupiditate optio.</p>
-                    <h2>Подзаголовок 3</h2>
-                    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Accusantium illo quae cupiditate velit tempora odio sunt error harum eveniet. Repellendus id ab odio quibusdam neque, alias perspiciatis quam cupiditate optio.</p>
-                    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Accusantium illo quae cupiditate velit tempora odio sunt error harum eveniet. Repellendus id ab odio quibusdam neque, alias perspiciatis quam cupiditate optio.</p>
-                    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Accusantium illo quae cupiditate velit tempora odio sunt error harum eveniet. Repellendus id ab odio quibusdam neque, alias perspiciatis quam cupiditate optio.</p>
-                    <h2>Подзаголовок 4</h2>
                     <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Accusantium illo quae cupiditate velit tempora odio sunt error harum eveniet. Repellendus id ab odio quibusdam neque, alias perspiciatis quam cupiditate optio.</p>
                     <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Accusantium illo quae cupiditate velit tempora odio sunt error harum eveniet. Repellendus id ab odio quibusdam neque, alias perspiciatis quam cupiditate optio.</p>
                     <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Accusantium illo quae cupiditate velit tempora odio sunt error harum eveniet. Repellendus id ab odio quibusdam neque, alias perspiciatis quam cupiditate optio.</p>
