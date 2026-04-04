@@ -27,6 +27,7 @@
     - [Метод rect](#метод-rect)
     - [Метод fill()](#метод-fill)
     - [Метод clip()](#метод-clip)
+    - [Метод arc()](#метод-arc)
 - [JavaScript анимации](#javascript-анимации)
 - [JavaScript в CSS](#javascript-в-css)
 - [Источники информации](#источники-информации)
@@ -803,6 +804,78 @@ context.stroke();
 ![clip на canvas в JavaScript](../img/canvas18.png)
 
 Поскольку вызов метода `clip()` идет после первого прямоугольника, то из второго прямоугольника будет нарисована только та часть, которая попадает в первый прямоугольник.
+
+#### Метод arc()
+Метод **`arc()`** добавляет к пути участок окружности или дугу/арку. Он имеет следующее определение:
+```js
+arc(x, y, radius, startAngle, endAngle, anticlockwise)
+```
+
+Здесь используются следующие параметры:
+
+- `x` и `y`: x- и y-координаты, в которых начинается дуга
+
+- `radius`: радиус окружности, по которой создается дуга
+
+- `startAngle` и `endAngle`: начальный и конечный угол, которые усекают окружность до дуги. В качестве единици измерения для углов применяются радианы. Например, полная окружность — это 2π радиан. Если, к примеру, нам надо нарисовать полный круг, то для параметра `endAngle` можно указать значение 2π. В JavaScript эту веричину можно получить с помощью выражения `Math.PI * 2`.
+
+- `anticlockwise`: направление движения по окружности при отсечении ее части, ограниченной начальным и конечным углом. При значении `true` направление против часовой стрелки, а при значении `false` — по часовой стрелке.
+
+![параметры дуги/окружности при рисовании на canvas в JavaScript](../img/canvas27.png)
+
+Пример рисования дуг и окружностей
+```js
+const canvas = document.getElementById("canvas");
+const context = canvas.getContext("2d");
+
+context.strokeStyle = "red";
+
+context.beginPath();
+context.moveTo(20, 90);
+context.arc(20, 90, 50, 0, Math.PI/2, false);
+context.closePath();
+context.stroke();
+
+context.beginPath();
+context.moveTo(130, 90);
+context.arc(130, 90, 50, 0, Math.PI, false);
+context.closePath();
+context.stroke();
+
+context.beginPath();
+context.moveTo(240, 90);
+context.arc(240, 90, 50, 0, Math.PI * 3 / 2, false);
+context.closePath();
+context.stroke();
+
+context.beginPath();
+context.arc(350, 90, 50, 0, Math.PI*2, false);
+context.closePath();
+context.stroke();
+```
+
+![Рисование кругов на canvas в JavaScript](../img/canvas19.png)
+
+Последний параметр `anticlockwise` играет важную роль, так как определяет движение по окружности, и в случае изменения `true` на `false` и наоборот, мы можем получить совершенно разные фигуры:
+```js
+const canvas = document.getElementById("canvas");
+const context = canvas.getContext("2d");
+context.strokeStyle = "red";
+
+context.beginPath();
+context.moveTo(80, 90);
+context.arc(80, 90, 50, 0, Math.PI/2, false);
+context.closePath();
+context.stroke();
+
+context.beginPath();
+context.moveTo(240, 90);
+context.arc(240, 90, 50, 0, Math.PI/2, true);
+context.closePath();
+context.stroke();
+```
+
+![Рисования дуг и окружностей на canvas в JavaScript](../img/canvas20.png)
 
 ## JavaScript анимации
 
