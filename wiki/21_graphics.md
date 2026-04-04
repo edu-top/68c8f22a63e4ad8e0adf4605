@@ -22,6 +22,7 @@
   - [Рисование фигур](#рисование-фигур)
     - [Методы moveTo() и lineTo()](#методы-moveto-и-lineto)
     - [Отображение пути](#отображение-пути)
+    - [Замыкание пути](#замыкание-пути)
 - [JavaScript анимации](#javascript-анимации)
 - [JavaScript в CSS](#javascript-в-css)
 - [Источники информации](#источники-информации)
@@ -643,6 +644,22 @@ context.lineTo(260, 100);
 context.strokeStyle = "red";    // красный цвет
 context.stroke();       // отображаем путь
 ```
+
+#### Замыкание пути
+Мы нарисовали две линии, и, допустим, мы их хотим соединить, чтобы замкнуть фигуру — в данном случае прямоугольник. В принципе в этом случае мы могли бы нарисовать еще одну линию, и у нас бы получился треугольник. Однако для упрощения Canvas API для этого предоставляет специальный метод — **`context.closePath()`**, который позволяет автоматически замкнуть путь, соединив первую и последнюю точки пути, и образовать фигуру:
+```js
+const canvas = document.getElementById("canvas");
+const context = canvas.getContext("2d");
+
+context.beginPath();
+context.moveTo(20, 100);
+context.lineTo(140, 10);
+context.lineTo(260, 100);
+context.closePath();    //  закрываем путь
+context.stroke();
+```
+
+![завершение пути на canvas с помощью closePath() в JavaScript](../img/canvas14.png)
 
 ## JavaScript анимации
 
