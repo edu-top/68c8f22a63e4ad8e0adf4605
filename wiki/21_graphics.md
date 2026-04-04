@@ -23,6 +23,7 @@
     - [Методы moveTo() и lineTo()](#методы-moveto-и-lineto)
     - [Отображение пути](#отображение-пути)
     - [Замыкание пути](#замыкание-пути)
+    - [Объекты Path2D](#объекты-path2d)
 - [JavaScript анимации](#javascript-анимации)
 - [JavaScript в CSS](#javascript-в-css)
 - [Источники информации](#источники-информации)
@@ -660,6 +661,33 @@ context.stroke();
 ```
 
 ![завершение пути на canvas с помощью closePath() в JavaScript](../img/canvas14.png)
+
+#### Объекты Path2D
+При работе со многими путями может возникнуть путаница. В этом случае для разграниченися отдельных путей можно использовать объект `Path2D`. Этот объект предоставляет методы, аналогичные методам объекта контекста в отношении создания пути. Например:
+```js
+const canvas = document.getElementById("canvas");
+const context = canvas.getContext("2d");
+
+const path1 = new Path2D();     // первый путь
+path1.moveTo(20, 100);
+path1.lineTo(140, 10);
+path1.lineTo(260, 100);
+path1.closePath();    //  закрываем путь
+context.strokeStyle = "blue";
+context.stroke(path1);
+
+const path2 = new Path2D();     // первый путь
+path2.moveTo(20, 110);
+path2.lineTo(140, 200);
+path2.lineTo(260, 110);
+path2.closePath();    //  закрываем путь
+context.strokeStyle = "red";
+context.stroke(path2);
+```
+
+Здесь создаются два пути, каждый из которых представляет треугольник. Для отрисовки каждого пути вызывается метод `context.stroke()`, в который передается путь.
+
+![рисование путей на canvas с помощью Path2D в JavaScript](../img/canvas24.png)
 
 ## JavaScript анимации
 
