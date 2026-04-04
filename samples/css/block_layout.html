@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Block layout</title>
+    <style>
+        aside, footer, header, main, nav {
+            border: 1px solid black;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px;
+            min-height: 50px;
+            padding: 10px;
+            text-align: center;
+        }
+        aside {
+            background-color: coral;
+            display: inline-block;
+            margin-top: 0;
+            vertical-align: top;
+            width: 300px;
+        }
+        body {
+            margin: 0;
+        }
+        div.content {
+            text-align: center;
+        }
+        footer {
+            background-color: darkslategray;
+            color: white;
+        }
+        header {
+            background-color: chartreuse;
+        }
+        main {
+            background-color: bisque;
+            display: inline-block;
+            /* margin: 20px auto; */
+            margin: 0 10px;
+            max-width: 1000px;
+        }
+        nav {
+            background-color: cadetblue;
+            padding: 0;
+            text-align: left;
+        }
+        p {
+            font-size: 16px;
+            font-weight: normal;
+        }
+        .menu_item {
+            background-color: blueviolet;
+            border: 1px solid black;
+            color: white;
+            display: inline-block;
+            height: 50px;
+            margin: 10px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>Шапка</header>
+    <nav><span class="menu_item">item1</span><span class="menu_item">item2</span><span class="menu_item">item3</span><span class="menu_item">item4</span><span class="menu_item">item5</span></nav>
+    <div class="content">
+        <!-- <aside>Сайдбар</aside> -->
+        <main>
+            <h1>Основное содержимое</h1>
+                <h2>Подзаголовок 1</h2>
+                <p>Lorem <em>ipsum</em>, dolor sit amet <u>consectetur</u> adipisicing elit. Accusantium illo quae cupiditate velit tempora odio sunt error harum eveniet. Repellendus id ab odio quibusdam neque, alias perspiciatis quam cupiditate optio.</p>
+                <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Accusantium illo quae cupiditate velit tempora odio sunt error harum eveniet. Repellendus id ab odio quibusdam neque, alias perspiciatis quam cupiditate optio.</p>
+                <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Accusantium illo quae cupiditate velit tempora odio sunt error harum eveniet. Repellendus id ab odio quibusdam neque, alias perspiciatis quam cupiditate optio.</p>
+                <h2>Подзаголовок 2</h2>
+                <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Accusantium illo quae cupiditate velit tempora odio sunt error harum eveniet. Repellendus id ab odio quibusdam neque, alias perspiciatis quam cupiditate optio.</p>
+                <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Accusantium illo quae cupiditate velit tempora odio sunt error harum eveniet. Repellendus id ab odio quibusdam neque, alias perspiciatis quam cupiditate optio.</p>
+                <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Accusantium illo quae cupiditate velit tempora odio sunt error harum eveniet. Repellendus id ab odio quibusdam neque, alias perspiciatis quam cupiditate optio.</p>
+        </main>
+        <!-- <aside>Сайдбар</aside> -->
+    </div>
+    <footer>Подвал</footer>
+</body>
+</html>
