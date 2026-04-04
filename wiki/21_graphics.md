@@ -28,6 +28,7 @@
     - [Метод fill()](#метод-fill)
     - [Метод clip()](#метод-clip)
     - [Метод arc()](#метод-arc)
+    - [Метод arcTo()](#метод-arcto)
 - [JavaScript анимации](#javascript-анимации)
 - [JavaScript в CSS](#javascript-в-css)
 - [Источники информации](#источники-информации)
@@ -876,6 +877,33 @@ context.stroke();
 ```
 
 ![Рисования дуг и окружностей на canvas в JavaScript](../img/canvas20.png)
+
+#### Метод arcTo()
+Метод `arcTo()` также рисует дугу. Он имеет следующее определение:
+```js
+arcTo(x1, y1, x2, y2, radius)
+```
+
+Где `x1` и `y1` — координаты первой контрольной точки, `x2` и `y2` — координаты второй контрольной точки, а `radius` — радиус дуги.
+
+![Параметры рисования дуг и окружностей на canvas с помощью arcTo в JavaScript](../img/canvas28.png)
+
+Пример рисования дуг с помощью `arcTo()`:
+```js
+const canvas = document.getElementById("canvas");
+const context = canvas.getContext("2d");
+context.strokeStyle = "red";
+
+context.beginPath();
+context.moveTo(0, 150);
+context.arcTo(0, 0, 150, 0, 140)
+context.closePath();
+context.stroke();
+```
+
+![Рисования дуг и окружностей на canvas с помощью arcTo в JavaScript](../img/canvas21.png)
+
+Здесь мы перемещаемся вначале на точку (0, 150), и от этой точки до первой контрольной точки (0, 0) будет проходить первая касательная. Далее от первой контрольной точки (0, 0) до второй (150, 0) будет проходить вторая касательная. Эти две касательные оформляют дугу, а 140 служит радиусом окружности, на которой усекается дуга.
 
 ## JavaScript анимации
 
