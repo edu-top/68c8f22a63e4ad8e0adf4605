@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table layout</title>
+    <style>
+        table {
+            border-spacing: 10px;
+            width: 100%;
+        }
+        td, th {
+            border: 1px solid black;
+            font-size: 24px;
+            font-weight: bold;
+            height: 50px;
+            padding: 10px;
+            text-align: center;
+        }
+        tfoot {
+            background-color: darkslategray;
+            color: white;
+        }
+        th {
+            background-color: bisque;
+        }
+        p {
+            font-size: 16px;
+            font-weight: normal;
+        }
+        .sidebar, tbody > tr > td:first-child, tbody > tr > td:last-child {
+            background-color: coral;
+            width: 300px;
+        }
+        tbody > tr > td:nth-child(2) {
+            background-color: chartreuse;
+        }
+        tbody > tr > td {
+            height: 500px;
+        }
+    </style>
+</head>
+<body>
+    <table>
+        <thead>
+            <tr>
+                <th colspan="3">Шапка</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Сайдбар</td>
+                <td>
+                    <h1>Основное содержимое</h1>
+                    <h2>Подзаголовок 1</h2>
+                    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Accusantium illo quae cupiditate velit tempora odio sunt error harum eveniet. Repellendus id ab odio quibusdam neque, alias perspiciatis quam cupiditate optio.</p>
+                    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Accusantium illo quae cupiditate velit tempora odio sunt error harum eveniet. Repellendus id ab odio quibusdam neque, alias perspiciatis quam cupiditate optio.</p>
+                    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Accusantium illo quae cupiditate velit tempora odio sunt error harum eveniet. Repellendus id ab odio quibusdam neque, alias perspiciatis quam cupiditate optio.</p>
+                    <h2>Подзаголовок 2</h2>
+                    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Accusantium illo quae cupiditate velit tempora odio sunt error harum eveniet. Repellendus id ab odio quibusdam neque, alias perspiciatis quam cupiditate optio.</p>
+                    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Accusantium illo quae cupiditate velit tempora odio sunt error harum eveniet. Repellendus id ab odio quibusdam neque, alias perspiciatis quam cupiditate optio.</p>
+                    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Accusantium illo quae cupiditate velit tempora odio sunt error harum eveniet. Repellendus id ab odio quibusdam neque, alias perspiciatis quam cupiditate optio.</p>
+                    <h2>Подзаголовок 3</h2>
+                    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Accusantium illo quae cupiditate velit tempora odio sunt error harum eveniet. Repellendus id ab odio quibusdam neque, alias perspiciatis quam cupiditate optio.</p>
+                    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Accusantium illo quae cupiditate velit tempora odio sunt error harum eveniet. Repellendus id ab odio quibusdam neque, alias perspiciatis quam cupiditate optio.</p>
+                    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Accusantium illo quae cupiditate velit tempora odio sunt error harum eveniet. Repellendus id ab odio quibusdam neque, alias perspiciatis quam cupiditate optio.</p>
+                    <h2>Подзаголовок 4</h2>
+                    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Accusantium illo quae cupiditate velit tempora odio sunt error harum eveniet. Repellendus id ab odio quibusdam neque, alias perspiciatis quam cupiditate optio.</p>
+                    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Accusantium illo quae cupiditate velit tempora odio sunt error harum eveniet. Repellendus id ab odio quibusdam neque, alias perspiciatis quam cupiditate optio.</p>
+                    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Accusantium illo quae cupiditate velit tempora odio sunt error harum eveniet. Repellendus id ab odio quibusdam neque, alias perspiciatis quam cupiditate optio.</p>
+                </td>
+                <td>Сайдбар</td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3">Подвал</td>
+            </tr>
+        </tfoot>
+    </table>
+</body>
+</html>
