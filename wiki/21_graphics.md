@@ -29,6 +29,7 @@
     - [Метод clip()](#метод-clip)
     - [Метод arc()](#метод-arc)
     - [Метод arcTo()](#метод-arcto)
+    - [Метод quadraticCurveTo()](#метод-quadraticcurveto)
 - [JavaScript анимации](#javascript-анимации)
 - [JavaScript в CSS](#javascript-в-css)
 - [Источники информации](#источники-информации)
@@ -904,6 +905,32 @@ context.stroke();
 ![Рисования дуг и окружностей на canvas с помощью arcTo в JavaScript](../img/canvas21.png)
 
 Здесь мы перемещаемся вначале на точку (0, 150), и от этой точки до первой контрольной точки (0, 0) будет проходить первая касательная. Далее от первой контрольной точки (0, 0) до второй (150, 0) будет проходить вторая касательная. Эти две касательные оформляют дугу, а 140 служит радиусом окружности, на которой усекается дуга.
+
+#### Метод quadraticCurveTo()
+Метод **`quadraticCurveTo()`** создает квадратичную кривую. Он имеет следующее определение:
+```js
+quadraticCurveTo(x1, y1, x2, y2)
+```
+
+Где `x1` и `y1` — координаты первой опорной точки, а `x2` и `y2` — координаты второй опорной точки.
+
+![Квадратичная кривая Безье на canvas в JavaScript](../img/canvas25.png)
+
+Пример квадратичной Безье:
+```js
+const canvas = document.getElementById("canvas");
+const context = canvas.getContext("2d");
+
+context.strokeStyle = "red";
+
+context.beginPath();
+context.moveTo(20, 90);
+context.quadraticCurveTo(130, 0, 280, 90)
+context.closePath();
+context.stroke();
+```
+
+![рисование квадратичной кривой Безье на canvas с помощью метода quadraticCurveTo в JavaScript](../img/canvas22.png)
 
 ## JavaScript анимации
 
