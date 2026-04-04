@@ -19,6 +19,7 @@
     - [Свойство textAlign](#свойство-textalign)
     - [Свойство textBaseline](#свойство-textbaseline)
     - [Определение ширины текста](#определение-ширины-текста)
+  - [Рисование фигур](#рисование-фигур)
 - [JavaScript анимации](#javascript-анимации)
 - [JavaScript в CSS](#javascript-в-css)
 - [Источники информации](#источники-информации)
@@ -574,6 +575,18 @@ const text = context.measureText("Hello JavaScript");
 console.log(text.width);
 ```
 
+### Рисование фигур
+Кроме прямоугольников canvas позволяет рисовать и более сложные фигуры. Для оформления сложных фигур используется концепция геометрических путей, которые представляют набор линий, окружностей, прямоугольников и других более мелких деталей, необходимых для построения сложной фигуры.
+
+Для создания нового пути надо вызвать метод **`beginPath()`**:
+```js
+const canvas = document.getElementById("canvas");
+const context = canvas.getContext("2d");
+context.beginPath();    //  начинаем рисование фигуры
+```
+
+После метода `beginPath()` вызываются методы, которые непосредственно создают различные участки пути.[^21.5]
+
 ## JavaScript анимации
 
 ## JavaScript в CSS
@@ -584,3 +597,4 @@ console.log(text.width);
 [^21.2]: [Фоновые изображения](https://metanit.com/web/javascript/21.2.php)
 [^21.3]: [Создание градиента](https://metanit.com/web/javascript/21.3.php)
 [^21.4]: [Рисование текста](https://metanit.com/web/javascript/21.4.php)
+[^21.5]: [Рисование фигур](https://metanit.com/web/javascript/21.5.php)
