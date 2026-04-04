@@ -26,6 +26,7 @@
     - [Объекты Path2D](#объекты-path2d)
     - [Метод rect](#метод-rect)
     - [Метод fill()](#метод-fill)
+    - [Метод clip()](#метод-clip)
 - [JavaScript анимации](#javascript-анимации)
 - [JavaScript в CSS](#javascript-в-css)
 - [Источники информации](#источники-информации)
@@ -745,6 +746,63 @@ context.stroke();
 С помощью свойства `fillStyle` опять же можно задать цвет заполнения фигуры. В данном случае это цвет "#4bcffa".
 
 ![Закрашивание фигур на canvas в JavaScript](../img/canvas16.png)
+
+#### Метод clip()
+Метод **`clip()`** позволяет вырезать из `canvas` определенную область, а все, что вне этой области, будет игнорироваться при последующей отрисовке.
+
+Для понимания этого метода сначала нарисуем два прямоугольника:
+```js
+const canvas = document.getElementById("canvas");
+const context = canvas.getContext("2d");
+
+// рисуем первый красный прямоугольник
+context.beginPath();
+context.moveTo(10, 20);
+context.lineTo(130, 20);
+context.lineTo(130, 110);
+context.lineTo(10, 110);
+context.closePath();
+context.strokeStyle = "red";
+context.stroke();
+
+// рисуем второй зеленый прямоугольник
+context.beginPath();
+context.rect(30, 50, 180, 70);
+context.closePath();
+context.strokeStyle = "green";
+context.stroke();
+```
+
+![Метод clip](../img/canvas17.png)
+
+Теперь применим метод `clip()` для ограничения области рисования только первым прямоугольником:
+```js
+const canvas = document.getElementById("canvas");
+const context = canvas.getContext("2d");
+
+// рисуем первый красный прямоугольник
+context.beginPath();
+context.moveTo(10, 20);
+context.lineTo(130, 20);
+context.lineTo(130, 110);
+context.lineTo(10, 110);
+context.closePath();
+context.strokeStyle = "red";
+context.stroke();
+
+context.clip();     // обрезаем область рисования по первому пути
+
+// рисуем второй зеленый прямоугольник
+context.beginPath();
+context.rect(30, 50, 180, 70);
+context.closePath();
+context.strokeStyle = "green";
+context.stroke();
+```
+
+![clip на canvas в JavaScript](../img/canvas18.png)
+
+Поскольку вызов метода `clip()` идет после первого прямоугольника, то из второго прямоугольника будет нарисована только та часть, которая попадает в первый прямоугольник.
 
 ## JavaScript анимации
 
