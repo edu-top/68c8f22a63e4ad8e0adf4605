@@ -31,6 +31,7 @@
     - [Метод arcTo()](#метод-arcto)
     - [Метод quadraticCurveTo()](#метод-quadraticcurveto)
     - [Метод bezierCurveTo(). Кривая Безье](#метод-beziercurveto-кривая-безье)
+    - [Комплексные фигуры](#комплексные-фигуры)
 - [JavaScript анимации](#javascript-анимации)
 - [JavaScript в CSS](#javascript-в-css)
 - [Источники информации](#источники-информации)
@@ -957,6 +958,62 @@ context.stroke();
 ```
 
 ![Кривая Безье на canvas в JavaScript](../img/canvas23.png)
+
+#### Комплексные фигуры
+Объединим несколько фигур вместе и нарисуем более сложную двухмерную сцену:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Example</title>
+</head>
+<body>
+    <canvas id="canvas" width="400" height="250"></canvas>
+    <script>
+        const canvas = document.getElementById("canvas");
+        const context = canvas.getContext("2d");
+        context.beginPath();
+        context.fill();
+        context.fillStyle = "yellow";
+        context.beginPath();
+        context.arc(160, 130, 100, 0, 2 * Math.PI);
+        context.fill();
+
+        // рот
+        context.beginPath();
+        context.moveTo(100, 160);
+        context.quadraticCurveTo(160, 250, 220, 160);
+        context.closePath();
+        context.fillStyle = "red";
+        context.fill();
+        context.lineWidth = 2;
+        context.strokeStyle = "black";
+        context.stroke();
+
+        // зубы
+        context.fillStyle = "#FFFFFF";
+        context.fillRect(140, 160, 15, 15);
+        context.fillRect(170, 160, 15, 15);
+
+        //глаза
+        context.beginPath();
+        context.arc(130, 90, 20, 0, 2 * Math.PI);
+        context.fillStyle = "#333333";
+        context.fill();
+        context.closePath();
+
+        context.beginPath();
+        context.arc(190, 90, 20, 0, 2 * Math.PI);
+        context.fillStyle = "#333333";
+        context.fill();
+        context.closePath();
+    </script>
+</body>
+</html>
+```
+
+![Сложные фигуры на canvas в JavaScript](../img/canvas45.png)
 
 ## JavaScript анимации
 
