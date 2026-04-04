@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[Фамилия И.О.] [Группа]</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 0;
+        }
+        footer {
+            background-color: #333333;
+            color: white;
+            text-align: center;
+            padding: 40px;
+        }
+        h1, h2 {
+            color: #2e7d32;
+        }
+        header {
+            background-color: #4caf50;
+            color: #2e7d32;
+            font-size: 30px;
+            font-weight: bold;
+            text-align: center;
+            padding: 40px;
+        }
+        main {
+            background-color: hsl(0, 0%, 90%);
+            min-height: 500px;
+            padding: 20px;
+        }
+        main div {
+            background-color: white;
+            border: 1px solid darkgray;
+            margin: 0 auto;
+            max-width: 1000px;
+            position: relative;
+        }
+        nav {
+            background-color: #333333;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        nav ul {
+            margin: 0;
+            padding-left: 0;
+        }
+        nav > ul > li {
+            display: inline-block;
+            padding: 20px;
+        }
+        section {
+            background-color: hsl(0, 0%, 95%);
+            margin: 20px;
+            padding: 20px;
+        }
+        article {
+            border: 1px solid hsl(0, 0%, 90%);
+            background-color: white;
+            border-left: 5px solid #4caf50;
+            margin: 20px 0;
+            padding: 20px;
+        }
+        aside {
+            background-color: hsla(125, 50%, 50%, 0.25);
+            border: 1px solid hsla(125, 50%, 50%, 0.5);
+            padding: 10px;
+            position: absolute;
+            max-width: 300px;
+            right: 20px;
+            top: 20px;
+        }
+        time {
+            color: hsl(0, 0%, 50%);
+            font-size: 14px;
+            font-style: italic;
+        }
+        .menu_button {
+            background-color: transparent;
+            border: none;
+            color: white;
+            position: absolute;
+            right: 0;
+            top: 15px;
+        }
+        .menu_button:hover {
+            color: hsl(0, 0%, 80%);
+            cursor: pointer;
+        }
+        .menu_button:active {
+            color: hsl(0, 0%, 70%);
+        }
+        menu {
+            background-color: black;
+            border: 1px solid gray;
+            box-shadow: 0px 2px 5px hsla(0, 0%, 50%);
+            color: white;
+            display: none;
+            padding: 20px;
+            position: absolute;
+            right: 0;
+            top: -15px;
+            width: 150px;
+            z-index: 1;
+        }
+        menu ul {
+            padding-left: 10px;
+        }
+        menu ul li {
+            list-style-type: none;
+            margin: 10px 0;
+        }
+        menu .menu_button {
+            top: 5px;
+        }
+        menu > ul > li .material-icons {
+            left: -5px;
+            position: relative;
+            top: 5px;
+        }
+        menu > ul > li:last-child .material-icons {
+            left: -2px;
+        }
+        .contact_widget {
+            background-color: hsl(200, 50%, 50%);
+            border: 5px solid white;
+            border-radius: 50%;
+            /* bottom: 50px; */
+            bottom: -240px;
+            box-shadow: 0px 2px 5px hsla(0, 0%, 50%);
+            box-sizing: border-box;
+            color: hsl(120, 50%, 75%);
+            height: 100px;
+            padding-top: 20px;
+            /* position: fixed; */
+            position: absolute;
+            right: 25px;
+            text-align: center;
+            width: 100px;
+        }
+        .contact_widget .material-icons {
+            font-size: 50px;
+        }
+    </style>
+</head>
+<body>
+    <header>[Группа]</header>
+
+    <nav>
+        <ul>
+            <li>Главная</li>
+            <li>О нас</li>
+            <li>Услуги</li>
+            <li>Контакты</li>
+        </ul>
+        <button class="menu_button" onclick="this.nextElementSibling.style.display = 'block'">
+            <i class="material-icons">menu</i>
+        </button>
+        <menu>
+            <ul>
+                <li><i class="material-icons">account_balance_wallet</i> Баланс</li>
+                <li><i class="material-icons">account_circle</i> Профиль</li>
+                <li><i class="material-icons">settings</i> Настройки</li>
+                <li><i class="material-icons">logout</i> Выход</li>
+            </ul>
+            <button class="menu_button" onclick="this.parentElement.style.display = 'none'">
+                <span class="material-icons">close</span>
+            </button>
+        </menu>
+    </nav>
+
+    <main>
+        <div>
+            <aside>
+                <h2>Боковая панель</h2>
+                <p>Здесь может быть дополнительная информация, ссылки или реклама.</p>
+            </aside>
+            <section>
+                <h1>Основная секция</h1>
+                <article>
+                    <h2>Статья 1</h2>
+                    <p>Это содержимое первой статьи. Здесь может быть текст, изображения и другой контент.</p>
+                    <time>[YYYY-MM-DD hh:mm]</time>
+                </article>
+                <article>
+                    <h2>Статья 2</h2>
+                    <p>Это содержимое второй статьи. Каждая статья представляет собой отдельный блок.</p>
+                    <time>[YYYY-MM-DD hh:mm]</time>
+                </article>
+            </section>
+            <section>
+                <h1>Дополнительная секция</h1>
+                <article>
+                    <h2>Дополнительная статья</h2>
+                    <p>Это содержимое первой статьи. Здесь может быть текст, изображения и другой контент.</p>
+                    <time>[YYYY-MM-DD hh:mm]</time>
+                </article>
+            </section>
+        </div>
+    </main>
+    <footer>[Год] [Фамилия Имя Отчество]</footer>
+    <div class="contact_widget"><i class="material-icons">phone_enabled</i></div>
+</body>
+</html>
