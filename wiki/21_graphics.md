@@ -21,6 +21,7 @@
     - [Определение ширины текста](#определение-ширины-текста)
   - [Рисование фигур](#рисование-фигур)
     - [Методы moveTo() и lineTo()](#методы-moveto-и-lineto)
+    - [Отображение пути](#отображение-пути)
 - [JavaScript анимации](#javascript-анимации)
 - [JavaScript в CSS](#javascript-в-css)
 - [Источники информации](#источники-информации)
@@ -614,6 +615,34 @@ context.lineTo(260, 100);
 ```
 
 Здесь мы устанавливаем начало пути в точку (20, 100), затем от нее рисуем линию до точки (140, 10) (линия вверх) и далее рисуем еще одну линию до точки (260, 100).
+
+#### Отображение пути
+Хотя мы нарисовали несколько линий, пока мы их не увидим, потому что их надо отобразить на экране. Для отображения пути надо использовать метод **`stroke()`**:
+```js
+const canvas = document.getElementById("canvas");
+const context = canvas.getContext("2d");
+
+context.beginPath();
+context.moveTo(20, 100);
+context.lineTo(140, 10);
+context.lineTo(260, 100);
+context.stroke();       // отображаем путь
+```
+
+![Рисование линий на canvas в JavaScript с помощью lineTo и stroke](../img/canvas13.png)
+
+По умолчанию для отрисовки используется черный цвет, но с помощью свойства **`strokeStyle`** можно изменить цвет:
+```js
+const canvas = document.getElementById("canvas");
+const context = canvas.getContext("2d");
+
+context.beginPath();
+context.moveTo(20, 100);
+context.lineTo(140, 10);
+context.lineTo(260, 100);
+context.strokeStyle = "red";    // красный цвет
+context.stroke();       // отображаем путь
+```
 
 ## JavaScript анимации
 
