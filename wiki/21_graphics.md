@@ -30,6 +30,7 @@
     - [Метод arc()](#метод-arc)
     - [Метод arcTo()](#метод-arcto)
     - [Метод quadraticCurveTo()](#метод-quadraticcurveto)
+    - [Метод bezierCurveTo(). Кривая Безье](#метод-beziercurveto-кривая-безье)
 - [JavaScript анимации](#javascript-анимации)
 - [JavaScript в CSS](#javascript-в-css)
 - [Источники информации](#источники-информации)
@@ -931,6 +932,31 @@ context.stroke();
 ```
 
 ![рисование квадратичной кривой Безье на canvas с помощью метода quadraticCurveTo в JavaScript](../img/canvas22.png)
+
+#### Метод bezierCurveTo(). Кривая Безье
+Метод `bezierCurveTo()` рисует кривую Безье. Он имеет следующее определение:
+```js
+bezierCurveTo(x1, y1, x2, y2, x3, y3)
+```
+
+Где `x1` и `y1` — координаты первой опорной точки, `x2` и `y2` — координаты второй опорной точки, а `x3` и `y3` — координаты третьей опорной точки.
+
+![параметры кривой Безье в JavaScript](../img/canvas26.png)
+
+Пример кривой Безье:
+```js
+const canvas = document.getElementById("canvas");
+const context = canvas.getContext("2d");
+context.strokeStyle = "red";
+
+context.beginPath();
+context.moveTo(30, 100);
+context.bezierCurveTo(110, 0, 190, 200, 270, 100);
+context.closePath();
+context.stroke();
+```
+
+![Кривая Безье на canvas в JavaScript](../img/canvas23.png)
 
 ## JavaScript анимации
 
