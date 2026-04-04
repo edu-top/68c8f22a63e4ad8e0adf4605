@@ -25,6 +25,7 @@
     - [Замыкание пути](#замыкание-пути)
     - [Объекты Path2D](#объекты-path2d)
     - [Метод rect](#метод-rect)
+    - [Метод fill()](#метод-fill)
 - [JavaScript анимации](#javascript-анимации)
 - [JavaScript в CSS](#javascript-в-css)
 - [Источники информации](#источники-информации)
@@ -722,6 +723,28 @@ context.lineTo(30, 110);
 context.closePath();
 context.stroke();
 ```
+
+#### Метод fill()
+Метод **`fill()`** заполняет цветом все внутреннее пространство нарисованного пути:
+```js
+const canvas = document.getElementById("canvas");
+const context = canvas.getContext("2d");
+
+context.beginPath();
+context.moveTo(20, 100);
+context.lineTo(140, 10);
+context.lineTo(260, 100);
+context.closePath();
+
+context.strokeStyle = "#2e86de";
+context.fillStyle = "#4bcffa";
+context.fill();
+context.stroke();
+```
+
+С помощью свойства `fillStyle` опять же можно задать цвет заполнения фигуры. В данном случае это цвет "#4bcffa".
+
+![Закрашивание фигур на canvas в JavaScript](../img/canvas16.png)
 
 ## JavaScript анимации
 
