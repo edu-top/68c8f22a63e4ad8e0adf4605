@@ -4,6 +4,7 @@
 
 - [Что такое Flexbox. Flex Container](#что-такое-flexbox-flex-container)
   - [Основные понятия](#основные-понятия)
+  - [Создание flex-контейнера](#создание-flex-контейнера)
 - [Свойство display: flex](#свойство-display-flex)
 - [Глоссарий](#глоссарий)
 - [Источники информации](#источники-информации)
@@ -33,6 +34,93 @@
 Кроме основной оси существует также поперечная ось или **cross axis**. Она перпендикулярна основной. При расположении элементов в виде строки cross axis направлена сверху вниз, а при расположении в виде столбца она направлена слева направо. Начало поперечной оси обозначается как **cross start**, а ее конец — как **cross end**. Расстояние между ними описывается термином **cross size**.
 
 То есть, если элементы располагаются в строку, то main size будет представлять ширину контейнера или элементов, а cross size — их высоту. Если же элементы располагаются в столбик, то, наоборот, main size представляет высоту контейнера и элементов, а cross size — их ширину.
+
+### Создание flex-контейнера
+Для создания flex-контейнера необходимо присвоить его стилевому свойству **`display`** одно из двух значений: **`flex`** или **`inline-flex`**.
+
+Создадим простейшую веб-страницу, которая применяет flexbox:
+```html
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Flexbox в CSS3</title>
+        <style>
+            .flex-container {
+                display: flex;
+            }
+            .flex-item {
+                text-align:center;
+                font-size: 1.1em;
+                padding: 1.5em;
+                color: white;
+            }
+            .color1 {background-color: #675BA7;}
+            .color2 {background-color: #9BC850;}
+            .color3 {background-color: #A62E5C;}
+        </style>
+    </head>
+    <body>
+        <div class="flex-container">
+            <div class="flex-item color1">Flex Item 1</div>
+            <div class="flex-item color2">Flex Item 2</div>
+            <div class="flex-item color3">Flex Item 3</div>
+        </div>
+    </body>
+</html>
+```
+
+Для контейнера `flex-container` установлено свойство `display:flex`. В нем располагается три flex-элемента.
+
+![Flex Container в CSS3](../img/flexbox1.png)
+
+Если значение `flex` определяет контейнер как блочный элемент, то значение `inline-flex` определяет элемент как строчный (`inline`). Рассмотрим оба способа на примере:
+```html
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Flexbox в CSS3</title>
+        <style>
+            .flex-container {
+                display: flex;
+                border:2px solid #ccc;
+            }
+            .inline-flex-container {
+                display: inline-flex;
+                border:2px solid #ccc;
+                margin-top:10px;
+            }
+            .flex-item {
+                text-align:center;
+                font-size: 1.1em;
+                padding: 1.5em;
+                color: white;
+            }
+            .color1 {background-color: #675BA7;}
+            .color2 {background-color: #9BC850;}
+            .color3 {background-color: #A62E5C;}
+        </style>
+    </head>
+    <body>
+        <div class="flex-container">
+            <div class="flex-item color1">Flex Item 1</div>
+            <div class="flex-item color2">Flex Item 2</div>
+            <div class="flex-item color3">Flex Item 3</div>
+        </div>
+
+        <div class="inline-flex-container">
+            <div class="flex-item color1">Flex Item 1</div>
+            <div class="flex-item color2">Flex Item 2</div>
+            <div class="flex-item color3">Flex Item 3</div>
+        </div>
+    </body>
+</html>
+```
+
+![inline-flex и flexbox в CSS3](../img/flexbox2.png)
+
+В частности, в первом случае flex-контейнер растягивается по ширине страницы, а во втором случае занимает именно столько места, сколько необходимо для flex-элементов.[^12.1]
 
 ## Свойство display: flex
 Во flex-верстке у вас есть основной контейнер и вложенные в него элементы
