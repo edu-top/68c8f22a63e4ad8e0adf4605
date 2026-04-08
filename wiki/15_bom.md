@@ -1656,7 +1656,7 @@ window.addEventListener('message', function(event) {
 
 - `origin`
 
-    Источник отправителя, например, http://javascript.info.
+    Источник отправителя, например, http://example.com.
 
 - `source`
 
