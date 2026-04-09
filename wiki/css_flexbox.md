@@ -6,6 +6,7 @@
   - [Основные понятия](#основные-понятия)
   - [Создание flex-контейнера](#создание-flex-контейнера)
 - [Свойство display: flex](#свойство-display-flex)
+- [Использование flexbox](#использование-flexbox)
 - [Глоссарий](#глоссарий)
 - [Источники информации](#источники-информации)
 
@@ -156,6 +157,173 @@
 </body>
 </html>
 ```
+
+## Использование flexbox
+
+![Flexbox](../img/flex_01-1.png)
+![Flexbox](../img/flex_01-2.png)
+![Flexbox](../img/flex_01-3.png)
+
+*Рассмотрим свойства для flex-контейнера*
+
+![Flexbox](../img/flex_02-1.png)
+![Flexbox](../img/flex_02-2.png)
+![Flexbox](../img/flexbox_1.png)
+
+![Flexbox](../img/flex_03-1-1.png)
+![Flexbox](../img/flex_03-2.png)
+![Flexbox](../img/flexbox_2.png)
+
+![Flexbox](../img/flex_04-1.png)
+![Flexbox](../img/flex_04-2.png)
+![Flexbox](../img/flexbox_3.png)
+
+![Flexbox](../img/flex_05-1.png)
+![Flexbox](../img/flex_05-2.png)
+![Flexbox](../img/flexbox_4.png)
+
+![Flexbox](../img/flex_06-1.png)
+![Flexbox](../img/flex_06-2.png)
+![Flexbox](../img/flexbox_5.png)
+
+![Flexbox](../img/flex_07-1.png)
+![Flexbox](../img/flex_07-2.png)
+![Flexbox](../img/flexbox_6.png)
+
+*По умолчанию элементы выстраиваются по горизонтали*
+
+![Flexbox](../img/flex_08-1.png)
+![Flexbox](../img/flex_08-2.png)
+![Flexbox](../img/flexbox_7.png)
+
+![Flexbox](../img/flex_09-1.png)
+![Flexbox](../img/flex_09-2.png)
+![Flexbox](../img/flexbox_8.png)
+
+![Flexbox](../img/flex_10-1.png)
+![Flexbox](../img/flex_10-2.png)
+![Flexbox](../img/flexbox_9.png)
+
+![Flexbox](../img/flex_11-1.png)
+![Flexbox](../img/flex_11-2.png)
+
+*Добавили контент во второй блок. Теперь он стал выше других*
+
+![Flexbox](../img/flex_11-1.png)
+![Flexbox](../img/flexbox_10.png)
+
+*Выравнивание по вспомогательной оси (вертикально)*
+
+![Flexbox](../img/flex_12.png)
+![Flexbox](../img/flexbox_11.png)
+
+![Flexbox](../img/flex_13.png)
+![Flexbox](../img/flexbox_12.png)
+
+![Flexbox](../img/flex_14.png)
+![Flexbox](../img/flexbox_13.png)
+
+![Flexbox](../img/flexbox_14.png)
+![Flexbox](../img/flex_15.png)
+
+![Flexbox](../img/flex_16.png)
+![Flexbox](../img/flexbox_15.png)
+
+![Flexbox](../img/flex_16.png)
+![Flexbox](../img/flex_17.png)
+
+![Flexbox](../img/flex_17_2.png)
+![Flexbox](../img/flexbox_16.png)
+
+![Flexbox](../img/flex_17_3.png)
+![Flexbox](../img/flexbox_16.png)
+
+![Flexbox](../img/flex_05-1.png)
+![Flexbox](../img/flex_18-1.png)
+
+![Flexbox](../img/flex_18-2.png)
+![Flexbox](../img/flexbox_17.png)
+
+![Flexbox](../img/flex_18-3.png)
+![Flexbox](../img/flexbox_17.png)
+
+![Flexbox](../img/flex_11-1.png)
+![Flexbox](../img/flex_19.png)
+
+*Рассмотрим свойства для flex-элемента*
+
+![Flexbox](../img/flex_20-1.png)
+![Flexbox](../img/flex_20-2.png)
+
+![Flexbox](../img/flex_21-1.png)
+![Flexbox](../img/flex_21-2.png)
+
+![Flexbox](../img/flex_22-1.png)
+![Flexbox](../img/flex_22-2.png)
+
+![Flexbox](../img/flex_23-1.png)
+![Flexbox](../img/flex_23-2.png)
+
+![Flexbox](../img/flex_24-1.png)
+![Flexbox](../img/flex_24-2.png)
+
+![Flexbox](../img/flex_25-1.png)
+![Flexbox](../img/flex_25-2.png)
+
+![Flexbox](../img/flex_26-1.png)
+![Flexbox](../img/flex_26-2.png)
+
+*Увеличиваем размер относительно базового размера*
+
+![Flexbox](../img/flex_27-1.png)
+![Flexbox](../img/flex_27-2.png)
+
+![Flexbox](../img/flex_28-1.png)
+![Flexbox](../img/flex_28-2.png)
+
+*Показывает, можно ли становиться меньше*
+
+![Flexbox](../img/flex_28-3.png)
+![Flexbox](../img/flex_28-2.png)
+
+![Flexbox](../img/flex_29-1.png)
+![Flexbox](../img/flex_29-2.png)
+
+![Flexbox](../img/flex_29-1.png)
+![Flexbox](../img/flex_29-3.png)
+
+![Flexbox](../img/flex_30-1.png)
+![Flexbox](../img/flex_30-2.png)
+
+![Flexbox](../img/flex_31-1.png)
+![Flexbox](../img/flex_31-2.png)
+
+![Flexbox](../img/flex_32-1.png)
+![Flexbox](../img/flex_32-2.png)
+
+![Flexbox](../img/flex_33-1.png)
+![Flexbox](../img/flex_30-3.png)
+
+![Flexbox](../img/flex_34-1.png)
+![Flexbox](../img/flex_34-2.png)
+
+![Flexbox](../img/flex_35-1.png)
+![Flexbox](../img/flex_35-2.png)
+
+![Flexbox](../img/flex_36-1.png)
+![Flexbox](../img/flex_36-2.png)
+
+![Flexbox](../img/flex_37-1.png)
+![Flexbox](../img/flex_37-2.png)
+
+![Flexbox](../img/flex_38-1.png)
+![Flexbox](../img/flex_38-2.png)
+
+![Flexbox](../img/flex_39-1.png)
+![Flexbox](../img/flex_39-2.png)
+
+![Flexbox](../img/flex_40-1.png)
+![Flexbox](../img/flex_40-2.png)
 
 ## Глоссарий
 Flexbox
