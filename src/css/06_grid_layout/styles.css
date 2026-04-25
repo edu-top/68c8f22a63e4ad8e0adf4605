@@ -1,0 +1,554 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+body {
+    /* background-color: hsl(215, 50%, 25%); */
+    background-image: linear-gradient(135deg, hsl(215, 50%, 25%), hsl(175, 50%, 20%));
+    color: white;
+    font-family: "Open Sans", Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    margin: 0;
+}
+article {
+    display: grid;
+    grid-template-areas:
+        "sidebar header header"
+        "sidebar main aside"
+        "footer footer footer"
+    ;
+    grid-template-columns: 250px 1fr 250px;
+    grid-template-rows: minmax(75px, auto) 1fr 75px;
+    grid-gap: 20px;
+    /* min-height: 100vh; */
+    padding: 20px;
+}
+aside.position_left {
+    /* background-color: aqua; */
+    grid-area: sidebar;
+}
+aside.position_right {
+    grid-area: aside;
+}
+footer {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;    
+    grid-area: footer;
+}
+h3 {
+    border-bottom: 1px solid hsla(220, 25%, 75%, 0.25);
+    margin: 0;
+    padding-bottom: 10px;
+}
+h4 {
+    color: hsla(220, 50%, 75%, 0.75);
+    color: hsla(175, 50%, 75%, 0.75);
+}
+header {
+    align-content: center;
+    display: flex;
+    flex-wrap: wrap;
+    grid-area: header;
+    justify-content: space-between;
+}
+header.section {
+    padding: 0 20px;
+}
+header > * {
+    margin: 20px 0;
+}
+header > div {
+    align-items: center;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-end;
+    /* gap: 20px; Отступ между блоками иконок */
+}
+header > div > .block {
+    height: 50px;
+    padding: 0 20px;
+}
+header > div > .block:not(:last-child) {
+    border-right: 1px solid hsla(220, 25%, 75%, 0.25);
+}
+header > div > .block.user_box {
+    padding-right: 0;
+}
+input {
+    color: white;
+    background-color: transparent;
+    border: 1px solid  hsla(220, 25%, 75%, 0.5);
+    border-radius: 5px;
+    flex: 1;
+    padding: 10px;
+    max-width: 750px;
+    min-width: 100px;
+    width: 100%;
+}
+main {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(250px, auto));
+    grid-template-rows: minmax(100px, 100px);
+    grid-area: main;
+}
+table {
+    border-spacing: 0;
+    font-family: Roboto, Arial, sans-serif;
+    width: 100%;
+}
+td, th {
+    border-bottom: 1px solid hsla(220, 25%, 50%, 0.25);
+    padding: 2px 5px;
+    text-align: left;
+    vertical-align: middle;
+}
+td .material-icons, th .material-icons {
+    line-height: 40px;
+}
+th {
+    background-color: hsla(200, 50%, 25%, 0.5);
+    color: hsla(175, 50%, 75%, 0.75);
+    padding: 10px 5px;
+}
+tr th:last-child, tr td:last-child {
+    text-align: right;
+}
+tr th:last-child {
+    padding-right: 15px;
+}
+time {
+    font-style: italic;
+}
+.activity {
+    border: 1px solid hsla(220, 25%, 75%, 0.25);
+    border-bottom-right-radius: 10px;
+    border-top-right-radius: 10px;
+    margin: 15px 0;
+    padding: 10px;
+    position: relative;
+}
+.activity:nth-child(2) {
+    border-left: 4px solid hsl(50, 50%, 50%);
+}
+.activity:nth-child(3) {
+    border-left: 4px solid hsl(300, 50%, 50%);
+}
+.activity:nth-child(4) {
+    border-left: 4px solid hsl(100, 50%, 50%);
+}
+.activity:nth-child(3) {
+    border-left: 4px solid hsl(200, 50%, 50%);
+}
+.activity::after {
+    color: hsla(220, 50%, 75%, 0.75);
+    content: "\f142";
+    font-family: "Font Awesome 6 Free", "Font Awesome 7 Free";
+    font-size: 12px;
+    font-weight: 600;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+.activity :last-child {
+    margin-top: 5px;
+}
+.activity :last-child::before {
+    content: "\f017";
+    font-family: "Font Awesome 6 Free", "Font Awesome 7 Free";
+    font-weight: 900;
+    margin-right: 5px;
+}
+.block {
+    align-items: center;
+    display: flex;
+}
+.block i {
+    margin: 0 5px;
+}
+.block:not(:last-child) {
+    border-right: 1px solid hsla(220, 25%, 75%, 0.25);
+}
+.calendar {
+    display: grid;
+    font-size: 14px;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: repeat(6, 30px);
+    margin-top: 10px;
+}
+.calendar > div {
+    padding-top: 4px;
+    text-align: center;
+}
+.chat {
+    display: flex;
+    margin: 20px 0;
+    position: relative;
+}
+.chat > :first-child {
+    /* border: 2px solid white; */
+    border-radius: 50%;
+    height: 40px;
+    margin-right: 10px;
+    width: 40px;
+}
+.chat > :last-child > :first-child {
+    font-size: 14px;
+}
+.chat > :last-child > :last-child {
+    margin-top: 5px;
+}
+.chat img {
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+}
+.chat img.size_diminished {
+    height: 38px;
+    width: 38px;
+}
+.chat > :first-child {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+.bg_white {
+    background-color: white;
+}
+.chat::after {
+    background-color: red;
+    border-radius: 50%;
+    content: "";
+    height: 10px;
+    position: absolute;
+    right: 10px;
+    top: 0px;
+    width: 10px;
+}
+.chat.state_offline::after {
+    background-color: hsl(0, 50%, 50%);
+}
+.chat.state_online::after {
+    background-color: hsl(150, 50%, 50%);
+}
+.chat.state_remote::after {
+    background-color: hsl(200, 50%, 50%);
+}
+.contact {
+    display: flex;
+    margin: 20px 0;
+    position: relative;
+}
+.contact::after {
+    color: hsl(100, 50%, 50%);
+    content: "\f879";
+    font-family: "Font Awesome 6 Free", "Font Awesome 7 Free";
+    font-weight: 600;
+    position: absolute;
+    right: 0;
+    top: 4px;
+}
+.contact::before {
+    color: hsl(50, 50%, 50%);
+    content: "\f0e0";
+    font-family: "Font Awesome 6 Free", "Font Awesome 7 Free";
+    font-weight: 600;
+    position: absolute;
+    right: 0;
+    top: 40px;
+}
+.contact > :first-child {
+    /* border: 2px solid white; */
+    align-items: center;
+    border-radius: 50%;
+    display: flex;
+    height: 40px;
+    justify-content: center;
+    margin-right: 10px;
+    width: 40px;
+}
+.contact:nth-of-type(1) > :first-child {
+    background-image: linear-gradient(45deg, hsl(0, 50% , 50%), hsl(50, 50%, 50%));
+}
+.contact:nth-of-type(2) > :first-child {
+    background-image: linear-gradient(45deg, hsl(100, 50% , 50%), hsl(200, 50%, 50%));
+}
+.contact:nth-of-type(3) > :first-child {
+    background-image: linear-gradient(45deg, hsl(200, 50% , 50%), hsl(300, 50%, 50%));
+}
+.contact_info {
+    font-size: 10px;
+}
+.contact_info > div:not(:first-child) {
+    margin: 2px;
+}
+.contact_info_name {
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 0;
+}
+.contact_info_position {
+    font-size: 12px;   
+}
+.current {
+    background-color: hsla(200, 100%, 50%, 0.5);
+    border-radius: 5px;
+    font-weight: bold;
+}
+.day {
+    color: hsla(220, 50%, 75%, 0.75);
+    font-weight: bold;
+}        
+.off {
+    color: hsla(0, 100%, 75%, 1);
+}
+.day.title.off {
+    color: hsla(0, 50%, 75%, 0.75);
+}
+.diff {
+    display: flex;
+    font-size: 12px;
+    position: relative;
+    top: 2px;
+}
+.diff i {
+    font-size: 14px;
+    position: relative;
+}
+.diff.neg i {
+    transform: rotate(90deg);            
+}
+.icon_list {
+    list-style-type: none;
+    padding-left: 0;
+}
+.icon_list li {
+    align-items: center;
+    color: hsla(220, 50%, 75%, 0.95);
+    display: flex;
+    justify-content: space-between;
+    margin: 15px 0;
+    position: relative;
+}
+.icon_list li > span {
+    align-items: center;
+    display: flex;
+}
+.icon_list li::after {
+    color: white;
+    content: "❯";
+    position: relative;
+    right: 0;
+}
+.icon_list li i {
+    color: #fff;
+    margin-right: 5px;
+}
+.metric {
+    align-self: flex-start;
+    display: flex;
+    position: relative;
+}
+.metric:nth-child(1) > :first-child {
+    background-color: hsla(100, 75%, 50%, 0.75);
+}
+.metric:nth-child(2) > :first-child {
+    background-color: hsla(200, 75%, 50%, 0.75);
+}
+.metric:nth-child(3) > :first-child {
+    background-color: hsla(50, 75%, 50%, 0.75);
+}
+.metric:nth-child(4) > :first-child {
+    background-color: hsla(300, 75%, 50%, 0.75);
+}
+.metric > :first-child {
+    align-items: center;
+    border-radius: 50%;
+    display: flex;
+    height: 60px;
+    justify-content: center;
+    width: 60px;
+}
+.metric > :first-child > .material-icons {
+    font-size: 30px;
+}
+.metric > :last-child {
+    flex: 1;
+    margin-left: 10px;
+}
+.metric > :last-child > :first-child {
+    font-weight: bold;
+}
+.metric > :last-child > :last-child {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+}
+.metric::after {
+    background-color: red;
+    border-radius: 50%;
+    content: "";
+    height: 10px;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    width: 10px;
+}
+.metric:nth-child(1)::after {
+    background-color: hsl(0, 50%, 50%);
+}
+.metric:nth-child(2)::after {
+    background-color: hsl(100, 50%, 50%);
+}
+.metric:nth-child(3)::after {
+    background-color: hsl(150, 50%, 50%);
+}
+.metric:nth-child(4)::after {
+    background-color: hsl(200, 50%, 50%);
+}
+.minor {
+    color: hsla(220, 25%, 75%, 0.5);
+}
+.neg {
+    color: hsla(0, 75%, 75%, 0.75);
+}
+.pos {
+    color: hsla(150, 75%, 50%, 0.75);
+}
+.prev {
+    opacity: 0.25;
+}
+.secondary {
+    color: hsla(220, 50%, 75%, 0.75);
+}
+.section {
+    background-color: hsla(220, 0%, 0%, 0.2);
+    border-radius: 10px;
+    padding: 20px;
+}
+.small {
+    font-size: small;
+}
+.status {
+    align-items: center;
+    border-radius: 20px;
+    display: inline-flex;
+    padding: 2px 5px;
+    position: relative;
+    font-size: 10px;
+    text-align: center;
+    width: 65px;
+}
+.status.state_active {
+    background-color: hsla(150, 50%, 50%, 0.25);
+}
+.status.state_paused {
+    background-color: hsla(20, 50%, 50%, 0.25);
+}
+.status.state_progress {
+    background-color: hsla(200, 50%, 50%, 0.25);
+}
+.status::before {
+    border-radius: 50%;
+    content: "";
+    display: block;
+    height: 8px;
+    margin-right: 5px;
+    width: 8px;
+}
+.status.state_active::before {
+    background-color: hsla(150, 50%, 50%, 0.5);
+}
+.status.state_paused::before {
+    background-color: hsla(0, 50%, 50%, 0.5);
+}
+.status.state_progress::before {
+    background-color: hsla(200, 50%, 50%, 0.5);
+}
+.style_notifications {
+    position: relative;
+}
+.style_notifications::after {
+    position: absolute;
+    background-color: red;
+    border-radius: 50%;
+    border: 2px solid hsla(220, 50%, 20%, 0.9);
+    content: "5";
+    font-size: 10px;
+    height: 15px;
+    left: 35px;
+    text-align: center;
+    top: 10px;
+    width: 15px;
+}
+.task {
+    align-items: flex-end;
+    border: 1px solid hsla(220, 25%, 75%, 0.25);
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+    padding: 10px;
+}
+.task > :first-child > :last-child {
+    margin-top: 10px;
+}
+.task > :first-child > :last-child::before {
+    color: hsla(200, 50%, 75%, 0.75);
+    content: "\f0c8";
+    font-family: "Font Awesome 6 Free", "Font Awesome 7 Free";
+    font-weight: 900;
+    margin-right: 5px;
+}
+.task:first-of-type > :first-child > :last-child::before {
+    color: hsla(150, 50%, 75%, 0.75);
+    content: "\f14a";
+}
+.task > :last-child {
+    background-image: linear-gradient(to bottom, hsla(150, 50%, 50%, 0.5), hsla(150, 50%, 75%, 0.75));
+    width: 20px;
+}
+.task:nth-of-type(1) > :last-child {
+    height: 40px;
+}
+.task:nth-of-type(2) > :last-child {
+    background-image: linear-gradient(to bottom, hsla(200, 50%, 50%, 0.5), hsla(150, 50%, 75%, 0.75));
+    height: 30px;
+}
+.task:nth-of-type(3) > :last-child {
+    background-image: linear-gradient(to bottom, hsla(200, 50%, 50%, 0.5), hsla(200, 50%, 75%, 0.75));
+    height: 15px;
+}
+.tasks {
+    /* grid-column: span 2; */
+    /* grid-row: span 2; */
+}
+.toggle {
+    color: hsla(175, 50%, 75%, 0.75);
+    font-size: 40px;
+}
+.toggle_box :first-child {
+    color: hsl(30, 50%, 75%);
+}
+.toggle_box :last-child {
+    color: hsl(30, 50%, 50%);
+}
+.user_box {
+    align-items: flex-start;
+    display: flex;
+    justify-content: space-between;
+    padding-right: 0;
+}
+.user_box > div {
+    line-height: 175%;
+    margin-right: 10px;
+}
+.user_box i {
+    color: hsla(150, 75%, 50%, 0.75);
+    font-size: 50px;
+}        
+.x-large {
+    font-size: x-large;
+}
+.x-small {
+    font-size: 12px;
+}

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Система управления</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <article>
+        <aside class="section position_left">
+            <h3>Панель управления</h3>
+            <h4>Сводки</h4>
+            <ul class="icon_list">
+                <li><span><i class="material-icons">analytics</i> Аналитика</span></li>
+                <li><span><i class="material-icons">shopping_cart</i> Коммерция</span></li>
+                <li><span><i class="material-icons">edit_note</i> Отчеты</span></li>
+                <li><span><i class="material-icons">report</i> Журнал</span></li>
+                <li><span><i class="material-icons">checklist</i> Чек-листы</span></li>
+                <li><span><i class="material-icons">offline_bolt</i> Инсайты</span></li>
+                <li><span><i class="material-icons">star</i> Избранное</span></li>
+            </ul>
+            <h4>Инструменты</h4>
+            <ul class="icon_list">
+                <li><span><i class="material-icons">backup</i> Восстановление</span></li>
+                <li><span><i class="material-icons">build</i> Сборка</span></li>
+                <li><span><i class="material-icons">calendar_month</i> Планирование</span></li>
+                <li><span><i class="material-icons">help</i> Справка</span></li>
+            </ul>
+            <!-- <h4>Источники</h4>
+            <ul class="icon_list">
+                <li><span><i class="material-icons">insert_drive_file</i> Файлы</span></li>
+                <li><span><i class="material-icons">cloud</i> Облако</span></li>
+            </ul> -->
+            <h4>Отслеживание</h4>
+            <ul class="icon_list">
+                <li><span><i class="material-icons">task_alt</i> Задачи</span></li>
+                <li><span><i class="material-icons">assignment</i> Проекты</span></li>
+                <li><span><i class="material-icons">queue</i> Очереди</span></li>
+                <li><span><i class="material-icons">dashboard</i> Доски</span></li>
+            </ul>
+            <!--<h4>Настройки</h4>
+            <ul class="icon_list">
+                <li><span><i class="material-icons">analytics</i> Аналитика</span></li>
+                <li><span><i class="material-icons">shopping_cart</i> Коммерция</span></li>
+                <li><span><i class="material-icons">cloud</i> Облако</span></li>
+            </ul> -->
+        </aside>        
+        <header class="section">
+            <input type="search" placeholder="Искать...">
+            <div>
+                <div class="block toggle_box">
+                    <i class="material-icons">wb_sunny</i>
+                    <i class="material-icons toggle">toggle_on</i>
+                    <i class="material-icons">nightlight_round</i>
+                </div>
+                <div class="block style_notifications">
+                    <i class="material-icons">message</i>
+                    <i class="material-icons icon_notification">notifications</i>
+                    <i class="material-icons">mail_outline</i>
+                </div>
+                <div class="block user_box">
+                    <div>
+                        <div>[Фамилия И.О.]</div>
+                        <div class="secondary small">[Группа]</div>
+                    </div>
+                    <i class="material-icons">account_circle</i>
+                </div>
+            </div>
+        </header>
+        <main>
+            <section class="section metric">
+                <div><i class="material-icons">list_alt</i></div>
+                <div>
+                    <div class="x-large">132</div>
+                    <div class="secondary">Проекты <div class="diff pos"><i class="material-icons">arrow_outward</i> +10%</div></div>
+                </div>
+            </section>
+            <section class="section metric">
+                <div><i class="material-icons">currency_exchange</i></div>
+                <div>
+                    <div class="x-large">5&thinsp;953&thinsp;040</div>
+                    <div class="secondary">Бюджет <div class="diff pos"><i class="material-icons">arrow_outward</i> +840K</div></div>
+                </div>
+            </section>
+            <section class="section metric">
+                <div><i class="material-icons">attach_money</i></div>
+                <div>
+                    <div class="x-large">720&thinsp;590</div>
+                    <div class="secondary">Расходы <div class="diff neg"><i class="material-icons">arrow_outward</i> -15%</div></div>
+                </div>
+            </section>
+            <section class="section metric">
+                <div><i class="material-icons">people_alt</i></div>
+                <div>
+                    <div class="x-large">35&thinsp;724</div>
+                    <div class="secondary">Пользователи <div class="diff pos"><i class="material-icons">arrow_outward</i> +3245</div></div>
+                </div>
+            </section>
+            <section class="section tasks">
+                <h3>Задачи</h3>
+                <div class="task">
+                    <div>
+                        <div>Написание кода</div>
+                        <div class="secondary small"> 2 ч. 40 мин.</div>
+                    </div>
+                    <div></div>
+                </div>
+                <div class="task">
+                    <div>
+                        <div>Тестирование</div>
+                        <div class="secondary small">2 ч. 25 мин.</div>
+                    </div>
+                    <div></div>
+                </div>
+                <div class="task">
+                    <div>
+                        <div>Код-ревю</div>
+                        <div class="secondary small">1 ч. 10 мин.</div>
+                    </div>
+                    <div></div>
+                </div>
+            </section>
+            <section class="section activities">
+                <h3>Мероприятия</h3>
+                <div class="activity">
+                    <div>Утреннее совещание</div>
+                    <div class="secondary small">09:00 &ndash; 09:30</div>
+                </div>
+                <div class="activity">
+                    <div>Мозговой штурм</div>
+                    <div class="secondary small">11:00 &ndash; 12:00</div>
+                </div>
+                <div class="activity">
+                    <div>Брифинг</div>
+                    <div class="secondary small">13:00 &ndash; 13:30</div>
+                </div>
+            </section>
+            <section class="section" style="position: relative; align-self: flex-start;">
+                <h3>21 апреля 2026 <span class="secondary" style="position: absolute; right: 15px"><i class="material-icons">keyboard_arrow_left</i><i class="material-icons">keyboard_arrow_right</i></span></h3>
+                <div class="calendar">
+                    <div class="day">Пн</div>
+                    <div class="day">Вт</div>
+                    <div class="day">Ср</div>
+                    <div class="day">Чт</div>
+                    <div class="day">Пт</div>
+                    <div class="day title off">Сб</div>
+                    <div class="day title off">Вс</div>
+                    <div class="prev">29</div>
+                    <div class="prev">30</div>
+                    <div class="prev">31</div>
+                    <div>1</div>
+                    <div>2</div>
+                    <div class="off">3</div>
+                    <div class="off">4</div>
+                    <div>5</div>
+                    <div>6</div>
+                    <div>7</div>
+                    <div>8</div>
+                    <div>9</div>
+                    <div class="off">10</div>
+                    <div class="off">11</div>
+                    <div>12</div>
+                    <div>13</div>
+                    <div>14</div>
+                    <div>15</div>
+                    <div>16</div>
+                    <div class="off">17</div>
+                    <div class="off">18</div>
+                    <div>19</div>
+                    <div>20</div>
+                    <div class="current">21</div>
+                    <div>22</div>
+                    <div>23</div>
+                    <div class="off">24</div>
+                    <div class="off">25</div>
+                    <div>26</div>
+                    <div>27</div>
+                    <div>28</div>
+                    <div>29</div>
+                    <div>30</div>
+                    <div class="prev off">1</div>
+                    <div class="prev off">2</div>
+                </div>
+            </section>
+            <section class="section reports">
+                <h3>Контакты</h3>
+                <div class="contact">
+                    <div>И</div>
+                    <div class="contact_info">
+                        <div class="contact_info_name">Алексей Иванов</div>
+                        <div class="contact_info_position">Руководитель</div>
+                        <div class="secondary">3 минуты назад</div>
+                    </div>
+                </div>
+                <div class="contact">
+                    <div>П</div>
+                    <div class="contact_info">
+                        <div class="contact_info_name">Владимир Петров</div>
+                        <div class="contact_info_position">Администратор</div>
+                        <div class="secondary">1 час 15 минут назад</div>
+                    </div>
+                </div>
+                <div class="contact">
+                    <div>С</div>
+                    <div class="contact_info">
+                        <div class="contact_info_name">Николай Сидоров</div>
+                        <div class="contact_info_position">Программист</div>
+                        <div class="secondary">2 часа назад</div>
+                    </div>
+                </div>
+            </section>
+            <section class="section" style="grid-column: 1 / -1">
+                <h3>Проекты</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="secondary"></th>
+                            <th style="white-space: nowrap;">Название <i class="fa-solid fa-arrow-down-a-z"></i></th>
+                            <th>Дата запуска</th>
+                            <th>Статус</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="secondary"><i class="material-icons">check_box</i></td>
+                            <td>Интернет-магазин</td>
+                            <td>18 августа 2024</td>
+                            <td><div class="status state_paused">На паузе</div></td>
+                        </tr>
+                        <tr>
+                            <td class="secondary"><i class="material-icons">check_box_outline_blank</i></td>
+                            <td>Онлайн-игра</td>
+                            <td>10 октября 2026</td>
+                            <td><div class="status state_progress">В работе</div></td>
+                        </tr>
+                        <tr>
+                            <td class="secondary"><i class="material-icons">check_box</i></td>
+                            <td>Обучающая платформа</td>
+                            <td>01 сентября 2025</td>
+                            <td><div class="status state_active">Активен</div></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </main>
+        <aside class="section position_right">
+            <h3>Беседы</h3>
+            <div class="chat state_online">
+                <div><img src="./svg/alice_logo.svg"></div>
+                <div>
+                    <div>Алиса ИИ</div>
+                    <div class="secondary x-small">Яндекс</div>
+                </div>
+            </div>
+            <div class="chat state_online">
+                <div class="bg_white"><img class="size_diminished" src="./img/gigachat_logo.png"></div>
+                <div>
+                    <div>GigaChat</div>
+                    <div class="secondary x-small">Сбер</div>
+                </div>
+            </div>
+            <div class="chat state_remote">
+                <div><img src="./img/qwen_logo.png"></div>
+                <div>
+                    <div>Qwen</div>
+                    <div class="secondary x-small">Alibaba Group</div>
+                </div>
+            </div>
+            <div class="chat state_remote">
+                <div><img src="./img/deepseek_logo.png" style="width: 100%; height: auto"></div>
+                <div>
+                    <div>DeepSeek</div>
+                    <div class="secondary x-small">High-Flyer AI</div>
+                </div>
+            </div>
+            <div class="chat state_remote">
+                <div class="bg_white"><img class="size_diminished" src="./img/perplexity_logo.png"></div>
+                <div>
+                    <div>Perplexity</div>
+                    <div class="secondary x-small">Perplexity AI, Inc.</div>
+                </div>
+            </div>
+            <div class="chat state_remote">
+                <div><img src="./img/gemini_logo.webp"></div>
+                <div>
+                    <div>Gemini</div>
+                    <div class="secondary x-small">Google</div>
+                </div>
+            </div>
+            <div class="chat state_offline">
+                <div class="bg_white"><img class="size_diminished" src="./img/chatgpt_logo.png"></div>
+                <div>
+                    <div>ChatGPT</div>
+                    <div class="secondary x-small">OpenAI</div>
+                </div>
+            </div>
+            <div class="chat state_offline">
+                <div><img src="./svg/claude_logo.svg"></div>
+                <div>
+                    <div>Claude AI</div>
+                    <div class="secondary x-small">Anthropic</div>
+                </div>
+            </div>
+            <div class="chat state_offline">
+                <div class="bg_white"><img src="./img/grok_logo.webp"></div>
+                <div>
+                    <div>Grok</div>
+                    <div class="secondary x-small">xAI</div>
+                </div>
+            </div>
+            <div class="chat state_remote">
+                <div class="bg_white"><img src="./svg/midjourney_logo.svg"></div>
+                <div>
+                    <div>Midjourney</div>
+                    <div class="secondary x-small">Midjourney, Inc.</div>
+                </div>
+            </div>
+        </aside>
+        <footer class="section">
+            <span>[Фамилия Имя Отчество]</span>
+            <time class="secondary">[ДД ММММ ГГГГ]</time>
+        </footer>
+        
+    </article>
+</body>
+</html>

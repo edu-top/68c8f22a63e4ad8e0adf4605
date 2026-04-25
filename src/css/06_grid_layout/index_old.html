@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Admin</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
+        body {
+            background-color: hsl(215, 50%, 25%);
+            font-family: "Open Sans", Arial, Helvetica, sans-serif;
+            font-size: 15px;
+            margin: 0;
+        }
+        article {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 300px));
+            grid-template-rows: auto repeat(4, minmax(100px, auto));
+            grid-auto-rows: minmax(100px, auto);
+            grid-gap: 20px;
+            /* height: 100vh; */
+            padding: 20px;
+        }
+        aside, header, section {
+            color: white;
+            background-color: hsla(220, 50%, 20%, 0.9);
+            border-radius: 10px;
+            padding: 20px;
+        }
+        aside.position_left {
+            grid-column: 1;
+            grid-row: 1 / -1;
+        }
+        aside.position_right {
+            /* background-color: purple; */
+            grid-column: -1;
+            grid-row: 2 / -1;
+        }
+        h3 {
+            border-bottom: 1px solid hsla(220, 25%, 75%, 0.25);
+            margin: 0;
+            padding-bottom: 10px;
+        }
+        h4 {
+            color: hsla(220, 50%, 75%, 0.75);
+        }
+        header {
+            align-content: center;
+            display: flex;
+            flex-wrap: wrap;
+            grid-column: 2 / -1;
+            grid-row: 1;
+        }
+        header > div {
+            align-items: center;
+            display: flex;
+            flex-flow: row wrap;
+            /* gap: 20px; Отступ между блоками иконок */
+        }
+        header > div > .block {
+            height: 50px;
+            padding: 0 20px;
+        }
+        header > div > .block:last-child {
+            border-left: 1px solid hsla(220, 25%, 75%, 0.25);
+        }
+        input {
+            background-color: transparent;
+            border: 1px solid  hsla(220, 25%, 75%, 0.5);
+            border-radius: 5px;
+            flex: 1;
+            padding: 10px;
+            width: 100%;
+        }
+        section {
+            color: white;
+        }
+        .block {
+            align-items: center;
+            display: flex;
+        }
+        .block i {
+            margin: 0 5px;
+        }
+        .calendar {
+            display: grid;
+            font-size: 14px;
+            grid-template-columns: repeat(7, 1fr);
+            grid-template-rows: repeat(6, 30px);
+            margin-top: 10px;
+        }
+        .calendar > div {
+            padding-top: 4px;
+            text-align: center;
+        }
+        .current {
+            background-color: hsla(200, 100%, 50%, 0.5);
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .day {
+            color: hsla(220, 50%, 75%, 0.75);
+            font-weight: bold;
+        }        
+        .off {
+            color: hsla(0, 100%, 75%, 1);
+        }
+        .day.title.off {
+            color: hsla(0, 50%, 75%, 0.75);
+        }
+        .diff {
+            display: flex;
+            font-size: 12px;
+            position: relative;
+            top: 2px;
+        }
+        .diff i {
+            font-size: 14px;
+            position: relative;
+        }
+        .diff.neg i {
+            transform: rotate(90deg);            
+        }
+        .icon_list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .icon_list li {
+            align-items: center;
+            color: hsla(220, 50%, 75%, 0.95);
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+            position: relative;
+        }
+        .icon_list li > span {
+            align-items: center;
+            display: flex;
+        }
+        .icon_list li::after {
+            color: white;
+            content: "❯";
+            position: relative;
+            right: 0;
+        }
+        .icon_list li i {
+            color: #fff;
+            margin-right: 5px;
+        }
+        .metric {
+            display: flex;
+        }
+        .metric:nth-child(5) > :first-child {
+            background-color: hsla(100, 75%, 50%, 0.75);
+        }
+        .metric:nth-child(6) > :first-child {
+            background-color: hsla(200, 75%, 50%, 0.75);
+        }
+        .metric:nth-child(7) > :first-child {
+            background-color: hsla(50, 75%, 50%, 0.75);
+        }
+        .metric:nth-child(8) > :first-child {
+            background-color: hsla(300, 75%, 50%, 0.75);
+        }
+        .metric > :first-child {
+            border-radius: 50%;
+            height: 60px;
+            width: 60px;
+        }
+        .metric > :last-child {
+            flex: 1;
+            margin-left: 10px;
+        }
+        .metric > :last-child > :first-child {
+            font-weight: bold;
+        }
+        .metric > :last-child > :last-child {
+            align-items: center;
+            display: flex;
+            justify-content: space-between;
+        }
+        .neg {
+            color: hsla(0, 75%, 75%, 0.75);
+        }
+        .pos {
+            color: hsla(150, 75%, 50%, 0.75);
+        }
+        .prev {
+            opacity: 0.25;
+        }
+        .style_notifications {
+            position: relative;
+        }
+        .style_notifications::after {
+            position: absolute;
+            background-color: red;
+            border-radius: 50%;
+            border: 2px solid hsla(220, 50%, 20%, 0.9);
+            content: "5";
+            font-size: 10px;
+            height: 15px;
+            left: 35px;
+            text-align: center;
+            top: 10px;
+            width: 15px;
+        }
+        .secondary {
+            color: hsla(220, 50%, 75%, 0.75);
+        }
+        .x-large {
+            font-size: x-large;
+        }
+        .small {
+            font-size: small;
+        }
+        .reports {
+            /* grid-row: span 2; */
+        }
+        .tasks {
+            grid-column: span 2;
+            /* grid-row: span 2; */
+        }
+        .toggle {
+            color: hsla(175, 50%, 75%, 0.75);
+            font-size: 40px;
+        }
+        .user_box {
+            align-items: flex-start;
+            display: flex;
+            justify-content: space-between;
+        }
+        .user_box > div {
+            line-height: 175%;
+            margin-right: 10px;
+        }
+        .user_box i {
+            color: hsla(150, 75%, 50%, 0.75);
+            font-size: 50px;
+        }
+    </style>
+</head>
+<body>
+    <article>
+        <aside class="position_left">
+            <h3>Панель управления</h3>
+            <h4>Сводки</h4>
+            <ul class="icon_list">
+                <li><span><i class="material-icons">analytics</i> Аналитика</span></li>
+                <li><span><i class="material-icons">shopping_cart</i> Коммерция</span></li>
+            </ul>
+            <h4>Инструменты</h4>
+            <ul class="icon_list">
+                <li><span><i class="material-icons">analytics</i> Аналитика</span></li>
+                <li><span><i class="material-icons">shopping_cart</i> Коммерция</span></li>
+            </ul>
+            <h4>Источники</h4>
+            <ul class="icon_list">
+                <li><span><i class="material-icons">analytics</i> Аналитика</span></li>
+                <li><span><i class="material-icons">shopping_cart</i> Коммерция</span></li>
+                <li><span><i class="material-icons">cloud</i> Облако</span></li>
+            </ul>
+            <!-- <h4>Компоненты</h4>
+            <ul class="icon_list">
+                <li><span><i class="material-icons">analytics</i> Аналитика</span></li>
+                <li><span><i class="material-icons">shopping_cart</i> Коммерция</span></li>
+                <li><span><i class="material-icons">cloud</i> Облако</span></li>
+            </ul>
+            <h4>Настройки</h4>
+            <ul class="icon_list">
+                <li><span><i class="material-icons">analytics</i> Аналитика</span></li>
+                <li><span><i class="material-icons">shopping_cart</i> Коммерция</span></li>
+                <li><span><i class="material-icons">cloud</i> Облако</span></li>
+            </ul> -->
+        </aside>        
+        <header>
+            <input type="search" placeholder="Искать...">
+            <div>
+                <div class="block">
+                    <i class="material-icons">wb_sunny</i>
+                    <i class="material-icons toggle">toggle_on</i>
+                    <i class="material-icons">nightlight_round</i>
+                </div>
+                <div class="block style_notifications">
+                    <i class="material-icons">message</i>
+                    <i class="material-icons icon_notification">notifications</i>
+                    <i class="material-icons">mail_outline</i>
+                </div>
+            </div>
+        </header>
+        <section class="user_box">
+            <div>
+                <div>[Фамилия И.О.]</div>
+                <div class="secondary small">[Группа]</div>
+            </div>
+            <i class="material-icons">account_circle</i>
+        </section>
+        <aside class="position_right">
+            <h3>Беседы</h3>
+            <ul>
+                <li>Management</li>
+                <li>CRM</li>
+                <li>Analytics</li>
+                <li>E-Commerce</li>
+                <li>Email Marketing</li>
+            </ul>
+        </aside>
+        <section class="metric">
+            <div></div>
+            <div>
+                <div class="x-large">372</div>
+                <div class="secondary">Проекты <div class="diff pos"><i class="material-icons">arrow_outward</i> +10%</div></div>
+            </div>
+        </section>
+        <section class="metric">
+            <div></div>
+            <div>
+                <div class="x-large">372</div>
+                <div class="secondary">Бюджет <div class="diff pos"><i class="material-icons">arrow_outward</i> +840K</div></div>
+            </div>
+        </section>
+        <section class="metric">
+            <div></div>
+            <div>
+                <div class="x-large">372</div>
+                <div class="secondary">Расходы <div class="diff neg"><i class="material-icons">arrow_outward</i> -15%</div></div>
+            </div>
+        </section>
+        <section class="metric">
+            <div></div>
+            <div>
+                <div class="x-large">372</div>
+                <div class="secondary">Подписчики <div class="diff pos"><i class="material-icons">arrow_outward</i> +3245</div></div>
+            </div>
+        </section>
+        <section class="tasks">
+            <h3>Задачи</h3>
+        </section>
+        <section class="activities">
+            <h3>Мероприятия</h3>
+        </section>
+        <section>
+            <h3>20 апреля 2026</h3>
+            <div class="calendar">
+                <div class="day">Пн</div>
+                <div class="day">Вт</div>
+                <div class="day">Ср</div>
+                <div class="day">Чт</div>
+                <div class="day">Пт</div>
+                <div class="day title off">Сб</div>
+                <div class="day title off">Вс</div>
+                <div class="prev">29</div>
+                <div class="prev">30</div>
+                <div class="prev">31</div>
+                <div>1</div>
+                <div>2</div>
+                <div class="off">3</div>
+                <div class="off">4</div>
+                <div>5</div>
+                <div>6</div>
+                <div>7</div>
+                <div>8</div>
+                <div>9</div>
+                <div class="off">10</div>
+                <div class="off">11</div>
+                <div>12</div>
+                <div>13</div>
+                <div>14</div>
+                <div>15</div>
+                <div>16</div>
+                <div class="off">17</div>
+                <div class="off">18</div>
+                <div>19</div>
+                <div>20</div>
+                <div class="current">21</div>
+                <div>22</div>
+                <div>23</div>
+                <div class="off">24</div>
+                <div class="off">25</div>
+                <div>26</div>
+                <div>27</div>
+                <div>28</div>
+                <div>29</div>
+                <div>30</div>
+                <div class="prev off">1</div>
+                <div class="prev off">2</div>
+            </div>
+        </section>
+        <section class="reports">
+            <h3>Отчеты</h3>
+        </section>
+        <section></section>
+        
+    </article>
+    <img src="./img/21_preview.jpg" alt="">
+
+    <img src="./img/68747470733a2f2f646f632e6e7572636f6465732e636f6d2f6d617465782d5053442f696d672f44656d6f2d30332e6a7067.jfif" alt="">
+</body>
+</html>
