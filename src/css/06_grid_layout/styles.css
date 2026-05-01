@@ -553,7 +553,7 @@ time {
     font-size: 12px;
 }
 
-@media (max-width: 1024px) {
+/* @media (max-width: 1024px) {
     article {
         grid-template-areas:
             "header"
@@ -565,6 +565,49 @@ time {
     aside.position_left,
     aside.position_right {
         display: none;
+    }
+} */
+
+@media (max-width: 1024px) {
+    article {
+        grid-template-areas:
+            "sidebar header"
+            "sidebar main"
+            "footer footer"
+        ;
+        grid-template-columns: 60px 1fr;
+    }
+    aside.position_left {
+        font-size: 0;
+    }
+    aside.position_right {
+        display: none;
+    }
+}
+
+@media (max-width: 640px) {
+    article {
+        grid-template-areas:
+            "header"
+            "main"
+            "footer"
+        ;
+        grid-template-columns: 1fr;
+    }
+    aside.position_left {
+        display: none;
+    }
+    .status {
+        background-color: transparent;
+        font-size: 0;
+        padding: 0;
+        width: 8px;
+    }
+    .status::before {
+        margin-right: 0;
+    }
+    .projects_table tr > th:last-child {
+        font-size: 0;
     }
 }
 
