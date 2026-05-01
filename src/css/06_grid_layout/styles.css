@@ -552,3 +552,29 @@ time {
 .x-small {
     font-size: 12px;
 }
+
+@media (max-width: 1024px) {
+    article {
+        grid-template-areas:
+            "header"
+            "main"
+            "footer"
+        ;
+        grid-template-columns: 1fr;
+    }
+    aside.position_left,
+    aside.position_right {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .status {
+        font-size: 0;
+        padding: 0;
+        width: 8px;
+    }
+    .status::before {
+        margin-right: 0;
+    }
+}
