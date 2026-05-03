@@ -1,0 +1,138 @@
+<html lang="ru"><head>
+    <title>Проверка кроссбраузерности — image-set() — Дока</title>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&amp;display=swap" rel="stylesheet">
+    <style>
+      *, *::before, *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        min-height: 100vh;
+        padding: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #18191C;
+        font-family: "Roboto", sans-serif;
+        font-size: 16px;
+        color: #ffffff;
+      }
+
+      @media (max-width: 640px) {
+        body {
+          padding: 30px;
+        }
+      }
+
+      h2 {
+        text-align: center;
+        margin-bottom: 17px;
+        font-weight: 500;
+        font-size: 1.375rem;
+      }
+
+      .container {
+        display: flex;
+        gap: 30px;
+        max-width: 100%;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          flex-direction: column;
+        }
+      }
+
+      .title-picture {
+        color: #F498AD;
+      }
+
+      .title-preview {
+        color: #2E9AFF;
+      }
+
+      .picture {
+        display: block;
+        max-width: 100%;
+        height: auto;
+      }
+
+      .preview {
+        width: 300px;
+        height: 240px;
+  
+        background-image: url('../../img/bg@1x.png');
+
+        /* Для Chrome и Safari */
+        background-image: -webkit-image-set(
+          url('../../img/bg@2x.webp') 2x,
+          url('../../img/bg@1x.webp') 1x,
+          url('../../img/bg@2x.jpg') 2x,
+          url('../../img/bg@1x.jpg') 1x,
+          url('../../img/bg@2x.png') 2x,
+          url('../../img/bg@1x.png') 1x
+        );
+
+        /* Для Firefox */
+        background-image: image-set(
+          url('../../img/bg@2x.avif') type('image/avif') 2x,
+          url('../../img/bg@1x.avif') type('image/avif') 1x,
+          url('../../img/bg@2x.webp') type('image/webp') 2x,
+          url('../../img/bg@1x.webp') type('image/webp') 1x,
+          url('../../img/bg@2x.jpg') type('image/jpeg') 2x,
+          url('../../img/bg@1x.jpg') type('image/jpeg') 1x,
+          url('../../img/bg@2x.png') type('image/png') 2x,
+          url('../../img/bg@1x.png') type('image/png') 1x
+        );
+
+        background-size: contain;
+        background-repeat: no-repeat;
+        max-width: 100%;
+        aspect-ratio: 1 / 1;
+      }
+    </style>
+
+  <script async="" src="https://cdn.jsdelivr.net/npm/yandex-metrica-watch/tag.js"></script><script>
+    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+    m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+    (window, document, "script", "https://cdn.jsdelivr.net/npm/yandex-metrica-watch/tag.js", "ym")
+
+    ym(83244811, "init", {
+      clickmap:true,
+      trackLinks:true,
+      accurateTrackBounce:true
+    })
+  </script>
+  <noscript><img src="https://mc.yandex.ru/watch/83244811" style="position:absolute;left:-9999px" alt=""></noscript>
+  <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-GH8FX28ET0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || []
+    function gtag(){dataLayer.push(arguments)}
+    gtag("js", new Date())
+    gtag("config", "G-GH8FX28ET0")
+  </script>
+  </head>
+  <body>
+  <div class="container">
+    <div>
+      <h2 class="title-picture">&lt;picture&gt;</h2>
+      <picture>
+        <source srcset="../../img/content@1x.avif 1x, ../../img/content@2x.avif 2x" type="image/avif">
+        <source srcset="../../img/content@1x.webp 1x, ../../img/content@2x.webp 2x" type="image/webp">
+        <source srcset="../../img/content@1x.png 1x, ../../img/content@2x.png 2x" type="image/png">
+        <img alt="Doka dog in css style." class="picture" height="240" src="../../img/content@1x.jpg" srcset="../../img/content@2x.jpg 2x" width="300">
+      </picture>
+    </div>
+    <div>
+      <h2 class="title-preview">image-set(…)</h2>
+      <div class="preview"></div>
+    </div>
+  </div>
+
+  </body></html>
