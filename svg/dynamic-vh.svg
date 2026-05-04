@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg  width="966" height="444" viewBox="0 0 966 444" xmlns="http://www.w3.org/2000/svg">
+<style>
+#dyno {
+	animation-name: grow-shrink;          /** Name der Animation **/
+    animation-duration: 6s;               /** Dauer der Animation **/
+    animation-iteration-count: infinite;  /** Anzahl der Wiederholungen **/
+    animation-fill-mode:forwards;
+    animation-timing-function: linear;
+}
+
+@keyframes grow-shrink {
+    0% {  transform: scaleY(1); transform-origin: 153px 12.5px }
+    50%   {  transform: scaleY(1.1); transform-origin: 153px 12.5px }
+    100%   {  transform: scaleY(1); transform-origin: 153px 12.5px }
+}
+
+</style>
+
+<defs>                        |                      |
+<linearGradient id="lgrad1" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="hsl(120,70%,75%)" />
+    <stop offset="0.46" stop-color="hsl(120,70%,75%)" />
+    <stop offset="0.47" stop-color="hsl(5,90%,55%)" />
+    <stop offset="0.51" stop-color="hsl(5,90%,55%)" />
+    <stop offset="0.52" stop-color="hsl(120,70%,75%)" />
+    <stop offset="1" stop-color="hsl(120,70%,75%)" />
+</linearGradient>
+</defs>
+	<g transform="scale(3.3) translate(0 -4)">
+		<g transform="translate(18)">
+			<rect x="2.6312" y="6.2695" width="65.505" height="129.93" rx="5" fill="#f4e3d7" fill-rule="evenodd"/>
+			<rect x="2.6312" y="6.2695" width="65.505" height="129.93" rx="5" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+			<path d="m7.6313 6.2694c-2.77 0-5.0002 2.2302-5.0002 5.0002v1.3848h65.505v-1.3848c0-2.77-2.2297-5.0002-4.9997-5.0002z" fill="#c8beb7" fill-rule="evenodd"/>
+			<path d="m7.6313 136.48c-2.77 0-5.0002-2.2302-5.0002-5.0002v-15.55h65.505v15.55c0 2.77-2.2297 5.0002-4.9997 5.0002z" fill="#c8beb7" fill-rule="evenodd"/>
+			<rect x="8.4446" y="120.17" width="51.171" height="6.7817" rx="1" fill="#fff" fill-rule="evenodd"/>
+			<path d="m33.957 129.82h0.60347c0.1108 0 0.2 0.0892 0.2 0.2v2.117c0 0.1108-0.0892 0.2-0.2 0.2h-2.5365c-0.1108 0-0.2-0.0892-0.2-0.2v-2.117c0-0.1108 0.0892-0.2 0.2-0.2h0.67577" fill="none" stroke="#1663d8" stroke-linecap="round" stroke-linejoin="round" stroke-width=".4"/>
+			<path d="m33.324 130.86v-1.5186" fill="none" stroke="#5079d4" stroke-linecap="round" stroke-linejoin="round" stroke-width=".4"/>
+			<path d="m33.328 128.76 0.46027 0.79722h-0.92055z" fill="#1663d8" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" stroke-width=".339" style="paint-order:fill markers stroke"/>
+			<path d="m46.219 129.75s0.64973-0.37456 1.0917-0.37456c0.44196 0 1.0917 0.37456 1.0917 0.37456v2.7416s-0.70566-0.38657-1.0917-0.38657c-0.38604 0-1.0917 0.38657-1.0917 0.38657z" fill="none" stroke="#5079d4" stroke-linecap="round" stroke-linejoin="round" stroke-width=".4" style="paint-order:fill markers stroke"/>
+			<path d="m44.03 129.75s0.64973-0.37456 1.0917-0.37456c0.44196 0 1.0917 0.37456 1.0917 0.37456v2.7416s-0.70566-0.38657-1.0917-0.38657c-0.38604 0-1.0917 0.38657-1.0917 0.38657z" fill="none" stroke="#5079d4" stroke-linecap="round" stroke-linejoin="round" stroke-width=".4" style="paint-order:fill markers stroke"/>
+			<path d="m57.975 131.7h-0.88125v-2.5533h2.4578v0.83031" fill="none" stroke="#5079d4" stroke-linecap="round" stroke-linejoin="round" stroke-width=".4" style="paint-order:fill markers stroke"/>
+			<path d="m58.048 130.05h2.4578v2.5533h-2.4578z" fill="none" stroke="#5079d4" stroke-linecap="round" stroke-linejoin="round" stroke-width=".4" style="paint-order:fill markers stroke"/>
+			<path d="m10.175 129.31-1.4268 1.4045 1.4268 1.4045" fill="none" stroke="#929292" stroke-linecap="round" stroke-linejoin="round" stroke-width=".4" style="paint-order:fill markers stroke"/>
+			<path d="m19.508 129.31 1.4268 1.4045-1.4268 1.4045" fill="none" stroke="#929292" stroke-linecap="round" stroke-linejoin="round" stroke-width=".4" style="paint-order:fill markers stroke"/>
+			<rect x="15.813" y="8.1633" width="6.1732" height="2.0063" ry=".1" fill="#1a1a1a" fill-rule="evenodd" style="paint-order:fill markers stroke"/>
+			<rect x="26.736" y="7.1809" width="17.628" height="4.1325" rx="2.9746" fill-rule="evenodd" style="paint-order:fill markers stroke"/>
+			<circle cx="55.597" cy="10.083" r=".28608" fill="#1a1a1a" fill-rule="evenodd" style="paint-order:fill markers stroke"/>
+			<path d="m54.894 9.3554c0.39583-0.39583 1.0376-0.39584 1.4334-1e-6" fill="none" stroke="#333" stroke-linecap="round" stroke-linejoin="round" stroke-width=".348" style="paint-order:fill markers stroke"/>
+			<path d="m54.467 8.9279c0.63193-0.63193 1.6565-0.63193 2.2884 0" fill="none" stroke="#333" stroke-linecap="round" stroke-linejoin="round" stroke-width=".35" style="paint-order:fill markers stroke"/>
+			<ellipse cx="50.483" cy="9.9063" rx=".21773" ry=".20783" fill="#1a1a1a" fill-rule="evenodd" style="paint-order:fill markers stroke"/>
+			<ellipse cx="51.27" cy="9.9063" rx=".21773" ry=".20783" fill="#1a1a1a" fill-rule="evenodd" style="paint-order:fill markers stroke"/>
+			<ellipse cx="52.109" cy="9.9063" rx=".21773" ry=".20783" fill="#1a1a1a" fill-rule="evenodd" style="paint-order:fill markers stroke"/>
+			<ellipse cx="52.975" cy="9.9063" rx=".21773" ry=".20783" fill="#1a1a1a" fill-rule="evenodd" style="paint-order:fill markers stroke"/>
+			<rect x="58.382" y="8.5824" width="3.3931" height="1.3205" rx=".2" fill="#1a1a1a" fill-rule="evenodd" style="paint-order:fill markers stroke"/>
+			<rect x="61.696" y="9.0284" width=".26235" height=".42851" rx=".1" fill="#1a1a1a" fill-rule="evenodd" style="paint-order:fill markers stroke"/>
+			<path d="m58.408 8.648v1.1718" fill="#1a1a1a" fill-rule="evenodd" stroke="#1a1a1a" stroke-linecap="round" stroke-linejoin="round" stroke-width=".35" style="paint-order:fill markers stroke"/>
+			<text x="19.240835" y="124.76725" fill="#000000" fill-rule="evenodd" font-family="Arial" font-size="3.8794px" stroke-linecap="round" stroke-linejoin="round" stroke-width=".17106" style="paint-order:fill markers stroke" xml:space="preserve"><tspan x="19.240835" y="124.76725" fill="#1a1a1a" stroke-width=".17106">dvh-lvh-svh.web</tspan></text>
+			<path id="blau" d="m2.6311 12.654v103.65h65.505v-103.65z" fill="#aef" fill-rule="evenodd"/>
+			<text x="15.047031" y="73.047081" fill="#1a1a1a" fill-rule="evenodd" font-family="Arial" font-size="13.205px" stroke-linecap="round" stroke-linejoin="round" stroke-width=".58227" style="paint-order:fill markers stroke" xml:space="preserve"><tspan x="15.047031" y="73.047081" stroke-width=".58227">100svh</tspan></text>
+			<path d="m34.899 14.192v43.913m0 19.756v36.999" fill="#fff6d5" fill-rule="evenodd" stroke="#e32407" stroke-linecap="square" stroke-linejoin="round" stroke-width="3" style="paint-order:fill markers stroke"/>
+		</g>
+		<g transform="translate(36)">
+			<rect x="78.426" y="6.2695" width="65.505" height="129.93" rx="5" fill="#f4e3d7" fill-rule="evenodd"/>
+			<rect x="78.426" y="6.2695" width="65.505" height="129.93" rx="5" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+			<path d="m83.426 6.2694c-2.77 0-5.0002 2.2302-5.0002 5.0002v1.3848h65.505v-1.3848c0-2.77-2.2297-5.0002-4.9997-5.0002z" fill="#c8beb7" fill-rule="evenodd"/>
+			<path d="m83.426 136.48c-2.77 0-5.0002-2.2302-5.0002-5.0002v-15.55h65.505v15.55c0 2.77-2.2297 5.0002-4.9997 5.0002z" fill="#c8beb7" fill-rule="evenodd"/>
+			<rect x="84.239" y="120.17" width="51.171" height="6.7817" rx="1" fill="#fff" fill-rule="evenodd"/>
+			<path d="m109.75 129.82h0.60347c0.1108 0 0.2 0.0892 0.2 0.2v2.117c0 0.1108-0.0892 0.2-0.2 0.2h-2.5365c-0.1108 0-0.2-0.0892-0.2-0.2v-2.117c0-0.1108 0.0892-0.2 0.2-0.2h0.67576" fill="none" stroke="#1663d8" stroke-linecap="round" stroke-linejoin="round" stroke-width=".4"/>
+			<path d="m109.12 130.86v-1.5186" fill="none" stroke="#5079d4" stroke-linecap="round" stroke-linejoin="round" stroke-width=".4"/>
+			<path d="m109.12 128.76 0.46027 0.79722h-0.92055z" fill="#1663d8" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" stroke-width=".339" style="paint-order:fill markers stroke"/>
+			<path d="m122.01 129.75s0.64973-0.37456 1.0917-0.37456 1.0917 0.37456 1.0917 0.37456v2.7416s-0.70566-0.38657-1.0917-0.38657c-0.38604 0-1.0917 0.38657-1.0917 0.38657z" fill="none" stroke="#5079d4" stroke-linecap="round" stroke-linejoin="round" stroke-width=".4" style="paint-order:fill markers stroke"/>
+			<path d="m119.82 129.75s0.64973-0.37456 1.0917-0.37456 1.0917 0.37456 1.0917 0.37456v2.7416s-0.70566-0.38657-1.0917-0.38657c-0.38604 0-1.0917 0.38657-1.0917 0.38657z" fill="none" stroke="#5079d4" stroke-linecap="round" stroke-linejoin="round" stroke-width=".4" style="paint-order:fill markers stroke"/>
+			<path d="m133.77 131.7h-0.88125v-2.5533h2.4578v0.83031" fill="none" stroke="#5079d4" stroke-linecap="round" stroke-linejoin="round" stroke-width=".4" style="paint-order:fill markers stroke"/>
+			<path d="m133.84 130.05h2.4578v2.5533h-2.4578z" fill="none" stroke="#5079d4" stroke-linecap="round" stroke-linejoin="round" stroke-width=".4" style="paint-order:fill markers stroke"/>
+			<path d="m85.97 129.31-1.4268 1.4045 1.4268 1.4045" fill="none" stroke="#929292" stroke-linecap="round" stroke-linejoin="round" stroke-width=".4" style="paint-order:fill markers stroke"/>
+			<path d="m95.303 129.31 1.4268 1.4045-1.4268 1.4045" fill="none" stroke="#929292" stroke-linecap="round" stroke-linejoin="round" stroke-width=".4" style="paint-order:fill markers stroke"/>
+			<rect x="91.608" y="8.1633" width="6.1732" height="2.0063" ry=".1" fill="#1a1a1a" fill-rule="evenodd" style="paint-order:fill markers stroke"/>
+			<rect x="102.53" y="7.1809" width="17.628" height="4.1325" rx="2.9746" fill-rule="evenodd" style="paint-order:fill markers stroke"/>
+			<circle cx="131.39" cy="10.083" r=".28608" fill="#1a1a1a" fill-rule="evenodd" style="paint-order:fill markers stroke"/>
+			<path d="m130.69 9.3554c0.39584-0.39583 1.0376-0.39584 1.4334-1e-6" fill="none" stroke="#333" stroke-linecap="round" stroke-linejoin="round" stroke-width=".348" style="paint-order:fill markers stroke"/>
+			<path d="m130.26 8.9279c0.63193-0.63193 1.6565-0.63193 2.2884 0" fill="none" stroke="#333" stroke-linecap="round" stroke-linejoin="round" stroke-width=".35" style="paint-order:fill markers stroke"/>
+			<ellipse cx="126.28" cy="9.9063" rx=".21773" ry=".20783" fill="#1a1a1a" fill-rule="evenodd" style="paint-order:fill markers stroke"/>
+			<ellipse cx="127.06" cy="9.9063" rx=".21773" ry=".20783" fill="#1a1a1a" fill-rule="evenodd" style="paint-order:fill markers stroke"/>
+			<ellipse cx="127.9" cy="9.9063" rx=".21773" ry=".20783" fill="#1a1a1a" fill-rule="evenodd" style="paint-order:fill markers stroke"/>
+			<ellipse cx="128.77" cy="9.9063" rx=".21773" ry=".20783" fill="#1a1a1a" fill-rule="evenodd" style="paint-order:fill markers stroke"/>
+			<rect x="134.18" y="8.5824" width="3.3931" height="1.3205" rx=".2" fill="#1a1a1a" fill-rule="evenodd" style="paint-order:fill markers stroke"/>
+			<rect x="137.49" y="9.0284" width=".26235" height=".42851" rx=".1" fill="#1a1a1a" fill-rule="evenodd" style="paint-order:fill markers stroke"/>
+			<path d="m134.2 8.648v1.1718" fill="#1a1a1a" fill-rule="evenodd" stroke="#1a1a1a" stroke-linecap="round" stroke-linejoin="round" stroke-width=".35" style="paint-order:fill markers stroke"/>
+			<text x="95.035469" y="124.76725" fill="#000000" fill-rule="evenodd" font-family="Arial" font-size="3.8794px" stroke-linecap="round" stroke-linejoin="round" stroke-width=".17106" style="paint-order:fill markers stroke" xml:space="preserve"><tspan x="95.035469" y="124.76725" fill="#1a1a1a" stroke-width=".17106">dvh-lvh-svh.web</tspan></text>
+			<path d="m78.426 12.654v114.67h65.505v-114.67z" fill="#fd5" fill-rule="evenodd"/>
+			<text x="90.841652" y="73.047081" fill="#1a1a1a" fill-rule="evenodd" font-family="Arial" font-size="13.205px" stroke-linecap="round" stroke-linejoin="round" stroke-width=".58227" style="paint-order:fill markers stroke" xml:space="preserve"><tspan x="90.841652" y="73.047081" stroke-width=".58227">100lvh</tspan></text>
+			<path d="m111.62 14.192v43.913m0 19.756v47.822" fill="#fff6d5" fill-rule="evenodd" stroke="#e32407" stroke-linecap="square" stroke-linejoin="round" stroke-width="3" style="paint-order:fill markers stroke"/>
+		</g>
+		<g  transform="translate(54)">
+			<rect x="153.66" y="6.2695" width="65.505" height="129.93" rx="5" fill="#f4e3d7" fill-rule="evenodd"/>
+			<rect x="153.66" y="6.2695" width="65.505" height="129.93" rx="5" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+			<path d="m158.66 6.2694c-2.77 0-5.0002 2.2302-5.0002 5.0002v1.3848h65.505v-1.3848c0-2.77-2.2297-5.0002-4.9997-5.0002z" fill="#c8beb7" fill-rule="evenodd"/>
+			<path d="m158.66 136.48c-2.77 0-5.0002-2.2302-5.0002-5.0002v-15.55h65.505v15.55c0 2.77-2.2297 5.0002-4.9997 5.0002z" fill="#c8beb7" fill-rule="evenodd"/>
+			<rect x="159.47" y="120.17" width="51.171" height="6.7817" rx="1" fill="#fff" fill-rule="evenodd"/>
+			<path d="m184.99 129.82h0.60347c0.1108 0 0.2 0.0892 0.2 0.2v2.117c0 0.1108-0.0892 0.2-0.2 0.2h-2.5365c-0.1108 0-0.2-0.0892-0.2-0.2v-2.117c0-0.1108 0.0892-0.2 0.2-0.2h0.67576" fill="none" stroke="#1663d8" stroke-linecap="round" stroke-linejoin="round" stroke-width=".4"/>
+			<path d="m184.35 130.86v-1.5186" fill="none" stroke="#5079d4" stroke-linecap="round" stroke-linejoin="round" stroke-width=".4"/>
+			<path d="m184.36 128.76 0.46027 0.79722h-0.92055z" fill="#1663d8" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" stroke-width=".339" style="paint-order:fill markers stroke"/>
+			<path d="m197.25 129.75s0.64973-0.37456 1.0917-0.37456 1.0917 0.37456 1.0917 0.37456v2.7416s-0.70566-0.38657-1.0917-0.38657c-0.38604 0-1.0917 0.38657-1.0917 0.38657z" fill="none" stroke="#5079d4" stroke-linecap="round" stroke-linejoin="round" stroke-width=".4" style="paint-order:fill markers stroke"/>
+			<path d="m195.06 129.75s0.64973-0.37456 1.0917-0.37456 1.0917 0.37456 1.0917 0.37456v2.7416s-0.70566-0.38657-1.0917-0.38657c-0.38604 0-1.0917 0.38657-1.0917 0.38657z" fill="none" stroke="#5079d4" stroke-linecap="round" stroke-linejoin="round" stroke-width=".4" style="paint-order:fill markers stroke"/>
+			<path d="m209 131.7h-0.88125v-2.5533h2.4578v0.83031" fill="none" stroke="#5079d4" stroke-linecap="round" stroke-linejoin="round" stroke-width=".4" style="paint-order:fill markers stroke"/>
+			<path d="m209.08 130.05h2.4578v2.5533h-2.4578z" fill="none" stroke="#5079d4" stroke-linecap="round" stroke-linejoin="round" stroke-width=".4" style="paint-order:fill markers stroke"/>
+			<path d="m161.2 129.31-1.4268 1.4045 1.4268 1.4045" fill="none" stroke="#929292" stroke-linecap="round" stroke-linejoin="round" stroke-width=".4" style="paint-order:fill markers stroke"/>
+			<path d="m170.54 129.31 1.4268 1.4045-1.4268 1.4045" fill="none" stroke="#929292" stroke-linecap="round" stroke-linejoin="round" stroke-width=".4" style="paint-order:fill markers stroke"/>
+			<rect x="166.84" y="8.1633" width="6.1732" height="2.0063" ry=".1" fill="#1a1a1a" fill-rule="evenodd" style="paint-order:fill markers stroke"/>
+			<rect x="177.76" y="7.1809" width="17.628" height="4.1325" rx="2.9746" fill-rule="evenodd" style="paint-order:fill markers stroke"/>
+			<circle cx="206.63" cy="10.083" r=".28608" fill="#1a1a1a" fill-rule="evenodd" style="paint-order:fill markers stroke"/>
+			<path d="m205.92 9.3554c0.39584-0.39583 1.0376-0.39584 1.4334-1e-6" fill="none" stroke="#333" stroke-linecap="round" stroke-linejoin="round" stroke-width=".348" style="paint-order:fill markers stroke"/>
+			<path d="m205.5 8.9279c0.63193-0.63193 1.6565-0.63193 2.2884 0" fill="none" stroke="#333" stroke-linecap="round" stroke-linejoin="round" stroke-width=".35" style="paint-order:fill markers stroke"/>
+			<ellipse cx="201.51" cy="9.9063" rx=".21773" ry=".20783" fill="#1a1a1a" fill-rule="evenodd" style="paint-order:fill markers stroke"/>
+			<ellipse cx="202.3" cy="9.9063" rx=".21773" ry=".20783" fill="#1a1a1a" fill-rule="evenodd" style="paint-order:fill markers stroke"/>
+			<ellipse cx="203.14" cy="9.9063" rx=".21773" ry=".20783" fill="#1a1a1a" fill-rule="evenodd" style="paint-order:fill markers stroke"/>
+			<ellipse cx="204" cy="9.9063" rx=".21773" ry=".20783" fill="#1a1a1a" fill-rule="evenodd" style="paint-order:fill markers stroke"/>
+			<rect x="209.41" y="8.5824" width="3.3931" height="1.3205" rx=".2" fill="#1a1a1a" fill-rule="evenodd" style="paint-order:fill markers stroke"/>
+			<rect x="212.73" y="9.0284" width=".26235" height=".42851" rx=".1" fill="#1a1a1a" fill-rule="evenodd" style="paint-order:fill markers stroke"/>
+			<path d="m209.44 8.648v1.1718" fill="#1a1a1a" fill-rule="evenodd" stroke="#1a1a1a" stroke-linecap="round" stroke-linejoin="round" stroke-width=".35" style="paint-order:fill markers stroke"/>
+			<text x="170.27008" y="124.76725" fill="#000000" fill-rule="evenodd" font-family="Arial" font-size="3.8794px" stroke-linecap="round" stroke-linejoin="round" stroke-width=".17106" style="paint-order:fill markers stroke" xml:space="preserve"><tspan x="170.27008" y="124.76725" fill="#1a1a1a" stroke-width=".17106">dvh-lvh-svh.web</tspan></text>
+
+			<rect x="153.5" y="12.5" width="66" height="100" fill="hsl(120,70%,75%)"></rect>
+			<rect x="153.5" y="12.5" width="66" height="50" fill="url(#lgrad1)"></rect>
+	
+			<rect id="dyno" x="153.5" y="70" width="66" height="47" fill="url(#lgrad1)"></rect>
+			<rect x="153.5" y="60" width="66" height="16" fill="hsl(120,70%,75%)"></rect>
+			<text x="166.07626" y="73.047081" fill="#1a1a1a" fill-rule="evenodd" font-family="Arial" font-size="13.205px" stroke-linecap="round" stroke-linejoin="round" stroke-width=".58227" style="paint-order:fill markers stroke" xml:space="preserve"><tspan x="166.07626" y="73.047081" stroke-width=".58227">100dvh</tspan></text>
+	
+		</g>
+	</g>
+</svg>
