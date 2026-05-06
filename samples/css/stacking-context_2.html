@@ -1,0 +1,80 @@
+<html lang="ru"><head>
+  <title>z-index — Контекст наложения — Дока</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      padding: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #18191C;
+      color: #FFFFFF;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 30px;
+      }
+    }
+
+    .block {
+      width: 150px;
+      height: 150px;
+      border: 5px solid;
+      box-sizing: border-box;
+    }
+
+    .first {
+      position: relative;
+      z-index: 1;
+      background-color: #2E9AFF;
+    }
+
+    .second {
+      margin-top: -50px;
+      margin-left: 50px;
+      background-color: #FF8630;
+    }
+
+    .third {
+      margin-top: -50px;
+      background-color: #F498AD;
+    }
+  </style>
+
+<script async="" src="https://cdn.jsdelivr.net/npm/yandex-metrica-watch/tag.js"></script><script>
+  (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+  m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+  (window, document, "script", "https://cdn.jsdelivr.net/npm/yandex-metrica-watch/tag.js", "ym")
+
+  ym(83244811, "init", {
+    clickmap:true,
+    trackLinks:true,
+    accurateTrackBounce:true
+  })
+</script>
+<noscript><img src="https://mc.yandex.ru/watch/83244811" style="position:absolute;left:-9999px" alt=""></noscript>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-GH8FX28ET0"></script>
+<script>
+  window.dataLayer = window.dataLayer || []
+  function gtag(){dataLayer.push(arguments)}
+  gtag("js", new Date())
+  gtag("config", "G-GH8FX28ET0")
+</script>
+</head>
+<body>
+  <div>
+    <div class="block first"></div>
+    <div class="block second"></div>
+    <div class="block third"></div>
+  </div>
+
+</body></html>
