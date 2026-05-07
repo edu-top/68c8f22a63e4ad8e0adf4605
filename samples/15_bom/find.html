@@ -1,0 +1,13 @@
+<body>
+    <input id="key" name="key" />
+    <button id="btn">Find</button>
+    <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</p>
+    <script>
+      const btn = document.getElementById("btn");
+      const keyField = document.getElementById("key");
+      btn.addEventListener("click", () => {
+        const result = find(keyField.value); // ищем введенное в поле слово
+        console.log(result);
+      });
+  </script>
+</body>
