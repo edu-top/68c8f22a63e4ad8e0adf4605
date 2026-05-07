@@ -1,0 +1,74 @@
+<html lang="ru"><head>
+    <title>Вуаль для картинки — z-index — Дока</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto&amp;display=swap">
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html, body {
+        color-scheme: dark;
+        block-size: 100%;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Roboto", sans-serif;
+      }
+
+      header {
+        position: relative;
+        background: #f5f5f5 url("../../img/landscape.jpg") no-repeat center / cover;
+        block-size: 100%;
+        display: grid;
+        place-items: center;
+        z-index: 0;
+      }
+
+      header::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-color: rgb(125 20 204 / 0.5);
+        z-index: -1;
+      }
+
+      h1 {
+        color: #fff;
+        font-size: 4rem;
+        max-inline-size: 50%;
+        text-align: center;
+        text-transform: uppercase;
+      }
+    </style>
+
+  <script async="" src="https://cdn.jsdelivr.net/npm/yandex-metrica-watch/tag.js"></script><script>
+    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+    m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+    (window, document, "script", "https://cdn.jsdelivr.net/npm/yandex-metrica-watch/tag.js", "ym")
+
+    ym(83244811, "init", {
+      clickmap:true,
+      trackLinks:true,
+      accurateTrackBounce:true
+    })
+  </script>
+  <noscript><img src="https://mc.yandex.ru/watch/83244811" style="position:absolute;left:-9999px" alt=""></noscript>
+  <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-GH8FX28ET0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || []
+    function gtag(){dataLayer.push(arguments)}
+    gtag("js", new Date())
+    gtag("config", "G-GH8FX28ET0")
+  </script>
+  </head>
+  <body>
+    <header>
+      <h1>Under the light of the purple sun</h1>
+    </header>
+
+  </body></html>
