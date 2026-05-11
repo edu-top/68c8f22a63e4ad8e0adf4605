@@ -123,7 +123,7 @@
 
 - **Плагины и внешний контент**
 
-  Устаревшие `<embed>` и `<object>` встраивают плагины (Flash, PDF), где `src` указывает ресурс, а `type` — MIME-тип. `<embed>` проще, `<object>` поддерживает fallback-контент.
+  Устаревший `<embed>` и `<object>` встраивают плагины (Flash, PDF), где `src` указывает ресурс, а `type` — MIME-тип. `<embed>` проще, `<object>` поддерживает резервное содержимое (*fallback content*).
 
 ### MIME-типы
 *[MIME]: Multipurpose Internet Mail Extensions
