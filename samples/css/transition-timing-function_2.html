@@ -1,0 +1,195 @@
+<html lang="ru"><head>
+  <title>Демонстрация разных значений jump — transition-timing-function — Дока</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&amp;display=swap">
+  <style>
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      color-scheme: dark;
+      block-size: 100%;
+    }
+
+    body {
+      min-block-size: 100%;
+      display: grid;
+      place-items: center;
+      padding: 5%;
+      background-color: #18191c;
+      color: #ffffff;
+      font-size: 24px;
+      font-family: "Roboto", sans-serif;
+    }
+
+    h3 {
+      font-weight: 500;
+    }
+
+    .parent {
+      position: relative;
+      inline-size: 600px;
+      margin-inline: auto;
+      margin-block-end: 40px;
+      outline: 1px solid #FFFFFF;
+    }
+
+    .parent span {
+      position: absolute;
+      inline-size: fit-content;
+      z-index: 1;
+      inset: 50% 0 0 50%;
+      transform: translate(-50%, -50%);
+      font-family: monospace;
+    }
+
+    .elem {
+      inline-size: 0;
+      block-size: 50px;
+      background-color: #2e9aff;
+      color: white;
+      display: flex;
+      align-items: center;
+      box-sizing: border-box;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .elem::before {
+      content: '';
+      position: absolute;
+      display: flex;
+      align-items: center;
+      box-sizing: border-box;
+      padding-left: 30px;
+      inset-inline-start: 0;
+      inline-size: 600px;
+      block-size: 100%;
+      inset-block-start: 0;
+      background-color: #2e9aff;
+    }
+
+    .elem.active {
+      inline-size: 600px;
+      transition-property: width;
+      transition-duration: 3s;
+    }
+
+    .supports {
+      display: none;
+    }
+
+    .jump-start {
+      transition-timing-function: steps(5, start);
+    }
+
+    @supports (transition-timing-function: steps(5, jump-start)) {
+      .jump-start {
+        transition-timing-function: steps(5, jump-start);
+      }
+      .supports {
+        display: block;
+      }
+      .not-supports {
+        display: none;
+      }
+    }
+
+    .jump-end {
+      transition-timing-function: steps(5, end);
+    }
+
+    @supports (transition-timing-function: steps(5, jump-end)) {
+      .jump-end {
+        transition-timing-function: steps(5, jump-end);
+      }
+      .supports {
+        display: block;
+      }
+      .not-supports {
+        display: none;
+      }
+    }
+
+    .jump-none {
+      transition-timing-function: steps(5, jump-none);
+    }
+
+    .jump-both {
+      transition-timing-function: steps(5, jump-both);
+    }
+
+    .ticker {
+      inline-size: 1px;
+      block-size: 20px;
+      background-color: #FFFFFF;
+      inset-inline-start: -1px;
+      position: absolute;
+    }
+
+    .ticker.active {
+      inset-inline-start: 600px;
+      transition-property: left;
+      transition-duration: 3s;
+      transition-timing-function: linear;
+    }
+
+    h3 {
+      margin-block-end: 25px;
+      text-align: center;
+    }
+  </style>
+
+</head>
+<body>
+  <div class="wrapper">
+    <h3>Нажми на прямоугольник</h3>
+    <div class="parent">
+      <span class="supports">jump-start</span>
+      <span class="not-supports">start</span>
+      <div class="elem jump-start active"></div>
+      <div class="ticker active"></div>
+    </div>
+
+    <div class="parent">
+      <span class="supports">jump-end</span>
+      <span class="not-supports">end</span>
+      <div class="elem jump-end active"></div>
+      <div class="ticker active"></div>
+    </div>
+
+    <div class="parent supports">
+      <span>jump-none</span>
+      <div class="elem jump-none active"></div>
+      <div class="ticker active"></div>
+    </div>
+
+    <div class="parent supports">
+      <span>jump-both</span>
+      <div class="elem jump-both active"></div>
+      <div class="ticker active"></div>
+    </div>
+  </div>
+
+  <script>
+    const parents = document.querySelectorAll('.parent')
+
+    parents.forEach((parent) => {
+      parent.addEventListener('click', () => {
+        const elem = parent.querySelector('.elem')
+        const ticker = parent.querySelector('.ticker')
+        elem.classList.toggle('active')
+        ticker.classList.toggle('active')
+      })
+    })
+  </script>
+
+</body></html>
