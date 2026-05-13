@@ -2108,6 +2108,17 @@ Here we explain how to use the track element.
 </figure>
 ```
 
+Аудиодорожка:
+```html
+<figure>
+  <figcaption>Привет, я Алиса</figcaption>
+  <audio controls src="hi-alice.mp3">
+    Ваш браузер не поддерживает встроенное аудио. Попробуйте скачать его
+    <a href="hi-alice.mp3" download>по ссылке</a>.
+  </audio>
+</figure>
+```
+
 Фрагменты кода:
 ```html
 <figure>
