@@ -33,6 +33,7 @@
       - [Маскирование текста: пример 2](#маскирование-текста-пример-2)
       - [Маскирование списков](#маскирование-списков)
       - [Интересные эффекты для изображения](#интересные-эффекты-для-изображения)
+      - [Скругление вкладок](#скругление-вкладок)
   - [Кадрирование и маскирование в SVG](#кадрирование-и-маскирование-в-svg)
     - [Обрезка](#обрезка)
     - [Маскировка](#маскировка)
@@ -1127,6 +1128,187 @@ img {
 ```
 
 ![Mask](../img/wtdsi3tgag6q-pqaihmzwwbvd4e.png)
+
+##### Скругление вкладок
+
+Возможно применение масок к функционалу UI под названием «скругление углов» (*round out corners*).
+
+Наша задача — скруглить стороны элемента так, чтобы они смешались с его `border-radius`.
+
+![Mask](../img/spq__cc2d5ibb_zihkjp9msjcny.png)
+
+В своей статье Крис Койер объяснил, как можно достичь этого эффекта с помощью множества псевдо-элементов. Более же динамичным решением будет использование маски CSS.
+
+Для начала повнимательнее взглянем на фигуру, которую нужно получить.
+
+![Mask](../img/xvg0ntnzo1ivfeb3rj11-pg8exu.png)
+
+Она состоит из квадрата и круга, и нам нужно их пересечение.
+
+Как этого достичь? Можно использовать многослойные маски, объединив их с помощью свойства `mask-composite`.
+
+Первым делом мы создадим элемент для хранения самой маски.
+
+```css
+.nav-item.active:before {
+    content: "";
+    position: absolute;
+    left: 100%;
+    bottom: 0;
+    width: 24px;
+    height: 24px;
+    background-color: var(--active-bg);
+}
+```
+
+![Mask](../img/eo70fju5hvcap7dbf_3h587irdc.png)
+
+Внутри этого пространства нужно нарисовать круг и квадрат, которые будут совмещаться. Удобно то, что это можно сделать путём смешения линейного и радиального градиентов.
+
+```css
+.nav-item.active:before {
+    content: "";
+    position: absolute;
+    left: 100%;
+    bottom: 0;
+    width: 24px;
+    height: 24px;
+    background-color: var(--active-bg);
+    background-image: linear-gradient(to top, #000, #000),
+    radial-gradient(circle 15px at center, #000 80%, transparent 81%);
+    background-size: 12px 12px, 100%;
+    background-position: bottom left, center;
+    background-repeat: no-repeat, repeat;
+}
+```
+
+Обратите внимание на следующее:
+- в качестве размера квадрата установлено `12px 12px`;
+- квадрат расположен в левом нижнем углу (`bottom left`);
+- для фигуры квадрата `background-repeat` не требуется.
+
+![Mask](../img/rifyc2spkzvonomb728lrrk_phu.png)
+
+Картинка выше просто визуально показывает, как будут выглядеть два градиента. Следующим шагом идёт их создание. В CSS объединить две фигуры можно с помощью свойства `mask-composite`.
+
+```css
+.nav-item.active:before {
+    content: "";
+    position: absolute;
+    left: 100%;
+    bottom: 0;
+    width: 24px;
+    height: 24px;
+    background-color: var(--active-bg);
+    mask-image: linear-gradient(to top, red, red),
+    radial-gradient(circle 15px at center, green 80%, transparent 81%);
+    mask-size: 12px 12px, 100%;
+    mask-position: bottom left, center;
+    mask-repeat: no-repeat, repeat;
+    mask-composite: subtract;
+}
+```
+
+В итоге получится:
+
+![Mask](../img/pmvn9lrqyh4u38sz4mful0e_wwc.png)
+
+Код выше предназначен для фигуры справа. Для второй же стороны можно просто изменить `mask-position`.
+
+```css
+.nav-item.active:after {
+    /* другие стили */
+    mask-position: bottom right, center;
+}
+```
+
+[Демо](https://codepen.io/shadeed/pen/YzObqbw/f8ac9db5ddde52a6214f1a8c2859e4f8?editors=0100)
+
+<details>
+<summary>Полный код (SCSS)</summary>
+
+
+```scss
+@mixin round-out {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  width: 24px;
+  height: 24px;
+  mask-image: linear-gradient(to top, red, red),
+    radial-gradient(circle 15px at center, green 80%, transparent 81%);
+  mask-size: 12px 12px, 100%;
+  mask-composite: subtract;
+  mask-repeat: no-repeat, repeat;
+}
+
+ul {
+  display: flex;
+  justify-content: center;
+  background-color: #222;
+  padding-top: 4rem;
+
+  li {
+    --default-bg: lightgrey;
+    --active-bg: #fff;
+    position: relative;
+    padding: 1rem 2rem;
+    background-color: var(--default-bg);
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+
+    &:first-child {
+      &:after {
+        @include round-out;
+        right: 100%;
+        background-color: var(--default-bg);
+        mask-position: bottom right, center;
+      }
+    }
+
+    &:last-child {
+      &:before {
+        @include round-out;
+        left: 100%;
+        background-color: var(--default-bg);
+        mask-position: bottom left, center;
+      }
+    }
+
+    &.active {
+      color: #222;
+      background-color: var(--active-bg);
+      z-index: 1;
+
+      &:before {
+        @include round-out;
+        left: 100%;
+        mask-position: bottom left, center;
+        background-color: var(--active-bg);
+      }
+
+      &:after {
+        @include round-out;
+        right: 100%;
+        mask-position: bottom right, center;
+        background-color: var(--active-bg);
+      }
+    }
+  }
+}
+
+body {
+  font-family: system-ui;
+  line-height: 1.45;
+  min-height: 1500px;
+}
+
+* {
+  box-sizing: border-box;
+}
+```
+
+</details>
 
 ### Кадрирование и маскирование в SVG
 SVG позволяет не только рисовать фигуры, тексты и иконки, но и гибко управлять тем, какие части этих элементов будут видны на экране. Два ключевых механизма для этого — кадрирование (`clip‑path`, обрезка) и маскирование (`mask`). Оба подхода скрывают часть содержимого, но делают это разными способами и дают разный визуальный результат.
