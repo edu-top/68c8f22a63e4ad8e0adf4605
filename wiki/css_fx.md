@@ -4662,6 +4662,76 @@ CSS-свойство `contain` позволяет изолировать эле�
 - `content` — контейнер должен адаптировать свои размеры, чтобы потомки помещались внутри. Сокращение для `layout paint`. Подходит для большинства случаев.
 - `strict` — контейнер строго определяет размеры и положение потомков. Потомки не могут выходить за пределы контейнера и влиять на его размеры или позицию. Сокращение для `size layout paint`. Самая строгая изоляция.
 
+Пример использования разных значений свойство показан ниже.
+
+*HTML*:
+```html
+<div>
+  <div class='container'>
+    <h2>Значение none</h2>
+  </div>
+  <div class='strict'>
+    <h2>Значение strict</h2>
+  </div>
+  <div class='content'>
+    <h2>Значение content</h2>
+  </div>
+  <div class='size'>
+    <h2>Значение size</h2>
+  </div>
+  <div class='inline-size'>
+    <h2>Значение inline size</h2>
+  </div>
+  <div class='layout'>
+    <h2>Значение layout</h2>
+  </div>
+  <div class='style'>
+    <h2>Значение style</h2>
+  </div>
+  <div class='paint'>
+    <h2>Значение paint</h2>
+  </div>
+</div>
+```
+
+*CSS*:
+```css
+.container {
+  contain: none;
+  outline: 1px solid red;
+}
+.strict {
+  contain: strict;
+  outline: 1px solid green;
+}
+.content {
+  contain: content;
+  outline: 1px solid blue;
+}
+.size {
+  contain: size;
+  outline: 1px solid orange;
+}
+.inline-size {
+  contain: inline-size;
+  outline: 1px solid purple;
+}
+.layout {
+  contain: layout;
+  outline: 1px solid cyan;
+}
+.style {
+  contain: style;
+  outline: 1px solid brown;
+}
+.paint {
+  contain: paint;
+  outline: 1px solid magenta;
+}
+```
+
+[Демо](../samples/css/contain.html)
+
 Ключевые преимущества:
 - **Производительность**: браузер пропускает лишнюю работу по перерасчету стилей и отрисовке частей страницы, не затронутых изменениями.
 - **Изоляция**: помогает предотвратить выход дочерних элементов за границы контейнера.
