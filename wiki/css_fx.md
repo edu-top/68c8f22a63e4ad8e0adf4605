@@ -4746,7 +4746,7 @@ CSS-свойство `contain` позволяет изолировать эле�
 }
 ```
 
-
+> 💡 Поддержка браузерами свойства `contain`: [Can I Use](https://caniuse.com/?search=contain).
 
 ## Глоссарий
 Конструктивные эффекты (*geometric effects* или *layout effects*)
