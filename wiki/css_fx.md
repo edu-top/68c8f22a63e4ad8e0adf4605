@@ -684,6 +684,8 @@ h1 {
 - `luminosity` — светимость верхнего цвета сохраняется, при этом используются насыщенность и оттенок `background-color`.
 - `hue` — результатом будет оттенок `background-image` в сочетании со светлотой и насыщенностью `background-color`.
 
+![background-blend-mode](../img/background-blend-mode.webp)
+
 ### Свойство `isolation`
 CSS-свойство `isolation` определяет, должен ли элемент создавать новый контекст наложения (*stacking context*).[^isolation] Обычно его используют, когда нужно изолировать элемент и его потомков от смешивания с внешними слоями, особенно вместе с `mix-blend-mode` и `background-blend-mode`.
 
