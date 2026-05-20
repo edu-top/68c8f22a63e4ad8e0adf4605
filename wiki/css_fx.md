@@ -13,6 +13,7 @@
     - [Режимы работы](#режимы-работы)
   - [Свойство `background-blend-mode`](#свойство-background-blend-mode)
     - [Режимы работы](#режимы-работы-1)
+  - [Свойство `isolation`](#свойство-isolation)
 - [Маскирование](#маскирование)
   - [Силуэты](#силуэты)
     - [Базовая форма](#базовая-форма)
@@ -680,6 +681,94 @@ h1 {
 - `color` — сохраняет оттенок и насыщенность `background-image` и светимость `background-color`.
 - `luminosity` — светимость верхнего цвета сохраняется, при этом используются насыщенность и оттенок `background-color`.
 - `hue` — результатом будет оттенок `background-image` в сочетании со светлотой и насыщенностью `background-color`.
+
+### Свойство `isolation`
+CSS-свойство `isolation` определяет, должен ли элемент создавать новый контекст наложения (*stacking context*).[^isolation] Обычно его используют, когда нужно изолировать элемент и его потомков от смешивания с внешними слоями, особенно вместе с `mix-blend-mode` и `background-blend-mode`.
+
+Главный практический сценарий — изоляция эффектов смешивания.
+Если есть элементы с `mix-blend-mode`, они могут визуально смешиваться с фоном или соседними слоями, и `isolation: isolate` помогает ограничить это смешивание рамками конкретного контейнера.
+
+Пример:
+```css
+.card {
+  isolation: isolate;
+}
+```
+
+Такой контейнер становится отдельной «группой», внутри которой проще контролировать `z-index` и эффекты наложения.
+
+Данное свойство особенно полезно при использовании совместно с `background-blend-mode`.
+
+Синтаксис:
+```css
+/* Ключевые слова */
+isolation: auto;
+isolation: isolate;
+
+/* Глобальные значения */
+isolation: inherit;
+isolation: initial;
+isolation: unset;
+```
+Свойство `isolation` указывается в качестве значения одного из нижеследующих ключевых слов.
+
+Значения
+
+- **`auto`**: новый контекст наложения создаётся только в том случае, если это требуется для одного из свойств, применяемых к элементу (поведение по умолчанию).
+
+  ![isolation: auto](../img/isolation-auto.png)
+
+- `isolate`: новый контекст наложения должен быть создан (элемент принудительно создаёт новый контекст наложения).
+
+  ![isolation: isolate](../img/isolation-isolate.png)
+
+Когда применять:
+- Когда нужно, чтобы вложенные элементы не влияли на внешний фон через blend-эффекты.
+
+- Когда структура слоёв запутана и хочется локализовать поведение `z-index` внутри блока.
+
+- Когда элемент с графикой или фоном должен рендериться как отдельная группа.
+
+!!! attention "Важный нюанс"
+
+    `isolation` не заменяет `z-index`: оно не «поднимает» элемент наверх само по себе, а только создаёт отдельный контекст наложения, в рамках которого уже работают слои и перекрытия.
+
+Пример:
+```html
+<div id="b" class="a">
+  <div id="d">
+    <div class="a c">auto</div>
+  </div>
+  <div id="e">
+    <div class="a c">isolate</div>
+  </div>
+</div>
+```
+
+```css
+.a {
+  background-color: rgb(0, 255, 0);
+}
+#b {
+  width: 200px;
+  height: 210px;
+}
+.c {
+  width: 100px;
+  height: 100px;
+  border: 1px solid black;
+  padding: 2px;
+  mix-blend-mode: difference;
+}
+#d {
+  isolation: auto;
+}
+#e {
+  isolation: isolate;
+}
+```
+
+![isolate](../img/isolate.png)
 
 ## Маскирование
 В мире дизайна маскирование является популярной техникой реализации уникальных эффектов. В своей сути маскирование подразумевает скрытие части элемента без его стирания.
@@ -5028,3 +5117,4 @@ DOM (Document Object Model)
 [^Clipping_and_masking]: [Обрезка и маска](https://developer.mozilla.org/ru/docs/Web/SVG/Tutorials/SVG_from_scratch/Clipping_and_masking)
 [^how-the-browser-creates-pages]: [Как браузер рисует страницы](https://doka.guide/tools/how-the-browser-creates-pages/)
 [^contain]: [CSS-свойство contain](https://htmlacademy.ru/blog/css/contain)
+[^isolation]: [isolation](https://developer.mozilla.org/ru/docs/Web/CSS/Reference/Properties/isolation)
